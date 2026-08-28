@@ -23,52 +23,52 @@ class SplashScreen extends GetView<SplashController> {
           ),
 
           // Bottom Section
-          Positioned(
-            bottom: 115,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                // Tagline
-                const Text(
-                  'Roll it. Play it. Enjoy it.',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
-                ),
+         Positioned(
+  bottom: 115,
+  left: 0,
+  right: 0,
+  child: Column(
+    children: [
+      // Tagline
+      // const Text(
+      //   'Roll it. Play it. Enjoy it.',
+      //   style: TextStyle(
+      //     color: Colors.white70,
+      //     fontSize: 14,
+      //   ),
+      // ),
 
-                const SizedBox(height: 18),
+      const SizedBox(height: 24),
 
-                // GET READY Button/Text
-                GestureDetector(
-                  onTap: () {
-                    Get.offNamed(AppRoutes.home);
-                  },
-                  child: const Text(
-                    'G E T   R E A D Y . . .',
-                    style: AppTextStyles.loading,
-                  ),
-                ),
+      // GET READY
+      GestureDetector(
+        onTap: () {
+          Get.offNamed(AppRoutes.home);
+        },
+        child: const Text(
+          'G E T   R E A D Y . . .',
+          style: AppTextStyles.loading,
+        ),
+      ),
 
-                const SizedBox(height: 22),
+      const SizedBox(height: 22),
 
-                // Loading Dots
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildLoadingDot(AppColors.violet),
-                    const SizedBox(width: 14),
-                    _buildLoadingDot(AppColors.purple),
-                    const SizedBox(width: 14),
-                    _buildLoadingDot(AppColors.purple),
-                    const SizedBox(width: 14),
-                    _buildLoadingDot(AppColors.purple),
-                  ],
-                ),
-              ],
-            ),
-          ),
+      // Dots
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildLoadingDot(AppColors.violet),
+          const SizedBox(width: 14),
+          _buildLoadingDot(AppColors.purple),
+          const SizedBox(width: 14),
+          _buildLoadingDot(AppColors.purple),
+          const SizedBox(width: 14),
+          _buildLoadingDot(AppColors.purple),
+        ],
+      ),
+    ],
+  ),
+),
         ],
       ),
     );

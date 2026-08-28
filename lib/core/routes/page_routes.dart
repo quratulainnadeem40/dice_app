@@ -1,6 +1,7 @@
 
 import 'package:dice_app/feature/home/binding/home_binding.dart';
 import 'package:dice_app/feature/home/view/home_screen.dart';
+import 'package:dice_app/feature/home/widgets/roll_dice_screen.dart';
 import 'package:dice_app/feature/splash/binding/splash_binding.dart';
 import 'package:dice_app/feature/splash/views/splash_screen.dart';
 import 'package:get/get.dart';
@@ -21,9 +22,13 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.home,
-      page: () => const HomeScreen(),
+      page: () => const HomePage(),
       binding: HomeBinding(),
     ),
+    GetPage(
+  name: AppRoutes.rollDice,
+  page: () => const RollDiceScreen(),
+),
   ];
 }
 
