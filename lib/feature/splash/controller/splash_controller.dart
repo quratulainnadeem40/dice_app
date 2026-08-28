@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/routes/app_routes.dart';
-
 class SplashController extends GetxController
     with GetSingleTickerProviderStateMixin {
   late AnimationController animationController;
@@ -14,7 +12,6 @@ class SplashController extends GetxController
 
   final RxInt activeDot = 0.obs;
 
-  Timer? _timer;
   Timer? _dotTimer;
 
   @override
@@ -48,7 +45,6 @@ class SplashController extends GetxController
     );
 
     _startLoadingDots();
-    _startSplashTimer();
   }
 
   void _startLoadingDots() {
@@ -65,20 +61,8 @@ class SplashController extends GetxController
     );
   }
 
-  void _startSplashTimer() {
-    _timer = Timer(
-      const Duration(seconds: 5),
-      () {
-        if (!isClosed) {
-          Get.offNamed(AppRoutes.home);
-        }
-      },
-    );
-  }
-
   @override
   void onClose() {
-    _timer?.cancel();
     _dotTimer?.cancel();
     animationController.dispose();
 

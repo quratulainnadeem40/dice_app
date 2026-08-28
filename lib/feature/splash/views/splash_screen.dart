@@ -1,9 +1,9 @@
+import 'package:dice_app/core/routes/app_routes.dart';
+import 'package:dice_app/core/theme/colors_custom.dart';
 import 'package:dice_app/core/theme/textstyle_custom.dart';
 import 'package:dice_app/feature/splash/controller/splash_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:dice_app/core/theme/colors_custom.dart';
 
 class SplashScreen extends GetView<SplashController> {
   const SplashScreen({super.key});
@@ -12,22 +12,47 @@ class SplashScreen extends GetView<SplashController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+
       body: Stack(
         fit: StackFit.expand,
         children: [
           // Splash Image
           Image.asset(
             'assets/imagesfolder/disciamge.png',
-            fit: BoxFit.contain,
+            fit: BoxFit.cover,
           ),
 
-          // Loading Section
+          // Bottom Section
           Positioned(
             bottom: 115,
             left: 0,
             right: 0,
             child: Column(
               children: [
+                // Tagline
+                const Text(
+                  'Roll it. Play it. Enjoy it.',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+
+                // GET READY Button/Text
+                GestureDetector(
+                  onTap: () {
+                    Get.offNamed(AppRoutes.home);
+                  },
+                  child: const Text(
+                    'G E T   R E A D Y . . .',
+                    style: AppTextStyles.loading,
+                  ),
+                ),
+
+                const SizedBox(height: 22),
+
                 // Loading Dots
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -40,14 +65,6 @@ class SplashScreen extends GetView<SplashController> {
                     const SizedBox(width: 14),
                     _buildLoadingDot(AppColors.purple),
                   ],
-                ),
-
-                const SizedBox(height: 28),
-
-                // Loading Text
-                const Text(
-                  'L O A D I N G . . .',
-                  style: AppTextStyles.loading,
                 ),
               ],
             ),
