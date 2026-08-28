@@ -1,3 +1,4 @@
+
 import 'dart:math';
 
 import 'package:dice_app/core/dice_theme.dart';
@@ -6,14 +7,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:vibration/vibration.dart';
 
-
 class RollDiceController extends GetxController {
   final Random _random = Random();
-
-  // ==========================================================
-  // VOICE
-  // ==========================================================
-
   final FlutterTts _tts = FlutterTts();
 
   // ==========================================================
@@ -21,31 +16,23 @@ class RollDiceController extends GetxController {
   // ==========================================================
 
   static const int maxPlayers = 7;
+  static const int minDiceSides = 3;
+  static const int maxDiceSides = 100;
 
   // ==========================================================
-  // DICE / PLAYER STATE
+  // PLAYER / DICE STATE
   // ==========================================================
 
-  // Number of players / dice
   final playerCount = 1.obs;
-
-  // Dice value for each player
   final diceValues = <int>[1].obs;
-
-  // Rolling state
   final isRolling = false.obs;
 
   // ==========================================================
   // SETTINGS
   // ==========================================================
 
-  // Number of sides on dice
   final diceSides = 6.obs;
-
-  // Selected dice theme
   final diceTheme = 'purple'.obs;
-
-  // Animation speed
   final animationSpeed = 'normal'.obs;
 
   // ==========================================================
@@ -53,9 +40,7 @@ class RollDiceController extends GetxController {
   // ==========================================================
 
   DiceTheme get selectedDiceTheme {
-    return DiceThemes.getById(
-      diceTheme.value,
-    );
+    return DiceThemes.getById(diceTheme.value);
   }
 
   // ==========================================================
@@ -71,7 +56,7 @@ class RollDiceController extends GetxController {
   }
 
   // ==========================================================
-  // VOICE INITIALIZATION
+  // VOICE
   // ==========================================================
 
   Future<void> _initVoice() async {
@@ -81,12 +66,12 @@ class RollDiceController extends GetxController {
       await _tts.setPitch(1.0);
       await _tts.setVolume(1.0);
     } catch (_) {
-      // Ignore voice initialization errors.
+      // Ignore TTS initialization errors.
     }
   }
 
   // ==========================================================
-  // PLAYER / DICE COUNT
+  // PLAYER COUNT
   // ==========================================================
 
   void setPlayerCount(int count) {
@@ -112,14 +97,18 @@ class RollDiceController extends GetxController {
   // ==========================================================
 
   void setDiceSides(int sides) {
-    if (sides < 3) {
+    if (sides < minDiceSides || sides > maxDiceSides) {
       return;
     }
 
     diceSides.value = sides;
 
-    // Reset dice values after changing sides.
-    updateDiceCount();
+    // Keep all current dice values valid.
+    diceValues.assignAll(
+      diceValues.map(
+        (value) => value > sides ? 1 : value,
+      ),
+    );
   }
 
   // ==========================================================
@@ -185,34 +174,33 @@ class RollDiceController extends GetxController {
 
     isRolling.value = true;
 
-    // Haptic feedback when roll starts.
-    await _vibrateStart();
+    try {
+      await _vibrateStart();
 
-    // Roll animation delay.
-    await Future.delayed(
-      Duration(
-        milliseconds: animationDuration,
-      ),
-    );
+      await Future.delayed(
+        Duration(
+          milliseconds: animationDuration,
+        ),
+      );
 
-    // Generate values according to selected sides.
-    final results = List.generate(
-      playerCount.value,
-      (_) => _random.nextInt(
-            diceSides.value,
-          ) +
-          1,
-    );
+      final results = List.generate(
+        playerCount.value,
+        (_) => _random.nextInt(
+              diceSides.value,
+            ) +
+            1,
+      );
 
-    diceValues.assignAll(results);
+      diceValues.assignAll(results);
 
-    isRolling.value = false;
+      await _vibrateResult();
 
-    // Haptic feedback after result.
-    await _vibrateResult();
-
-    // Announce result.
-    await _speakResults(results);
+      await _speakResults(results);
+    } catch (_) {
+      // Keep UI stable if any device feature fails.
+    } finally {
+      isRolling.value = false;
+    }
   }
 
   // ==========================================================
@@ -221,8 +209,7 @@ class RollDiceController extends GetxController {
 
   Future<void> _vibrateStart() async {
     try {
-      final hasVibrator =
-          await Vibration.hasVibrator();
+      final hasVibrator = await Vibration.hasVibrator();
 
       if (hasVibrator) {
         await Vibration.vibrate(
@@ -232,7 +219,9 @@ class RollDiceController extends GetxController {
         await HapticFeedback.lightImpact();
       }
     } catch (_) {
-      await HapticFeedback.lightImpact();
+      try {
+        await HapticFeedback.lightImpact();
+      } catch (_) {}
     }
   }
 
@@ -242,8 +231,7 @@ class RollDiceController extends GetxController {
 
   Future<void> _vibrateResult() async {
     try {
-      final hasVibrator =
-          await Vibration.hasVibrator();
+      final hasVibrator = await Vibration.hasVibrator();
 
       if (hasVibrator) {
         await Vibration.vibrate(
@@ -253,7 +241,9 @@ class RollDiceController extends GetxController {
         await HapticFeedback.mediumImpact();
       }
     } catch (_) {
-      await HapticFeedback.mediumImpact();
+      try {
+        await HapticFeedback.mediumImpact();
+      } catch (_) {}
     }
   }
 
@@ -273,13 +263,9 @@ class RollDiceController extends GetxController {
 
       String message;
 
-      // One player.
       if (results.length == 1) {
         message = 'You rolled ${results.first}.';
-      }
-
-      // Multiple players.
-      else {
+      } else {
         final parts = <String>[];
 
         for (int i = 0; i < results.length; i++) {
@@ -307,3 +293,4 @@ class RollDiceController extends GetxController {
     super.onClose();
   }
 }
+

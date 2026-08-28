@@ -1,7 +1,7 @@
+
 import 'package:dice_app/core/dice_theme.dart';
 import 'package:dice_app/core/theme/colors_custom.dart';
-import 'package:dice_app/feature/Roll_dice/controller/Roll_dice_controller.dart';
-import 'package:dice_app/feature/roll_dice/controller/roll_dice_controller.dart' hide RollDiceController;
+import 'package:dice_app/feature/roll_dice/controller/roll_dice_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -452,8 +452,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
       () {
         final value = controller.diceValues[index];
 
-        // IMPORTANT:
-        // Theme ab controller.themeColors() se nahi aa raha.
+        // Theme comes directly from the same RollDiceController.
         final DiceTheme theme =
             controller.selectedDiceTheme;
 
@@ -748,3 +747,4 @@ class RollDiceScreen extends GetView<RollDiceController> {
     );
   }
 }
+

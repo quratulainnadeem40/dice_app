@@ -19,7 +19,7 @@ class SplashScreen extends GetView<SplashController> {
           // Splash Image
           Image.asset(
             'assets/imagesfolder/disciamge.png',
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
 
           // Bottom Section

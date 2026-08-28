@@ -1,5 +1,5 @@
 import 'package:dice_app/feature/Roll_dice/binding/Roll_dice.binding.dart';
-import 'package:dice_app/feature/roll_dice/view/roll_dice_screen.dart';
+import 'package:dice_app/feature/Roll_dice/view/Roll_dice_screen.dart';
 import 'package:dice_app/feature/home/binding/home_binding.dart';
 import 'package:dice_app/feature/home/view/home_screen.dart';
 import 'package:dice_app/feature/splash/binding/splash_binding.dart';
