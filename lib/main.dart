@@ -1,29 +1,44 @@
-import 'package:dice_app/core/routes/page_routes.dart';
-import 'package:dice_app/feature/intial_binding_app.dart';
+import 'package:dice_app/feature/splash/binding/binding_splash.dart';
+
+import 'package:dice_app/feature/splash/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'core/routes/app_routes.dart';
-import 'core/theme/theme_custom.dart';
 
 
 void main() {
-  runApp(const MyApp());
+  runApp(const DiceApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class DiceApp extends StatelessWidget {
+  const DiceApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Dice Roller',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+
+      title: 'Dice App',
+
       initialRoute: AppRoutes.splash,
-      getPages: AppPages.pages,
-      initialBinding: InitialBinding(),
+
+      getPages: [
+        GetPage(
+          name: AppRoutes.splash,
+          page: () => const SplashScreen(),
+          binding: SplashBinding(),
+        ),
+
+        GetPage(
+          name: AppRoutes.home,
+          page: () => const Scaffold(
+            body: Center(
+              child: Text('Home'),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
