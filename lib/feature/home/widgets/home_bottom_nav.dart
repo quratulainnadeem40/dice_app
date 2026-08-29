@@ -1,3 +1,4 @@
+import 'package:dice_app/core/routes/app_routes.dart';
 import 'package:dice_app/core/theme/colors_custom.dart';
 import 'package:dice_app/feature/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
@@ -21,11 +22,11 @@ class HomeBottomNav extends StatelessWidget {
           color: const Color(0xFF121022),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: AppColors.purple.withOpacity(0.18),
+            color: AppColors.purple.withValues(alpha: 0.18),
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.purple.withOpacity(0.08),
+              color: AppColors.purple.withValues(alpha: 0.08),
               blurRadius: 25,
             ),
           ],
@@ -35,8 +36,31 @@ class HomeBottomNav extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
           selectedIndex: controller.selectedBottomIndex.value,
-          onDestinationSelected: controller.changeBottomIndex,
-          indicatorColor: AppColors.purple.withOpacity(0.18),
+
+          onDestinationSelected: (index) {
+            controller.changeBottomIndex(index);
+
+            switch (index) {
+              case 0:
+                if (Get.currentRoute != AppRoutes.home) {
+                  Get.offNamed(AppRoutes.home);
+                }
+                break;
+
+              case 1:
+                // History will be added later.
+                break;
+
+              case 2:
+                if (Get.currentRoute != AppRoutes.profile) {
+                  Get.offNamed(AppRoutes.profile);
+                }
+                break;
+            }
+          },
+
+          indicatorColor: AppColors.purple.withValues(alpha: 0.18),
+
           destinations: const [
             NavigationDestination(
               icon: Icon(
@@ -49,6 +73,7 @@ class HomeBottomNav extends StatelessWidget {
               ),
               label: 'Home',
             ),
+
             NavigationDestination(
               icon: Icon(
                 Icons.history_outlined,
@@ -60,6 +85,7 @@ class HomeBottomNav extends StatelessWidget {
               ),
               label: 'History',
             ),
+
             NavigationDestination(
               icon: Icon(
                 Icons.person_outline_rounded,
@@ -72,9 +98,10 @@ class HomeBottomNav extends StatelessWidget {
               label: 'Profile',
             ),
           ],
-          labelTextStyle: WidgetStatePropertyAll(
+
+          labelTextStyle: const WidgetStatePropertyAll(
             TextStyle(
-              color: Colors.white.withOpacity(0.65),
+              color: Colors.white,
               fontSize: 10,
               fontWeight: FontWeight.w600,
             ),

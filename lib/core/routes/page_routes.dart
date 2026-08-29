@@ -1,7 +1,7 @@
-import 'package:dice_app/feature/Roll_dice/binding/Roll_dice.binding.dart';
-import 'package:dice_app/feature/Roll_dice/view/Roll_dice_screen.dart';
 import 'package:dice_app/feature/home/binding/home_binding.dart';
 import 'package:dice_app/feature/home/view/home_screen.dart';
+import 'package:dice_app/feature/profile/binding/profile_binding.dart';
+import 'package:dice_app/feature/profile/view/profile_screen.dart';
 import 'package:dice_app/feature/splash/binding/splash_binding.dart';
 import 'package:dice_app/feature/splash/views/splash_screen.dart';
 import 'package:get/get.dart';
@@ -25,9 +25,9 @@ class AppPages {
     ),
 
     GetPage(
-      name: AppRoutes.rollDice,
-      page: () => const RollDiceScreen(),
-      binding: RollDiceBinding(),
+      name: AppRoutes.profile,
+      page: () => const ProfileScreen(),
+      binding: ProfileBinding(),
     ),
   ];
 }
