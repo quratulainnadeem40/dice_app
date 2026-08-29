@@ -1,42 +1,46 @@
 import 'package:dice_app/core/navigation/controller/navigation_controller.dart';
+import 'package:dice_app/core/theme/colors_custom.dart';
+import 'package:dice_app/feature/Multiplayers/view/multiplayer_screen.dart';
 import 'package:dice_app/feature/Roll_dice/view/Roll_dice_screen.dart';
+import 'package:dice_app/feature/achievement/view/achievement_screen.dart';
 import 'package:dice_app/feature/home/view/home_screen.dart';
 import 'package:dice_app/feature/setting/view/setting_screen.dart';
-import 'package:dice_app/history/view/history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends GetView<NavigationController> {
   const MainScreen({Key? key}) : super(key: key);
 
-  final List<Widget> screens = const [
+  final List<Widget> pages = const [
     HomeScreen(),
     RollDiceScreen(),
-    HistoryScreen(),
+    MultiplayerScreen(),
+    AchievementScreen(),
     SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final NavigationController navController = Get.find<NavigationController>();
-
-    return Obx(() => Scaffold(
-          body: screens[navController.selectedIndex.value],
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: navController.selectedIndex.value,
-            onTap: (index) => navController.selectedIndex.value = index,
-            backgroundColor: const Color(0xFF0F0B1E),
-            selectedItemColor: const Color(0xFF8B5CF6),
-            unselectedItemColor: Colors.white38,
-            type: BottomNavigationBarType.fixed,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.casino), label: 'Roll'),
-              BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'History'),
-              BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-            ],
-          ),
-        ));
+    return Scaffold(
+      body: Obx(() => pages[controller.currentIndex.value]),
+      bottomNavigationBar: Obx(
+        () => BottomNavigationBar(
+          currentIndex: controller.currentIndex.value,
+          onTap: controller.changePage,
+          backgroundColor: ColorsCustom.cardBg,
+          selectedItemColor: ColorsCustom.primary,
+          unselectedItemColor: ColorsCustom.textSecondary,
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.casino_rounded), label: 'Roll'),
+            BottomNavigationBarItem(icon: Icon(Icons.people_rounded), label: 'Multi'),
+            BottomNavigationBarItem(icon: Icon(Icons.emoji_events_rounded), label: 'Badges'),
+            BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Settings'),
+          ],
+        ),
+      ),
+    );
   }
 }
