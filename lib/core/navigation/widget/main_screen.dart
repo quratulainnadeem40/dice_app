@@ -1,6 +1,8 @@
 import 'package:dice_app/core/navigation/controller/navigation_controller.dart';
 import 'package:dice_app/feature/Roll_dice/view/Roll_dice_screen.dart';
 import 'package:dice_app/feature/home/view/home_screen.dart';
+import 'package:dice_app/feature/setting/view/setting_screen.dart';
+import 'package:dice_app/history/view/history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +11,7 @@ class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   final List<Widget> screens = const [
-    HomePage(),
+    HomeScreen(),
     RollDiceScreen(),
     HistoryScreen(),
     SettingsScreen(),
