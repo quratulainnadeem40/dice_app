@@ -1,14 +1,10 @@
-
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/core/theme/custom_textstyle.dart';
+import 'package:dice_app/feature/Roll_dice/view/roll_disc_screen.dart';
 import 'package:dice_app/feature/home/widget/bottom_nav.dart';
 import 'package:dice_app/feature/home/widget/dice_card.dart';
-import 'package:dice_app/feature/home/widget/quick_action.dart';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-import '../../../core/routes/app_routes.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -29,39 +25,12 @@ class HomePage extends StatelessWidget {
               _buildWelcome(),
               const SizedBox(height: 24),
 
-               DiceCard(),
-
-              const SizedBox(height: 30),
-
-              _buildSectionTitle(),
-
-              const SizedBox(height: 14),
-
-              Row(
-                children: [
-                  QuickActionCard(
-                    icon: Icons.people_alt_rounded,
-                    title: 'Players',
-                    onTap: () {
-                      Get.toNamed(AppRoutes.rollDice);
-                    },
-                  ),
-                  QuickActionCard(
-                    icon: Icons.emoji_events_rounded,
-                    title: 'Scores',
-                    onTap: () {},
-                  ),
-                  QuickActionCard(
-                    icon: Icons.bar_chart_rounded,
-                    title: 'Stats',
-                    onTap: () {},
-                  ),
-                ],
-              ),
+              DiceCard(),
 
               const SizedBox(height: 24),
 
-              _buildInfoCard(),
+              // Context pass kiya hai navigation ke liye
+              _buildInfoCard(context),
             ],
           ),
         ),
@@ -197,70 +166,70 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle() {
-    return const Text(
-      'Quick Actions',
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 17,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-  }
-
-  Widget _buildInfoCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        color: Colors.white.withOpacity(0.035),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.07),
+  Widget _buildInfoCard(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RollDiceScreen(),
+          ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Colors.white.withOpacity(0.035),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.07),
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(13),
-              color: AppColors.purple.withOpacity(0.12),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(13),
+                color: AppColors.purple.withOpacity(0.12),
+              ),
+              child: const Icon(
+                Icons.auto_awesome_rounded,
+                color: AppColors.violet,
+                size: 21,
+              ),
             ),
-            child: const Icon(
-              Icons.auto_awesome_rounded,
-              color: AppColors.violet,
-              size: 21,
-            ),
-          ),
 
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
 
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ready for your next roll?',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Ready for your next roll?',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                SizedBox(height: 3),
-                Text(
-                  'Choose your players and roll together.',
-                  style: TextStyle(
-                    color: Colors.white54,
-                    fontSize: 11,
+                  SizedBox(height: 3),
+                  Text(
+                    'Choose your players and roll together.',
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 11,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
