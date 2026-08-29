@@ -1,51 +1,36 @@
 import 'dart:math';
 import 'package:get/get.dart';
-import '../model/player_model.dart';
+
+class Player {
+  final String name;
+  RxInt score;
+  Player({required this.name, required int score}) : score = score.obs;
+}
 
 class MultiplayerController extends GetxController {
-  var playerCount = 2.obs;
-  var players = <PlayerModel>[].obs;
-  var currentTurnIndex = 0.obs;
-  var lastRoll = 0.obs;
+  final RxInt selectedTab = 0.obs; // 0: Local, 1: Online
+  final RxList<Player> players = <Player>[
+    Player(name: 'Player 1 (You)', score: 24),
+    Player(name: 'Player 2', score: 18),
+    Player(name: 'Player 3', score: 15),
+  ].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    setupPlayers(playerCount.value);
+  final RxString winnerName = 'Player 1'.obs;
+
+  void rollForCurrentPlayer() {
+    for (var player in players) {
+      player.score.value += Random().nextInt(6) + 1;
+    }
+    _updateWinner();
   }
 
-  void setupPlayers(int count) {
-    playerCount.value = count;
-    players.value = List.generate(
-      count,
-      (index) => PlayerModel(
-        id: '$index',
-        name: 'Player ${index + 1}',
-        isCurrentTurn: index == 0,
-      ),
-    );
-    currentTurnIndex.value = 0;
-    lastRoll.value = 0;
-  }
-
-  void rollDice() {
-    if (players.isEmpty) return;
-
-    final rolledValue = Random().nextInt(6) + 1;
-    lastRoll.value = rolledValue;
-
-    players[currentTurnIndex.value].score += rolledValue;
-    nextTurn();
-  }
-
-  void nextTurn() {
-    players[currentTurnIndex.value].isCurrentTurn = false;
-    currentTurnIndex.value = (currentTurnIndex.value + 1) % players.length;
-    players[currentTurnIndex.value].isCurrentTurn = true;
-    players.refresh();
-  }
-
-  void resetGame() {
-    setupPlayers(playerCount.value);
+  void _updateWinner() {
+    Player currentLeader = players[0];
+    for (var player in players) {
+      if (player.score.value > currentLeader.score.value) {
+        currentLeader = player;
+      }
+    }
+    winnerName.value = currentLeader.name.replaceAll(' (You)', '');
   }
 }

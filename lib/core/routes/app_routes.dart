@@ -1,8 +1,8 @@
-abstract class Routes {
-  static const INITIAL = '/';
+
+abstract class AppRoutes {
+  static const MAIN = '/';
   static const HOME = '/home';
-  static const ROLL_DICE = '/roll-dice';
-  static const MULTIPLAYER = '/multiplayer';
-  static const ACHIEVEMENTS = '/achievements';
+  static const ROLL = '/roll';
   static const SETTINGS = '/settings';
+  static const HISTORY = '/history';
 }

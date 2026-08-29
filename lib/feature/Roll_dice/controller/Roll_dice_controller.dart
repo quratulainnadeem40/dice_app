@@ -1,66 +1,35 @@
-import 'dart:async';
 import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../model/roll_dice_model.dart';
 
 class RollDiceController extends GetxController {
-  var diceList = <DiceModel>[].obs;
-  var isRolling = false.obs;
-  var totalSum = 0.obs;
+  final RxList<int> diceResults = <int>[1, 2, 3].obs;
+  final RxInt numberOfDice = 3.obs;
+  final RxInt numberOfSides = 6.obs;
+  final RxBool isRolling = false.obs;
 
-  // Visual matching colors for the glow theme
-  final List<Color> multiColors = const [
-    Color(0xFF8A2BE2), // Premium Purple
-    Color(0xFF1E90FF), // Neon Blue
-    Color(0xFFFF8C00), // Amber Orange
-    Color(0xFF32CD32), // Emerald Green
-    Color(0xFFFF4500), // Crimson Red
-    Color(0xFFFFD700), // Gold Yellow
-  ];
+  int get totalSum => diceResults.fold(0, (sum, item) => sum + item);
 
-  @override
-  void onInit() {
-    super.onInit();
-    initDice(count: 3, sides: 6);
-  }
-
-  void initDice({int count = 3, int sides = 6}) {
-    diceList.value = List.generate(
-      count,
-      (index) => DiceModel(
-        id: index,
-        sides: sides,
-        currentValue: index == 0 ? 2 : (index == 1 ? 5 : 3),
-        color: multiColors[index % multiColors.length],
-      ),
-    );
-    calculateTotal();
-  }
-
-  void rollDice() {
-    if (isRolling.value) return;
-
+  void rollDice() async {
     isRolling.value = true;
-    final random = Random();
-    int counter = 0;
-
-    Timer.periodic(const Duration(milliseconds: 80), (timer) {
-      counter++;
-      for (var dice in diceList) {
-        dice.currentValue = random.nextInt(dice.sides) + 1;
-      }
-      diceList.refresh();
-
-      if (counter >= 10) {
-        timer.cancel();
-        isRolling.value = false;
-        calculateTotal();
-      }
-    });
+    
+    // Simple animation simulation delay
+    for (int i = 0; i < 5; i++) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      diceResults.value = List.generate(
+        numberOfDice.value,
+        (_) => Random().nextInt(numberOfSides.value) + 1,
+      );
+    }
+    
+    isRolling.value = false;
   }
 
-  void calculateTotal() {
-    totalSum.value = diceList.fold(0, (sum, dice) => sum + dice.currentValue);
+  void updateDiceConfig(int diceCount, int sides) {
+    numberOfDice.value = diceCount;
+    numberOfSides.value = sides;
+    diceResults.value = List.generate(
+      diceCount,
+      (_) => Random().nextInt(sides) + 1,
+    );
   }
 }

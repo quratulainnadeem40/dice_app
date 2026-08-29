@@ -1,23 +1,25 @@
-import 'package:dice_app/core/routes/page_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dice_app/core/theme/theme_custom.dart';
+import 'core/theme/theme_custom.dart';
+import 'core/routes/app_pages.dart';
+import 'core/routes/app_routes.dart';
 
 void main() {
-  runApp(const DiceApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
 }
 
-class DiceApp extends StatelessWidget {
-  const DiceApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      title: 'Dice Roller',
       debugShowCheckedModeBanner: false,
-      title: 'Dice App',
-      theme: ThemeCustom.darkTheme, // Custom dark theme apply kar di gayi hai
-      initialRoute: AppPages.INITIAL, // Variable case fix kar diya gaya hai
-      getPages: AppPages.routes,
+      theme: AppTheme.darkTheme,
+      initialRoute: AppRoutes.MAIN,
+      getPages: AppPages.pages,
     );
   }
 }

@@ -1,89 +1,49 @@
-import 'package:dice_app/core/routes/app_routes.dart';
-import 'package:dice_app/core/theme/colors_custom.dart'; // ✅ Updated Import
-import 'package:dice_app/core/theme/textstyle_custom.dart';
-import 'package:dice_app/feature/splash/controller/splash_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/theme/colors_custom.dart';
+import '../controller/splash_controller.dart';
 
-class SplashScreen extends GetView<SplashController> {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Get.put(SplashController());
+
     return Scaffold(
-      backgroundColor: ColorsCustom.background, // ✅ Fixed
-
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Splash Image
-          Image.asset(
-            'assets/imagesfolder/disciamge.png',
-            fit: BoxFit.contain,
-          ),
-
-          // Bottom Section
-          Positioned(
-            bottom: 115,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                const SizedBox(height: 24),
-
-                // GET READY
-                GestureDetector(
-                  onTap: () {
-                    Get.offNamed(Routes.INITIAL);
-                  },
-                  child: const Text(
-                    'G E T   R E A D Y . . .',
-                    style: TextStyle(
-  color: Colors.white,
-  fontSize: 16,
-  fontWeight: FontWeight.bold,
-  letterSpacing: 2.0,
-),
+      backgroundColor: CustomColors.background,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: CustomColors.primaryPurple,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: CustomColors.primaryNeon.withOpacity(0.6),
+                    blurRadius: 40,
+                    spreadRadius: 10,
                   ),
-                ),
-
-                const SizedBox(height: 22),
-
-                // Dots
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildLoadingDot(ColorsCustom.violet), // ✅ Fixed
-                    const SizedBox(width: 14),
-                    _buildLoadingDot(ColorsCustom.purple), // ✅ Fixed
-                    const SizedBox(width: 14),
-                    _buildLoadingDot(ColorsCustom.purple), // ✅ Fixed
-                    const SizedBox(width: 14),
-                    _buildLoadingDot(ColorsCustom.purple), // ✅ Fixed
-                  ],
-                ),
-              ],
+                ],
+              ),
+              child: const Icon(Icons.casino_rounded, size: 70, color: Colors.white),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingDot(Color color) {
-    return Container(
-      width: 23,
-      height: 23,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.5),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
+            const SizedBox(height: 24),
+            const Text(
+              'DICE ROLLER',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

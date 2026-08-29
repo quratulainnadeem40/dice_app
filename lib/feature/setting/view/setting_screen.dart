@@ -1,84 +1,130 @@
-import 'package:dice_app/feature/setting/controller/setting_%20controller.dart';
-import 'package:dice_app/feature/setting/widgets/dice_side_selector.dart';
-import 'package:dice_app/feature/setting/widgets/setting_section.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/theme/colors_custom.dart';
+import '../controller/settings_controller.dart';
 
-import '../widgets/dice_count_selector.dart';
-
-import '../widgets/dice_color_selector.dart';
-import '../widgets/animation_speed_slider.dart';
-import '../widgets/sound_setting_tile.dart';
-import '../widgets/vibration_setting_tile.dart';
-
-class SettingsScreen extends GetView<SettingsController> {
-  const SettingsScreen({Key? key}) : super(key: key);
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(SettingsController());
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0B1E),
+      backgroundColor: CustomColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: const Text('SETTINGS', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+        title: const Text('SETTINGS', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('DICE CONFIGURATION', style: TextStyle(color: CustomColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            
+            // Dice Count Selector
+            _buildCounterTile(
+              label: 'Number of Dice',
+              valueObx: Obx(() => Text('${controller.numberOfDice.value}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+              onDecrement: controller.decrementDice,
+              onIncrement: controller.incrementDice,
+            ),
+            const SizedBox(height: 10),
+
+            // Dice Sides Selector
+            _buildCounterTile(
+              label: 'Number of Sides',
+              valueObx: Obx(() => Text('${controller.numberOfSides.value}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+              onDecrement: controller.decrementSides,
+              onIncrement: controller.incrementSides,
+            ),
+            const SizedBox(height: 24),
+
+            const Text('DICE THEME / COLOR', style: TextStyle(color: CustomColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildColorCircle(CustomColors.primaryPurple, 0, controller),
+                _buildColorCircle(CustomColors.accentBlue, 1, controller),
+                _buildColorCircle(CustomColors.accentOrange, 2, controller),
+                _buildColorCircle(CustomColors.accentGreen, 3, controller),
+                _buildColorCircle(CustomColors.accentRed, 4, controller),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            const Text('ANIMATION SPEED', style: TextStyle(color: CustomColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+            Obx(() => Slider(
+              value: controller.animationSpeed.value,
+              onChanged: (val) => controller.animationSpeed.value = val,
+              activeColor: CustomColors.primaryNeon,
+              inactiveColor: CustomColors.surfaceLight,
+            )),
+            const SizedBox(height: 24),
+
+            const Text('SOUND & VIBRATION', style: TextStyle(color: CustomColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            
+            Obx(() => _buildSwitchTile('Sound', controller.soundEnabled.value, (val) => controller.soundEnabled.value = val)),
+            const SizedBox(height: 10),
+            Obx(() => _buildSwitchTile('Vibration', controller.vibrationEnabled.value, (val) => controller.vibrationEnabled.value = val)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCounterTile({required String label, required Widget valueObx, required VoidCallback onDecrement, required VoidCallback onIncrement}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(color: CustomColors.surface, borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SettingsSection(
-            title: 'Dice Configuration',
-            child: Column(
-              children: [
-                Obx(() => DiceCountSelector(
-                      count: controller.diceCount.value,
-                      onIncrement: controller.incrementDice,
-                      onDecrement: controller.decrementDice,
-                    )),
-                const SizedBox(height: 10),
-                Obx(() => DiceSidesSelector(
-                      sides: controller.diceSides.value,
-                      onIncrement: controller.incrementSides,
-                      onDecrement: controller.decrementSides,
-                    )),
-              ],
-            ),
-          ),
-          SettingsSection(
-            title: 'Dice Theme / Color',
-            child: Obx(() => DiceColorSelector(
-                  colors: controller.availableColors,
-                  selectedColor: controller.selectedColor.value,
-                  onSelectColor: controller.selectColor,
-                )),
-          ),
-          SettingsSection(
-            title: 'Animation Speed',
-            child: Obx(() => AnimationSpeedSlider(
-                  value: controller.animationSpeed.value,
-                  onChanged: controller.updateAnimationSpeed,
-                )),
-          ),
-          SettingsSection(
-            title: 'Sound & Vibration',
-            child: Column(
-              children: [
-                Obx(() => SoundSettingTile(
-                      isEnabled: controller.soundEnabled.value,
-                      onChanged: controller.toggleSound,
-                    )),
-                const SizedBox(height: 10),
-                Obx(() => VibrationSettingTile(
-                      isEnabled: controller.vibrationEnabled.value,
-                      onChanged: controller.toggleVibration,
-                    )),
-              ],
-            ),
+          Text(label, style: const TextStyle(fontSize: 16)),
+          Row(
+            children: [
+              IconButton(onPressed: onDecrement, icon: const Icon(Icons.remove, color: CustomColors.textSecondary)),
+              valueObx,
+              IconButton(onPressed: onIncrement, icon: const Icon(Icons.add, color: CustomColors.primaryNeon)),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildColorCircle(Color color, int index, SettingsController controller) {
+    return Obx(() {
+      final isSelected = controller.selectedThemeIndex.value == index;
+      return GestureDetector(
+        onTap: () => controller.selectedThemeIndex.value = index,
+        child: CircleAvatar(
+          radius: 20,
+          backgroundColor: color,
+          child: isSelected ? const Icon(Icons.check, color: Colors.white) : null,
+        ),
+      );
+    });
+  }
+
+  Widget _buildSwitchTile(String label, bool value, Function(bool) onChanged) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(color: CustomColors.surface, borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 16)),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: CustomColors.primaryNeon,
           ),
         ],
       ),
