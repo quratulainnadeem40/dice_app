@@ -1,58 +1,110 @@
-import 'package:dice_app/feature/home/widgets/quick_action.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/theme/colors_custom.dart';
 import '../controller/home_controller.dart';
-import '../widgets/home_header.dart';
-import '../widgets/quick_roll_card.dart';
 
-import '../widgets/recent_roll_card.dart';
-import '../widgets/home_stat_card.dart';
-
-class HomeScreen extends GetView<HomeController> {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(HomeController());
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0C1B),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const HomeHeader(),
-              const SizedBox(height: 20),
-              QuickRollCard(onRoll: controller.rollDice),
-              const SizedBox(height: 20),
-              const QuickActions(),
-              const SizedBox(height: 20),
-              Obx(() => RecentRollCard(lastResult: controller.homeData.value.lastRoll)),
-              const SizedBox(height: 16),
-              Obx(() => Row(
-                children: [
-                  HomeStatCard(title: 'Total Rolls', value: '${controller.homeData.value.totalRolls}'),
-                  const SizedBox(width: 12),
-                  HomeStatCard(title: 'Last Roll', value: '${controller.homeData.value.lastRoll}'),
-                ],
-              )),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: Obx(() => BottomNavigationBar(
-        currentIndex: controller.selectedBottomNavIndex.value,
-        onTap: controller.changeBottomNav,
-        backgroundColor: const Color(0xFF0F0C1B),
-        selectedItemColor: Colors.purpleAccent,
-        unselectedItemColor: Colors.white54,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.style), label: 'Roll'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'History'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+      backgroundColor: CustomColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: const Icon(Icons.menu),
+        title: const Text('DICE ROLLER', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: CustomColors.surface,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: const [
+                Icon(Icons.monetization_on, color: Colors.amber, size: 18),
+                SizedBox(width: 4),
+                Text('1250', style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          )
         ],
-      )),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          const SizedBox(height: 20),
+          
+          // Glowing Neon Dice Interactive Target
+          GestureDetector(
+            onTap: controller.rollSingleDice,
+            child: Obx(
+              () => Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  color: CustomColors.primaryPurple,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: CustomColors.primaryNeon.withOpacity(0.6),
+                      blurRadius: 30,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    '${controller.diceValue.value}',
+                    style: const TextStyle(fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
+          Obx(() => Text(
+            controller.isRolled.value ? "YOU ROLLED\n${controller.diceValue.value}" : "TAP THE DICE TO ROLL",
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: CustomColors.textSecondary, fontSize: 16, fontWeight: FontWeight.w600),
+          )),
+
+          // Bottom Stats
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Row(
+              children: [
+                Expanded(child: _buildStatCard("Last Result", "${controller.diceValue.value}")),
+                const SizedBox(width: 16),
+                Expanded(child: _buildStatCard("Total Rolls", "${controller.totalRolls.value}")),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: CustomColors.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Text(label, style: const TextStyle(color: CustomColors.textSecondary, fontSize: 12)),
+          const SizedBox(height: 6),
+          Text(value, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        ],
+      ),
     );
   }
 }

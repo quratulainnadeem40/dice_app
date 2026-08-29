@@ -1,22 +1,22 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:dice_app/feature/Roll_dice/model/roll_dice_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../model/roll_dice_model.dart';
 
 class RollDiceController extends GetxController {
   var diceList = <DiceModel>[].obs;
   var isRolling = false.obs;
   var totalSum = 0.obs;
 
-  // Image waley unique colors palette
+  // Visual matching colors for the glow theme
   final List<Color> multiColors = const [
-    Color(0xFF8A2BE2), // Purple
-    Color(0xFF1E90FF), // Blue
-    Color(0xFFFF8C00), // Orange
-    Color(0xFF32CD32), // Green
-    Color(0xFFFF4500), // Red
-    Color(0xFFFFD700), // Yellow
+    Color(0xFF8A2BE2), // Premium Purple
+    Color(0xFF1E90FF), // Neon Blue
+    Color(0xFFFF8C00), // Amber Orange
+    Color(0xFF32CD32), // Emerald Green
+    Color(0xFFFF4500), // Crimson Red
+    Color(0xFFFFD700), // Gold Yellow
   ];
 
   @override
@@ -31,14 +31,14 @@ class RollDiceController extends GetxController {
       (index) => DiceModel(
         id: index,
         sides: sides,
-        // Har dice ko index ke hisab se alag color milega
-        color: multiColors[index % multiColors.length], 
+        currentValue: index == 0 ? 2 : (index == 1 ? 5 : 3),
+        color: multiColors[index % multiColors.length],
       ),
     );
     calculateTotal();
   }
 
-  void rollDice() async {
+  void rollDice() {
     if (isRolling.value) return;
 
     isRolling.value = true;
