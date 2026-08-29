@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import '../controller/home_controller.dart';
 import '../widgets/home_header.dart';
 import '../widgets/quick_roll_card.dart';
+
 import '../widgets/recent_roll_card.dart';
 import '../widgets/home_stat_card.dart';
-import '../widgets/achievement_preview.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,45 +14,45 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0B1E),
+      backgroundColor: const Color(0xFF0F0C1B),
       body: SafeArea(
-        child: Obx(() {
-          final data = controller.homeData.value;
-          if (data == null) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFF8B5CF6)));
-          }
-
-          return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
             children: [
-              HomeHeader(userName: data.userName),
+              const HomeHeader(),
               const SizedBox(height: 20),
-              QuickRollCard(onTap: controller.goToRollScreen),
-              const SizedBox(height: 24),
+              QuickRollCard(onRoll: controller.rollDice),
+              const SizedBox(height: 20),
               const QuickActions(),
-              const SizedBox(height: 24),
-              RecentRollCard(
-                lastResult: data.lastRollResult,
-                onTap: controller.goToHistoryScreen,
-              ),
-              const SizedBox(height: 12),
-              Row(
+              const SizedBox(height: 20),
+              Obx(() => RecentRollCard(lastResult: controller.homeData.value.lastRoll)),
+              const SizedBox(height: 16),
+              Obx(() => Row(
                 children: [
-                  Expanded(
-                    child: HomeStatCard(title: 'Total Rolls', value: '${data.totalRolls}'),
-                  ),
+                  HomeStatCard(title: 'Total Rolls', value: '${controller.homeData.value.totalRolls}'),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: HomeStatCard(title: 'Last Roll', value: '${data.lastRollResult}'),
-                  ),
+                  HomeStatCard(title: 'Last Roll', value: '${controller.homeData.value.lastRoll}'),
                 ],
-              ),
-              const SizedBox(height: 12),
-              AchievementPreview(title: data.recentAchievement),
+              )),
             ],
-          );
-        }),
+          ),
+        ),
       ),
+      bottomNavigationBar: Obx(() => BottomNavigationBar(
+        currentIndex: controller.selectedBottomNavIndex.value,
+        onTap: controller.changeBottomNav,
+        backgroundColor: const Color(0xFF0F0C1B),
+        selectedItemColor: Colors.purpleAccent,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.style), label: 'Roll'),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'History'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+        ],
+      )),
     );
   }
 }
