@@ -8,4 +8,8 @@ class ColorsCustom {
   static const Color textPrimary = Colors.white;
   static const Color textSecondary = Colors.white54;
   static const Color textMuted = Colors.white38;
+  static const Color violet = Color(0xFF8B5CF6);
+  static const Color purple = Color(0xFF6D28D9);
+  static const Color blue = Color(0xFF3B82F6);
+
 }

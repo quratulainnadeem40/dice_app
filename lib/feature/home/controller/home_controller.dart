@@ -21,14 +21,14 @@ class HomeController extends GetxController {
   }
 
   void goToRollScreen() {
-    if (Get.isRegistered<NavigationController>()) {
-      Get.find<NavigationController>().navigateToTab(1);
-    }
-  }
-
-  void goToHistoryScreen() {
-    if (Get.isRegistered<NavigationController>()) {
-      Get.find<NavigationController>().navigateToTab(2);
-    }
+  if (Get.isRegistered<NavigationController>()) {
+    Get.find<NavigationController>().changePage(1);
   }
 }
+
+void goToHistoryScreen() {
+  if (Get.isRegistered<NavigationController>()) {
+    Get.find<NavigationController>().changePage(2);
+  }
+}
+  }
