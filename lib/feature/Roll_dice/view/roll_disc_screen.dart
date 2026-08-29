@@ -4,11 +4,13 @@ import 'package:dice_app/feature/Roll_dice/controller/roll_disc_controller.dart'
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class RollDiceScreen extends GetView<RollDiceController> {
+class RollDiceScreen extends StatelessWidget {
   const RollDiceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final RollDiceController controller = Get.put(RollDiceController());
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -46,19 +48,19 @@ class RollDiceScreen extends GetView<RollDiceController> {
 
                 const SizedBox(height: 8),
 
-                _buildHeading(),
+                _buildHeading(controller),
 
                 const SizedBox(height: 14),
 
-                _buildPlayerSelector(),
+                _buildPlayerSelector(controller),
 
                 const SizedBox(height: 8),
 
                 Expanded(
-                  child: _buildDiceArea(context),
+                  child: _buildDiceArea(context, controller),
                 ),
 
-                _buildRollButton(),
+                _buildRollButton(controller),
 
                 const SizedBox(height: 12),
               ],
@@ -73,10 +75,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
   // BACKGROUND GLOW
   // ==========================================================
 
-  Widget _buildGlow(
-    Color color,
-    double size,
-  ) {
+  Widget _buildGlow(Color color, double size) {
     return IgnorePointer(
       child: Container(
         width: size,
@@ -102,16 +101,11 @@ class RollDiceScreen extends GetView<RollDiceController> {
 
   Widget _buildTopBar() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        18,
-        8,
-        18,
-        0,
-      ),
+      padding: const EdgeInsets.fromLTRB(18, 8, 18, 0),
       child: Row(
         children: [
           GestureDetector(
-            onTap: Get.back,
+            onTap: () => Get.back(),
             child: Container(
               width: 42,
               height: 42,
@@ -174,7 +168,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
   // HEADING
   // ==========================================================
 
-  Widget _buildHeading() {
+  Widget _buildHeading(RollDiceController controller) {
     return Obx(
       () => Column(
         children: [
@@ -189,9 +183,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
               letterSpacing: -0.4,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Text(
             controller.isRolling.value
                 ? 'Rolling your dice...'
@@ -211,12 +203,10 @@ class RollDiceScreen extends GetView<RollDiceController> {
   // PLAYER SELECTOR
   // ==========================================================
 
-  Widget _buildPlayerSelector() {
+  Widget _buildPlayerSelector(RollDiceController controller) {
     return Obx(
       () => Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 18,
-        ),
+        margin: const EdgeInsets.symmetric(horizontal: 18),
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.045),
@@ -230,9 +220,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
             7,
             (index) {
               final number = index + 1;
-
-              final selected =
-                  controller.playerCount.value == number;
+              final selected = controller.playerCount.value == number;
 
               return Expanded(
                 child: GestureDetector(
@@ -240,13 +228,9 @@ class RollDiceScreen extends GetView<RollDiceController> {
                     controller.setPlayerCount(number);
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(
-                      milliseconds: 180,
-                    ),
+                    duration: const Duration(milliseconds: 180),
                     height: 42,
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 2,
-                    ),
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(11),
                       gradient: selected
@@ -294,7 +278,10 @@ class RollDiceScreen extends GetView<RollDiceController> {
   // DICE AREA
   // ==========================================================
 
-  Widget _buildDiceArea(BuildContext context) {
+  Widget _buildDiceArea(
+    BuildContext context,
+    RollDiceController controller,
+  ) {
     return Obx(
       () {
         final count = controller.playerCount.value;
@@ -303,7 +290,8 @@ class RollDiceScreen extends GetView<RollDiceController> {
           return Center(
             child: _buildPlayerDice(
               0,
-              size: 165,
+              size: 155,
+              controller: controller,
             ),
           );
         }
@@ -311,8 +299,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
         if (count == 2) {
           final screenWidth = MediaQuery.sizeOf(context).width;
           final availableWidth = screenWidth - 56;
-          final size = ((availableWidth - 30) / 2)
-              .clamp(85.0, 125.0);
+          final size = ((availableWidth - 30) / 2).clamp(85.0, 120.0);
 
           return Center(
             child: Row(
@@ -321,11 +308,13 @@ class RollDiceScreen extends GetView<RollDiceController> {
                 _buildPlayerDice(
                   0,
                   size: size,
+                  controller: controller,
                 ),
                 const SizedBox(width: 20),
                 _buildPlayerDice(
                   1,
                   size: size,
+                  controller: controller,
                 ),
               ],
             ),
@@ -335,6 +324,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
         return _buildBalancedPlayerLayout(
           count,
           context,
+          controller,
         );
       },
     );
@@ -347,6 +337,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
   Widget _buildBalancedPlayerLayout(
     int count,
     BuildContext context,
+    RollDiceController controller,
   ) {
     final rows = <List<int>>[];
 
@@ -369,47 +360,45 @@ class RollDiceScreen extends GetView<RollDiceController> {
 
     final screenWidth = MediaQuery.sizeOf(context).width;
 
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(
-        8,
-        4,
-        8,
-        4,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: rows.map(
-          (row) {
-            final diceSize = _responsiveDiceSize(
-              count: count,
-              rowCount: row.length,
-              screenWidth: screenWidth,
-            );
+    return Center(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(
+          vertical: 10,
+          horizontal: 8,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: rows.map(
+            (row) {
+              final diceSize = _responsiveDiceSize(
+                count: count,
+                rowCount: row.length,
+                screenWidth: screenWidth,
+              );
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 7,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: row.map(
-                  (index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 5,
-                      ),
-                      child: _buildPlayerDice(
-                        index,
-                        size: diceSize,
-                      ),
-                    );
-                  },
-                ).toList(),
-              ),
-            );
-          },
-        ).toList(),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: row.map(
+                    (index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: _buildPlayerDice(
+                          index,
+                          size: diceSize,
+                          controller: controller,
+                        ),
+                      );
+                    },
+                  ).toList(),
+                ),
+              );
+            },
+          ).toList(),
+        ),
       ),
     );
   }
@@ -426,49 +415,49 @@ class RollDiceScreen extends GetView<RollDiceController> {
     const horizontalPadding = 10.0;
     const safetySpace = 12.0;
 
-    final availableWidth =
-        screenWidth - horizontalPadding - safetySpace;
-
-    final calculatedSize =
-        (availableWidth / rowCount) - 34 - 10;
+    final availableWidth = screenWidth - horizontalPadding - safetySpace;
+    final calculatedSize = (availableWidth / rowCount) - 34 - 10;
 
     double maxSize;
 
     switch (count) {
       case 3:
-        maxSize = 100;
+        maxSize = 95;
         break;
       case 4:
-        maxSize = 94;
+        maxSize = 90;
         break;
       case 5:
-        maxSize = 88;
+        maxSize = 85;
         break;
       case 6:
-        maxSize = 82;
+        maxSize = 80;
         break;
       case 7:
       default:
-        maxSize = 78;
+        maxSize = 75;
         break;
     }
 
-    return calculatedSize.clamp(62.0, maxSize);
+    return calculatedSize.clamp(55.0, maxSize);
   }
 
   // ==========================================================
   // PLAYER DICE THEME
   // ==========================================================
 
-  DiceTheme _getPlayerTheme(int index) {
-  final themes = DiceThemes.all;
+  DiceTheme _getPlayerTheme(
+    int index,
+    RollDiceController controller,
+  ) {
+    final themes = DiceThemes.all;
 
-  if (themes.isEmpty) {
-    return controller.selectedDiceTheme.value;
+    if (themes.isEmpty) {
+      return controller.selectedDiceTheme.value;
+    }
+
+    return themes[index % themes.length];
   }
-
-  return themes[index % themes.length];
-}
 
   // ==========================================================
   // PLAYER DICE
@@ -477,11 +466,15 @@ class RollDiceScreen extends GetView<RollDiceController> {
   Widget _buildPlayerDice(
     int index, {
     required double size,
+    required RollDiceController controller,
   }) {
     return Obx(
       () {
         final value = controller.diceValues[index];
-        final DiceTheme theme = _getPlayerTheme(index);
+        final DiceTheme theme = _getPlayerTheme(
+          index,
+          controller,
+        );
 
         return SizedBox(
           width: size + 34,
@@ -521,27 +514,15 @@ class RollDiceScreen extends GetView<RollDiceController> {
 
               const SizedBox(height: 8),
 
-              AnimatedRotation(
-                duration: const Duration(
-                  milliseconds: 220,
-                ),
-                turns: controller.isRolling.value
-                    ? 0.04
-                    : 0,
+              AnimatedScale(
+                duration: const Duration(milliseconds: 250),
+                scale: controller.isRolling.value ? 0.88 : 1.0,
                 curve: Curves.easeOutBack,
-                child: AnimatedScale(
-                  duration: const Duration(
-                    milliseconds: 220,
-                  ),
-                  scale: controller.isRolling.value
-                      ? 0.92
-                      : 1.0,
-                  curve: Curves.easeOutBack,
-                  child: _buildDiceFace(
-                    value: value,
-                    size: size,
-                    theme: theme,
-                  ),
+                child: _buildDiceFace(
+                  value: value,
+                  size: size,
+                  theme: theme,
+                  controller: controller,
                 ),
               ),
             ],
@@ -552,90 +533,98 @@ class RollDiceScreen extends GetView<RollDiceController> {
   }
 
   // ==========================================================
-  // DICE FACE
+  // 3D DICE FACE
   // ==========================================================
 
   Widget _buildDiceFace({
     required int value,
     required double size,
     required DiceTheme theme,
+    required RollDiceController controller,
   }) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(
-          size * 0.20,
-        ),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: theme.colors,
-        ),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.85),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: theme.glowColor.withValues(alpha: 0.30),
-            blurRadius: 20,
-            spreadRadius: 2,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutBack,
+      child: Transform(
+        transform: Matrix4.identity()
+          ..setEntry(3, 2, 0.0008)
+          ..rotateX(
+            controller.isRolling.value ? 0.25 : 0.05,
+          )
+          ..rotateY(
+            controller.isRolling.value ? -0.30 : -0.05,
+          )
+          ..rotateZ(
+            controller.isRolling.value ? 0.10 : 0.0,
           ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.38),
-            blurRadius: 12,
-            offset: const Offset(
-              0,
-              7,
+        alignment: Alignment.center,
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(size * 0.22),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: theme.colors,
             ),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: size * 0.075,
-            left: size * 0.11,
-            child: Container(
-              width: size * 0.34,
-              height: size * 0.09,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.78),
-                borderRadius: BorderRadius.circular(50),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.85),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: theme.glowColor.withValues(alpha: 0.40),
+                blurRadius: 14,
+                spreadRadius: 1,
+                offset: const Offset(-2, 4),
               ),
-            ),
-          ),
-
-          Positioned(
-            right: size * 0.05,
-            bottom: size * 0.05,
-            child: Container(
-              width: size * 0.34,
-              height: size * 0.16,
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.04),
-                borderRadius: BorderRadius.circular(50),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.40),
+                blurRadius: 8,
+                offset: const Offset(3, 5),
               ),
-            ),
+            ],
           ),
-
-          Center(
-            child: controller.diceSides.value <= 6
-                ? _buildDiceDots(
-                    value: value,
-                    size: size,
-                  )
-                : Text(
-                    '$value',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: size * 0.34,
-                      fontWeight: FontWeight.w900,
-                    ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: size * 0.07,
+                left: size * 0.10,
+                child: Container(
+                  width: size * 0.35,
+                  height: size * 0.09,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(50),
                   ),
+                ),
+              ),
+              Center(
+                child: controller.diceSides.value <= 6
+                    ? _buildDiceDots(
+                        value: value,
+                        size: size,
+                      )
+                    : Text(
+                        '$value',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: size * 0.34,
+                          fontWeight: FontWeight.w900,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.45),
+                              offset: const Offset(2, 2),
+                              blurRadius: 3,
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -665,8 +654,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         itemCount: 9,
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
         ),
         itemBuilder: (context, index) {
@@ -683,12 +671,9 @@ class RollDiceScreen extends GetView<RollDiceController> {
                 color: const Color(0xFF22232B),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.30),
+                    color: Colors.black.withValues(alpha: 0.35),
                     blurRadius: size * 0.025,
-                    offset: const Offset(
-                      0,
-                      1,
-                    ),
+                    offset: const Offset(0, 1.5),
                   ),
                 ],
               ),
@@ -703,12 +688,10 @@ class RollDiceScreen extends GetView<RollDiceController> {
   // ROLL BUTTON
   // ==========================================================
 
-  Widget _buildRollButton() {
+  Widget _buildRollButton(RollDiceController controller) {
     return Obx(
       () => Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SizedBox(
           width: double.infinity,
           height: 56,

@@ -1,4 +1,4 @@
-
+import 'package:dice_app/core/routes/app_routes.dart';
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/feature/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
@@ -35,10 +35,25 @@ class HomeBottomNav extends StatelessWidget {
           height: 70,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          selectedIndex: controller.selectedBottomIndex.value,
-          onDestinationSelected: controller.changeBottomIndex,
-          indicatorColor: AppColors.purple.withOpacity(0.18),
+
+          selectedIndex:
+              controller.selectedBottomIndex.value,
+
+          onDestinationSelected: (index) {
+            if (index == 2) {
+              // Open Settings Screen
+              Get.toNamed(AppRoutes.settings);
+            } else {
+              // Home / History
+              controller.changeBottomIndex(index);
+            }
+          },
+
+          indicatorColor:
+              AppColors.purple.withOpacity(0.18),
+
           destinations: const [
+            // HOME
             NavigationDestination(
               icon: Icon(
                 Icons.home_outlined,
@@ -50,6 +65,8 @@ class HomeBottomNav extends StatelessWidget {
               ),
               label: 'Home',
             ),
+
+            // HISTORY
             NavigationDestination(
               icon: Icon(
                 Icons.history_outlined,
@@ -61,18 +78,21 @@ class HomeBottomNav extends StatelessWidget {
               ),
               label: 'History',
             ),
+
+            // SETTINGS
             NavigationDestination(
               icon: Icon(
-                Icons.person_outline_rounded,
+                Icons.settings_outlined,
                 color: Colors.white54,
               ),
               selectedIcon: Icon(
-                Icons.person_rounded,
+                Icons.settings_rounded,
                 color: AppColors.violet,
               ),
-              label: 'setting',
+              label: 'Settings',
             ),
           ],
+
           labelTextStyle: WidgetStatePropertyAll(
             TextStyle(
               color: Colors.white.withOpacity(0.65),

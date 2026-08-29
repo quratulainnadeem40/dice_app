@@ -1,3 +1,4 @@
+import 'package:dice_app/feature/Roll_dice/view/roll_disc_screen.dart';
 import 'package:dice_app/feature/setting/controller/setting_controller.dart';
 import 'package:dice_app/feature/setting/widgets/animation_speed_slider.dart';
 import 'package:dice_app/feature/setting/widgets/dice_color_selector.dart';
@@ -6,9 +7,9 @@ import 'package:dice_app/feature/setting/widgets/dices_sides_selector.dart';
 import 'package:dice_app/feature/setting/widgets/setting_section.dart';
 import 'package:dice_app/feature/setting/widgets/sound_setting_tile.dart';
 import 'package:dice_app/feature/setting/widgets/vibration_slides.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 
 class SettingsScreen extends GetView<SettingsController> {
   const SettingsScreen({super.key});
@@ -30,14 +31,11 @@ class SettingsScreen extends GetView<SettingsController> {
                 child: Column(
                   children: [
                     _buildAppBar(),
-
                     Expanded(
                       child: SingleChildScrollView(
-                        physics:
-                            const BouncingScrollPhysics(),
+                        physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
-                          horizontal:
-                              isTablet ? 28 : 16,
+                          horizontal: isTablet ? 28 : 16,
                           vertical: 16,
                         ),
                         child: Column(
@@ -45,25 +43,23 @@ class SettingsScreen extends GetView<SettingsController> {
                             SettingsSection(
                               title: '1. DICE CONFIGURATION',
                               child: Column(
-                                children: [
-                                  const DiceCountSelector(),
-                                  const SizedBox(height: 10),
-                                  const DiceSidesSelector(),
+                                children: const [
+                                  DiceCountSelector(),
+                                  SizedBox(height: 10),
+                                  DiceSidesSelector(),
                                 ],
                               ),
                             ),
-
                             SettingsSection(
                               title: '2. THEME & APPEARANCE',
                               child: Column(
-                                children: [
-                                  const DiceColorSelector(),
-                                  const SizedBox(height: 10),
-                                  const AnimationSpeedSlider(),
+                                children: const [
+                                  DiceColorSelector(),
+                                  SizedBox(height: 10),
+                                  AnimationSpeedSlider(),
                                 ],
                               ),
                             ),
-
                             SettingsSection(
                               title: '3. SOUND & VIBRATION',
                               child: Column(
@@ -76,13 +72,9 @@ class SettingsScreen extends GetView<SettingsController> {
                                 ],
                               ),
                             ),
-
                             _buildPreview(),
-
                             const SizedBox(height: 4),
-
                             _buildSaveButton(),
-
                             const SizedBox(height: 24),
                           ],
                         ),
@@ -120,7 +112,6 @@ class SettingsScreen extends GetView<SettingsController> {
               size: 21,
             ),
           ),
-
           const Expanded(
             child: Text(
               'SETTINGS',
@@ -133,7 +124,6 @@ class SettingsScreen extends GetView<SettingsController> {
               ),
             ),
           ),
-
           const SizedBox(width: 48),
         ],
       ),
@@ -149,17 +139,16 @@ class SettingsScreen extends GetView<SettingsController> {
           borderRadius: BorderRadius.circular(15),
         ),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              children: [
-                const Icon(
+              children: const [
+                Icon(
                   Icons.casino_rounded,
                   color: Color(0xFFB43DFF),
                 ),
-                const SizedBox(width: 10),
-                const Text(
+                SizedBox(width: 10),
+                Text(
                   'Roll Sound',
                   style: TextStyle(
                     color: Colors.white,
@@ -169,32 +158,23 @@ class SettingsScreen extends GetView<SettingsController> {
                 ),
               ],
             ),
-
             const SizedBox(height: 12),
-
             Row(
               children: List.generate(
                 3,
                 (index) {
                   final dice = index + 1;
-                  final selected =
-                      controller.selectedRollDice.value ==
-                          dice;
+                  final selected = controller.selectedRollDice.value == dice;
 
                   return Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        controller
-                            .selectRollDice(dice);
-                      },
+                      onTap: () => controller.selectRollDice(dice),
                       child: AnimatedContainer(
-                        duration:
-                            const Duration(milliseconds: 180),
+                        duration: const Duration(milliseconds: 180),
                         margin: EdgeInsets.only(
                           right: index == 2 ? 0 : 8,
                         ),
-                        padding:
-                            const EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 8,
                         ),
@@ -202,8 +182,7 @@ class SettingsScreen extends GetView<SettingsController> {
                           color: selected
                               ? const Color(0xFF17183E)
                               : Colors.transparent,
-                          borderRadius:
-                              BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: selected
                                 ? const Color(0xFFB43DFF)
@@ -211,15 +190,12 @@ class SettingsScreen extends GetView<SettingsController> {
                           ),
                         ),
                         child: Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               selected
-                                  ? Icons
-                                      .radio_button_checked
-                                  : Icons
-                                      .radio_button_off,
+                                  ? Icons.radio_button_checked
+                                  : Icons.radio_button_off,
                               color: selected
                                   ? const Color(0xFFB43DFF)
                                   : const Color(0xFF999CB8),
@@ -231,12 +207,9 @@ class SettingsScreen extends GetView<SettingsController> {
                               style: TextStyle(
                                 color: selected
                                     ? Colors.white
-                                    : const Color(
-                                        0xFFB5B7CC,
-                                      ),
+                                    : const Color(0xFFB5B7CC),
                                 fontSize: 13,
-                                fontWeight:
-                                    FontWeight.w600,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -257,90 +230,93 @@ class SettingsScreen extends GetView<SettingsController> {
     return SettingsSection(
       title: '4. PREVIEW',
       child: Obx(
-        () => Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: const Color(0xFF080B29),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 150,
-                child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
-                  crossAxisAlignment:
-                      CrossAxisAlignment.center,
-                  children: [
-                    _previewDice(
-                      controller.diceColor.value,
-                      5,
-                      -0.12,
-                    ),
-                    const SizedBox(width: 12),
-                    _previewDice(
-                      const Color(0xFFFF3948),
-                      6,
-                      0.08,
-                    ),
-                    const SizedBox(width: 12),
-                    _previewDice(
-                      const Color(0xFF087FF5),
-                      4,
-                      -0.08,
-                    ),
-                  ],
-                ),
-              ),
+        () {
+          final isMultiColor = controller.diceColor.value == Colors.transparent;
 
-              const SizedBox(height: 4),
-
-              const Text(
-                'Roll the dice to preview your selected settings.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xFFC3C5D8),
-                  fontSize: 13,
-                ),
-              ),
-
-              const SizedBox(height: 14),
-
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.casino_rounded,
-                    color: Colors.white,
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: const Color(0xFF080B29),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 150,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _previewDice(
+                        isMultiColor
+                            ? const Color(0xFF8B2CFF)
+                            : controller.diceColor.value,
+                        5,
+                        -0.12,
+                      ),
+                      const SizedBox(width: 12),
+                      _previewDice(
+                        isMultiColor
+                            ? const Color(0xFFFF3D4F)
+                            : controller.diceColor.value,
+                        6,
+                        0.08,
+                      ),
+                      const SizedBox(width: 12),
+                      _previewDice(
+                        isMultiColor
+                            ? const Color(0xFF087FF5)
+                            : controller.diceColor.value,
+                        4,
+                        -0.08,
+                      ),
+                    ],
                   ),
-                  label: const Text(
-                    'ROLL DICE',
-                    style: TextStyle(
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Roll the dice to preview your selected settings.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xFFC3C5D8),
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Get.to(() => const  RollDiceScreen());
+                    },
+                    icon: const Icon(
+                      Icons.casino_rounded,
                       color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFF8B22E9),
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(13),
+                    label: const Text(
+                      'ROLL DICE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                    elevation: 8,
-                    shadowColor:
-                        const Color(0xFF8B22E9),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF8B22E9),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(13),
+                      ),
+                      elevation: 8,
+                      shadowColor: const Color(0xFF8B22E9),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -455,8 +431,7 @@ class SettingsScreen extends GetView<SettingsController> {
             borderRadius: BorderRadius.circular(14),
           ),
           elevation: 8,
-          shadowColor:
-              const Color(0xFF8B22E9).withOpacity(0.4),
+          shadowColor: const Color(0xFF8B22E9).withOpacity(0.4),
         ),
       ),
     );
