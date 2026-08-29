@@ -1,15 +1,15 @@
-
-class HistoryModel {
-  final List<int> results;
-  final int playerCount;
-  final int diceSides;
+class RollHistoryModel {
+  final String id;
+  final String title;
+  final List<int> diceValues;
+  final int totalResult;
   final DateTime dateTime;
 
-  HistoryModel({
-    required this.results,
-    required this.playerCount,
-    required this.diceSides,
+  RollHistoryModel({
+    required this.id,
+    required this.title,
+    required this.diceValues,
+    required this.totalResult,
     required this.dateTime,
   });
 }
-

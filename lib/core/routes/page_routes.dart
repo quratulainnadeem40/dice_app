@@ -1,5 +1,5 @@
 import 'package:dice_app/feature/Roll_dice/view/roll_disc_screen.dart';
-import 'package:dice_app/feature/history/controller/history_controller.dart';
+import 'package:dice_app/feature/history/binding/history_binding.dart';
 import 'package:dice_app/feature/history/view/history_screen.dart';
 import 'package:dice_app/feature/home/binding/home_binding.dart';
 import 'package:dice_app/feature/home/home_screen.dart';
@@ -63,11 +63,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.history,
       page: () => const HistoryScreen(),
-      binding: BindingsBuilder(() {
-        Get.lazyPut<HistoryController>(
-          () => HistoryController(),
-        );
-      }),
+      binding: HistoryBinding(),
     ),
   ];
 }

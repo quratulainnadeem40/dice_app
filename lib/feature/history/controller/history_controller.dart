@@ -1,61 +1,49 @@
 import 'package:dice_app/feature/history/model/history_model.dart';
 import 'package:get/get.dart';
 
+
 class HistoryController extends GetxController {
-  // ==========================================================
-  // HISTORY LIST
-  // ==========================================================
+  final RxList<RollHistoryModel> historyList = <RollHistoryModel>[].obs;
 
-  final history = <HistoryModel>[].obs;
-
-  // ==========================================================
-  // ADD HISTORY
-  // ==========================================================
-
+  // Add new history entry from RollDiceController
   void addHistory({
     required List<int> results,
     required int playerCount,
     required int diceSides,
   }) {
-    if (results.isEmpty) {
-      return;
-    }
+    final int total = results.fold(0, (sum, item) => sum + item);
+    final String title = '$playerCount Player${playerCount > 1 ? 's' : ''} (D$diceSides)';
 
-    final record = HistoryModel(
-      results: List<int>.from(results),
-      playerCount: playerCount,
-      diceSides: diceSides,
+    final newHistory = RollHistoryModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+      diceValues: results,
+      totalResult: total,
       dateTime: DateTime.now(),
     );
 
-    history.insert(0, record);
+    // List ke start me insert karte hain taaki new result top par dikhe
+    historyList.insert(0, newHistory);
   }
-
-  // ==========================================================
-  // CLEAR HISTORY
-  // ==========================================================
-
-  void clearHistory() {
-    history.clear();
-  }
-
-  // ==========================================================
-  // REMOVE ONE RECORD
-  // ==========================================================
 
   void removeHistory(int index) {
-    if (index < 0 || index >= history.length) {
-      return;
+    if (index >= 0 && index < historyList.length) {
+      historyList.removeAt(index);
     }
-
-    history.removeAt(index);
   }
 
-  // ==========================================================
-  // HISTORY COUNT
-  // ==========================================================
+  void insertHistory(int index, RollHistoryModel item) {
+    if (index >= 0 && index <= historyList.length) {
+      historyList.insert(index, item);
+    }
+  }
 
-  int get historyCount {
-    return history.length;
+  void clearAllHistory() {
+    historyList.clear();
+  }
+
+  // Alias for RollDiceController clear history call
+  void clearHistory() {
+    clearAllHistory();
   }
 }
