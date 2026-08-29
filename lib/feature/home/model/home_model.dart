@@ -1,16 +1,54 @@
-class HomeModel {
-  final String userName;
+class HomeStats {
   final int totalRolls;
-  final int lastRollResult;
-  final String recentAchievement;
+  final int lastResult;
+  final int maxRoll;
+  final int minRoll;
 
-  HomeModel({
-    required this.userName,
+  HomeStats({
     required this.totalRolls,
-    required this.lastRollResult,
-    required this.recentAchievement,
+    required this.lastResult,
+    required this.maxRoll,
+    required this.minRoll,
   });
 
-  // Shortcut getter so both lastRoll & lastRollResult work seamlessly
-  int get lastRoll => lastRollResult;
+  factory HomeStats.empty() {
+    return HomeStats(
+      totalRolls: 0,
+      lastResult: 0,
+      maxRoll: 0,
+      minRoll: 0,
+    );
+  }
+}
+
+class RecentRoll {
+  final int result;
+  final DateTime timestamp;
+  final int diceCount;
+  final int diceSides;
+
+  RecentRoll({
+    required this.result,
+    required this.timestamp,
+    required this.diceCount,
+    required this.diceSides,
+  });
+}
+
+class Achievement {
+  final String id;
+  final String title;
+  final String description;
+  final String icon;
+  final bool isUnlocked;
+  final double progress;
+
+  Achievement({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.isUnlocked,
+    required this.progress,
+  });
 }

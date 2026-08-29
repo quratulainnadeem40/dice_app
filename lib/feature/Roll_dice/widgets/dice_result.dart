@@ -1,72 +1,112 @@
-// import 'package:flutter/material.dart';
-
-// class DiceResult extends StatelessWidget {
-//   final int result;
-
-//   const DiceResult({
-//     Key? key,
-//     required this.result,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-//       decoration: BoxDecoration(
-//         color: const Color(0xFF1E1A34),
-//         borderRadius: BorderRadius.circular(12),
-//       ),
-//       child: Row(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           const Icon(Icons.casino_outlined, color: Colors.white54, size: 20),
-//           const SizedBox(width: 8),
-//           Text(
-//             'Result: $result',
-//             style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+import 'package:dice_app/core/theme/textstyle_custom.dart';
 import 'package:flutter/material.dart';
-import '../model/roll_dice_model.dart';
+import '../../../core/theme/colors_custom.dart';
 
-class DiceResultWidget extends StatelessWidget {
-  final List<DiceModel> diceList;
+import 'dice_face.dart';
 
-  const DiceResultWidget({Key? key, required this.diceList}) : super(key: key);
+class DiceResult extends StatelessWidget {
+  final List<int> results;
+  final Color diceColor;
+  final bool showAnimations;
+
+  const DiceResult({
+    Key? key,
+    required this.results,
+    required this.diceColor,
+    this.showAnimations = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    if (results.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
       children: [
-        for (int i = 0; i < diceList.length; i++) ...[
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: diceList[i].color.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: diceList[i].color.withOpacity(0.5),
-                  blurRadius: 10,
-                ),
-              ],
-            ),
-            child: Text(
-              '${diceList[i].currentValue}',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+        // Individual dice
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 12,
+          runSpacing: 12,
+          children: List.generate(
+            results.length,
+            (index) => DiceFace(
+              number: results[index],
+              color: diceColor,
+              isAnimating: showAnimations,
+              size: 80,
             ),
           ),
-          if (i < diceList.length - 1)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text('+', style: TextStyle(color: Colors.white70, fontSize: 20, fontWeight: FontWeight.bold)),
+        ),
+        const SizedBox(height: 20),
+        // Result breakdown
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.cardBgLight,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.borderColor),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(
+              results.length > 1 ? results.length + 2 : 1,
+              (index) {
+                if (index < results.length) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Dice ${index + 1}',
+                        style: AppTextStyles.bodySmall,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${results[index]}',
+                        style: AppTextStyles.headingSmall,
+                      ),
+                    ],
+                  );
+                } else if (index == results.length) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Total',
+                        style: AppTextStyles.bodySmall,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${results.reduce((a, b) => a + b)}',
+                        style: AppTextStyles.headingSmall.copyWith(
+                          color: AppColors.primaryPurple,
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Average',
+                        style: AppTextStyles.bodySmall,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${(results.reduce((a, b) => a + b) / results.length).toStringAsFixed(1)}',
+                        style: AppTextStyles.headingSmall.copyWith(
+                          color: AppColors.success,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
-        ],
+          ),
+        ),
       ],
     );
   }

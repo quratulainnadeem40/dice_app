@@ -1,82 +1,135 @@
-// import 'package:dice_app/feature/Roll_dice/model/roll_dice_model.dart';
-// import 'package:flutter/material.dart';
-
-// import 'dice_face.dart';
-
-// class DiceCard extends StatelessWidget {
-//   final DiceModel dice;
-
-//   const DiceCard({
-//     Key? key,
-//     required this.dice,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.all(16),
-//       decoration: BoxDecoration(
-//         color: const Color(0xFF1E1A34),
-//         borderRadius: BorderRadius.circular(20),
-//         border: Border.all(color: Colors.white10),
-//       ),
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           DiceFace(value: dice.currentValue, color: dice.color),
-//           const SizedBox(height: 8),
-//           Text(
-//             'D${dice.sides}',
-//             style: const TextStyle(color: Colors.white54, fontSize: 12),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../model/roll_dice_model.dart';
-import 'dice_face.dart';
+import '../../../core/theme/colors_custom.dart';
+import '../../../core/theme/text_styles_custom.dart';
 
-class DiceCard extends StatelessWidget {
-  final DiceModel dice;
+class DiceCard extends StatefulWidget {
+  final int? result;
+  final bool isRolling;
+  final Color diceColor;
+  final double size;
 
-  const DiceCard({Key? key, required this.dice}) : super(key: key);
+  const DiceCard({
+    Key? key,
+    this.result,
+    required this.isRolling,
+    required this.diceColor,
+    this.size = 150,
+  }) : super(key: key);
+
+  @override
+  State<DiceCard> createState() => _DiceCardState();
+}
+
+class _DiceCardState extends State<DiceCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _rotation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _rotation = Tween<double>(begin: 0, end: 6.28).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    if (widget.isRolling) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void didUpdateWidget(DiceCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isRolling && !_controller.isAnimating) {
+      _controller.repeat();
+    } else if (!widget.isRolling && _controller.isAnimating) {
+      _controller.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          width: 115,
-          height: 125,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: Colors.white.withOpacity(0.12)),
-            boxShadow: [
-              BoxShadow(
-                color: dice.color.withOpacity(0.15),
-                blurRadius: 20,
+    return AnimatedBuilder(
+      animation: _rotation,
+      builder: (context, child) {
+        return Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateX(_rotation.value * 0.5)
+            ..rotateY(_rotation.value)
+            ..rotateZ(_rotation.value * 0.3),
+          child: Container(
+            width: widget.size,
+            height: widget.size,
+            decoration: BoxDecoration(
+              color: widget.diceColor,
+              borderRadius: BorderRadius.circular(widget.size * 0.15),
+              boxShadow: [
+                BoxShadow(
+                  color: widget.diceColor.withOpacity(0.5),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+              gradient: LinearGradient(
+                colors: [
+                  widget.diceColor.withOpacity(1),
+                  widget.diceColor.withOpacity(0.7),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
+            ),
+            child: widget.isRolling
+                ? Center(
+                    child: SizedBox(
+                      width: widget.size * 0.4,
+                      height: widget.size * 0.4,
+                      child: CircularProgressIndicator(
+                        valueColor: const AlwaysStoppedAnimation(
+                          Colors.white,
+                        ),
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      '${widget.result ?? '?'}',
+                      style: TextStyle(
+                        fontSize: widget.size * 0.5,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.3),
+                            offset: const Offset(2, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              DiceFace(value: dice.currentValue, baseColor: dice.color),
-              const SizedBox(height: 6),
-              Text(
-                'D${dice.sides}',
-                style: const TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

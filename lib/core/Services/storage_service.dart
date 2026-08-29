@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 
-import 'package:dart:convert';
+import 'package:get_storage/get_storage.dart';
 
 class StorageService extends GetxService {
   late final GetStorage _storage;

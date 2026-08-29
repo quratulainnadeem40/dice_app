@@ -1,33 +1,65 @@
-import 'package:flutter/material.dart';
+class DiceResult {
+  final List<int> results;
+  final int total;
+  final int diceCount;
+  final int diceSides;
+  final DateTime timestamp;
 
-class DiceModel {
-  final int id;
-  int currentValue;
-  final int sides;
-  final Color color;
-  bool isRolling;
-
-  DiceModel({
-    required this.id,
-    this.currentValue = 1,
-    this.sides = 6,
-    this.color = const Color(0xFF8B5CF6),
-    this.isRolling = false,
+  DiceResult({
+    required this.results,
+    required this.total,
+    required this.diceCount,
+    required this.diceSides,
+    required this.timestamp,
   });
 
-  // State update karne ke liye copyWith method
-  DiceModel copyWith({
-    int? currentValue,
-    int? sides,
-    Color? color,
-    bool? isRolling,
+  int get average {
+    if (results.isEmpty) return 0;
+    return (total / results.length).ceil();
+  }
+
+  int get max {
+    return results.isEmpty ? 0 : results.reduce((a, b) => a > b ? a : b);
+  }
+
+  int get min {
+    return results.isEmpty ? 0 : results.reduce((a, b) => a < b ? a : b);
+  }
+}
+
+class DiceConfig {
+  final int diceCount;
+  final int diceSides;
+  final String diceColor;
+  final double animationSpeed;
+
+  DiceConfig({
+    required this.diceCount,
+    required this.diceSides,
+    required this.diceColor,
+    required this.animationSpeed,
+  });
+
+  factory DiceConfig.defaultConfig() {
+    return DiceConfig(
+      diceCount: 1,
+      diceSides: 6,
+      diceColor: 'purple',
+      animationSpeed: 1.0,
+    );
+  }
+
+  DiceConfig copyWith({
+    int? diceCount,
+    int? diceSides,
+    String? diceColor,
+    double? animationSpeed,
   }) {
-    return DiceModel(
-      id: this.id,
-      currentValue: currentValue ?? this.currentValue,
-      sides: sides ?? this.sides,
-      color: color ?? this.color,
-      isRolling: isRolling ?? this.isRolling,
+    return DiceConfig(
+      diceCount: diceCount ?? this.diceCount,
+      diceSides: diceSides ?? this.diceSides,
+      diceColor: diceColor ?? this.diceColor,
+      animationSpeed: animationSpeed ?? this.animationSpeed,
     );
   }
 }
