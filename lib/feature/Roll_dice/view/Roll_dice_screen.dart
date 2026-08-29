@@ -56,7 +56,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
                 const SizedBox(height: 8),
 
                 Expanded(
-                  child: _buildDiceArea(),
+                  child: _buildDiceArea(context),
                 ),
 
                 _buildRollButton(),
@@ -295,7 +295,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
   // DICE AREA
   // ==========================================================
 
-  Widget _buildDiceArea() {
+  Widget _buildDiceArea(BuildContext context) {
     return Obx(
       () {
         final count = controller.playerCount.value;
@@ -308,7 +308,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
           return Center(
             child: _buildPlayerDice(
               0,
-              size: 155,
+              size: 165,
             ),
           );
         }
@@ -318,18 +318,25 @@ class RollDiceScreen extends GetView<RollDiceController> {
         // ----------------------------------------------------
 
         if (count == 2) {
+          final screenWidth = MediaQuery.sizeOf(context).width;
+
+          // Responsive size for two dice.
+          final availableWidth = screenWidth - 56;
+          final size = ((availableWidth - 30) / 2)
+              .clamp(85.0, 125.0);
+
           return Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildPlayerDice(
                   0,
-                  size: 110,
+                  size: size,
                 ),
-                const SizedBox(width: 30),
+                const SizedBox(width: 20),
                 _buildPlayerDice(
                   1,
-                  size: 110,
+                  size: size,
                 ),
               ],
             ),
@@ -340,7 +347,10 @@ class RollDiceScreen extends GetView<RollDiceController> {
         // 3 - 7 PLAYERS
         // ----------------------------------------------------
 
-        return _buildBalancedPlayerLayout(count);
+        return _buildBalancedPlayerLayout(
+          count,
+          context,
+        );
       },
     );
   }
@@ -357,6 +367,7 @@ class RollDiceScreen extends GetView<RollDiceController> {
 
   Widget _buildBalancedPlayerLayout(
     int count,
+    BuildContext context,
   ) {
     final rows = <List<int>>[];
 
@@ -377,18 +388,26 @@ class RollDiceScreen extends GetView<RollDiceController> {
       rows.add([5, 6]);
     }
 
+    final screenWidth = MediaQuery.sizeOf(context).width;
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(
-        14,
+        8,
         4,
-        14,
+        8,
         4,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: rows.map(
           (row) {
+            final diceSize = _responsiveDiceSize(
+              count: count,
+              rowCount: row.length,
+              screenWidth: screenWidth,
+            );
+
             return Padding(
               padding: const EdgeInsets.symmetric(
                 vertical: 7,
@@ -399,11 +418,11 @@ class RollDiceScreen extends GetView<RollDiceController> {
                   (index) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
+                        horizontal: 5,
                       ),
                       child: _buildPlayerDice(
                         index,
-                        size: _diceSize(count),
+                        size: diceSize,
                       ),
                     );
                   },
@@ -417,27 +436,74 @@ class RollDiceScreen extends GetView<RollDiceController> {
   }
 
   // ==========================================================
-  // DICE SIZE
+  // RESPONSIVE DICE SIZE
   // ==========================================================
 
-  double _diceSize(int count) {
+  double _responsiveDiceSize({
+    required int count,
+    required int rowCount,
+    required double screenWidth,
+  }) {
+    // Width used by one dice item:
+    // dice size + 34 from _buildPlayerDice
+    //
+    // Horizontal padding:
+    // 5 left + 5 right
+    //
+    // Extra small safety margin keeps the Row
+    // inside the screen on narrow devices.
+
+    const horizontalPadding = 10.0;
+    const safetySpace = 12.0;
+
+    final availableWidth =
+        screenWidth - horizontalPadding - safetySpace;
+
+    final calculatedSize =
+        (availableWidth / rowCount) - 34 - 10;
+
+    double maxSize;
+
     switch (count) {
       case 3:
-        return 88;
+        maxSize = 100;
+        break;
 
       case 4:
-        return 84;
+        maxSize = 94;
+        break;
 
       case 5:
-        return 76;
+        maxSize = 88;
+        break;
 
       case 6:
-        return 70;
+        maxSize = 82;
+        break;
 
       case 7:
       default:
-        return 68;
+        maxSize = 78;
+        break;
     }
+
+    // Never allow dice to become too small.
+    return calculatedSize.clamp(62.0, maxSize);
+  }
+
+  // ==========================================================
+  // PLAYER DICE THEME
+  // Each player gets a different dice theme
+  // ==========================================================
+
+  DiceTheme _getPlayerTheme(int index) {
+    final themes = DiceThemes.all;
+
+    if (themes.isEmpty) {
+      return controller.selectedDiceTheme;
+    }
+
+    return themes[index % themes.length];
   }
 
   // ==========================================================
@@ -452,9 +518,8 @@ class RollDiceScreen extends GetView<RollDiceController> {
       () {
         final value = controller.diceValues[index];
 
-        // Theme comes directly from the same RollDiceController.
-        final DiceTheme theme =
-            controller.selectedDiceTheme;
+        // Each player gets a different theme
+        final DiceTheme theme = _getPlayerTheme(index);
 
         return SizedBox(
           width: size + 34,
