@@ -701,50 +701,50 @@ class RollDiceScreen extends GetView<RollDiceController> {
   // ROLL BUTTON
   // ==========================================================
 
-  Widget _buildRollButton() {
-    return Obx(
-      () => Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-        ),
-        child: SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton.icon(
-            onPressed: controller.isRolling.value
-                ? null
-                : controller.rollAllDice,
-            icon: Icon(
-              controller.isRolling.value
-                  ? Icons.sync_rounded
-                  : Icons.casino_rounded,
+ Widget _buildRollButton() {
+  return Obx(
+    () => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SizedBox(
+        width: double.infinity,
+        height: 56,
+        child: ElevatedButton.icon(
+          onPressed: controller.isRolling.value
+              ? null
+              : () {
+                  debugPrint('ROLL BUTTON PRESSED');
+                  controller.rollAllDice();
+                },
+          icon: Icon(
+            controller.isRolling.value
+                ? Icons.sync_rounded
+                : Icons.casino_rounded,
+            color: Colors.white,
+            size: 21,
+          ),
+          label: Text(
+            controller.isRolling.value
+                ? 'ROLLING...'
+                : 'ROLL ALL DICE',
+            style: const TextStyle(
               color: Colors.white,
-              size: 21,
+              fontSize: 13,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.9,
             ),
-            label: Text(
-              controller.isRolling.value
-                  ? 'ROLLING...'
-                  : 'ROLL ALL DICE',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.9,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.purple,
-              disabledBackgroundColor:
-                  AppColors.purple.withOpacity(0.45),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.purple,
+            disabledBackgroundColor:
+                AppColors.purple.withValues(alpha: 0.45),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
-
+}

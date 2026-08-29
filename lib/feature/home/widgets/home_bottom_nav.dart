@@ -52,8 +52,8 @@ class HomeBottomNav extends StatelessWidget {
                 break;
 
               case 2:
-                if (Get.currentRoute != AppRoutes.profile) {
-                  Get.offNamed(AppRoutes.profile);
+                if (Get.currentRoute != AppRoutes.settings) {
+                  Get.offNamed(AppRoutes.settings);
                 }
                 break;
             }
@@ -87,16 +87,16 @@ class HomeBottomNav extends StatelessWidget {
             ),
 
             NavigationDestination(
-              icon: Icon(
-                Icons.person_outline_rounded,
-                color: Colors.white54,
-              ),
-              selectedIcon: Icon(
-                Icons.person_rounded,
-                color: AppColors.violet,
-              ),
-              label: 'Profile',
-            ),
+  icon: Icon(
+    Icons.settings_outlined,
+    color: Colors.white54,
+  ),
+  selectedIcon: Icon(
+    Icons.settings_rounded,
+    color: AppColors.violet,
+  ),
+  label: 'Settings',
+),
           ],
 
           labelTextStyle: const WidgetStatePropertyAll(
