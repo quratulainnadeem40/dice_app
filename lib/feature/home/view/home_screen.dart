@@ -1,14 +1,15 @@
+import 'package:dice_app/feature/home/controller/home_controller.dart';
+import 'package:dice_app/feature/home/widgets/achievement_preview.dart';
+import 'package:dice_app/feature/home/widgets/home_header.dart';
+import 'package:dice_app/feature/home/widgets/home_stat_card.dart';
 import 'package:dice_app/feature/home/widgets/quick_action.dart';
+import 'package:dice_app/feature/home/widgets/quick_roll_card.dart';
+import 'package:dice_app/feature/home/widgets/recent_roll_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/colors_custom.dart';
 import '../../../core/widgets/section_title.dart';
-import '../controller/home_controller.dart';
-import '../widgets/home_header.dart';
-import '../widgets/quick_roll_card.dart';
-import '../widgets/recent_roll_card.dart';
-import '../widgets/home_stat_card.dart';
-import '../widgets/achievement_preview.dart';
+
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({Key? key}) : super(key: key);

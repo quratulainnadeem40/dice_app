@@ -8,13 +8,23 @@ class SettingsController extends GetxController {
   final RxBool soundEnabled = true.obs;
   final RxBool vibrationEnabled = true.obs;
 
-  void incrementDice() => numberOfDice.value++;
-  void decrementDice() {
-    if (numberOfDice.value > 1) numberOfDice.value--;
+  void incrementDice() {
+    numberOfDice.value++;
   }
 
-  void incrementSides() => numberOfSides.value++;
+  void decrementDice() {
+    if (numberOfDice.value > 1) {
+      numberOfDice.value--;
+    }
+  }
+
+  void incrementSides() {
+    numberOfSides.value++;
+  }
+
   void decrementSides() {
-    if (numberOfSides.value > 2) numberOfSides.value--;
+    if (numberOfSides.value > 2) {
+      numberOfSides.value--;
+    }
   }
 }

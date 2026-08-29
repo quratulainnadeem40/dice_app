@@ -4,6 +4,8 @@ import '../controller/roll_dice_controller.dart';
 class RollDiceBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(RollDiceController());
+    Get.lazyPut<RollDiceController>(
+      () => RollDiceController(),
+    );
   }
 }

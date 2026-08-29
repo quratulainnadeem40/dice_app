@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors_custom.dart';
-import '../../../core/theme/text_styles_custom.dart';
 
 class DiceCard extends StatefulWidget {
   final int? result;

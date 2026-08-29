@@ -1,9 +1,10 @@
+import 'package:dice_app/core/routes/page_routes.dart';
+import 'package:dice_app/feature/intial_binding_app.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'core/routes/app_pages.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/theme_custom.dart';
-import 'core/bindings/initial_binding.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Dice Roller',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.darkTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
       initialRoute: AppRoutes.splash,

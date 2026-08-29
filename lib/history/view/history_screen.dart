@@ -1,65 +1,202 @@
+import 'package:dice_app/core/theme/textstyle_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../core/theme/colors_custom.dart';
 
-class HistoryScreen extends StatelessWidget {
-  const HistoryScreen({super.key});
+import '../controller/history_controller.dart';
+import '../widgets/history_card.dart';
+import '../widgets/history_header.dart';
+import '../widgets/history_empty_state.dart';
+
+class HistoryScreen extends GetView<HistoryController> {
+  const HistoryScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> historyItems = [
-      {'dice': '5 Dice', 'total': 22, 'time': 'Today, 10:45 AM', 'values': [5, 4, 6, 3, 4]},
-      {'dice': '3 Dice', 'total': 13, 'time': 'Today, 10:30 AM', 'values': [4, 4, 5]},
-      {'dice': '2 Dice', 'total': 8, 'time': 'Today, 09:15 AM', 'values': [6, 2]},
-      {'dice': '1 Dice', 'total': 4, 'time': 'Today, 09:00 AM', 'values': [4]},
-    ];
-
     return Scaffold(
-      backgroundColor: CustomColors.background,
+      backgroundColor: AppColors.darkBg,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        title: const Text('HISTORY'),
+        backgroundColor: AppColors.darkBgSecondary,
         elevation: 0,
-        title: const Text('HISTORY', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
+        actions: [
+          Obx(
+            () => controller.rollHistory.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    onPressed: () {
+                      Get.dialog(
+                        AlertDialog(
+                          backgroundColor: AppColors.darkBgSecondary,
+                          title: const Text('Clear History'),
+                          content: const Text(
+                            'Are you sure you want to clear all history?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Get.back(),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                controller.clearHistory();
+                                Get.back();
+                              },
+                              child: const Text(
+                                'Clear',
+                                style: TextStyle(color: AppColors.error),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  )
+                : const SizedBox.shrink(),
+          ),
+        ],
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(20),
-        itemCount: historyItems.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final item = historyItems[index];
-          return Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: CustomColors.surface,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                Text(item['dice'], style: const TextStyle(color: CustomColors.textSecondary)),
-                const SizedBox(width: 12),
-                Expanded(
+      body: SafeArea(
+        child: Obx(
+          () => controller.rollHistory.isEmpty
+              ? HistoryEmptyState(
+                  onAction: () => Get.toNamed('/roll-dice'),
+                )
+              : SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Wrap(
-                        spacing: 4,
-                        children: (item['values'] as List<int>).map((val) => Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(color: CustomColors.primaryPurple, borderRadius: BorderRadius.circular(4)),
-                          child: Center(child: Text('$val', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold))),
-                        )).toList(),
+                      // Header with stats
+                      HistoryHeader(
+                        totalRolls: controller.totalRolls,
+                        averageRoll: controller.averageRoll,
+                        maxRoll: controller.maxRoll,
+                        minRoll: controller.minRoll,
                       ),
-                      const SizedBox(height: 4),
-                      Text(item['time'], style: const TextStyle(color: CustomColors.textSecondary, fontSize: 10)),
+                      const SizedBox(height: 24),
+
+                      // Search Bar
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.cardBg,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.borderColor),
+                        ),
+                        child: TextField(
+                          onChanged: controller.setSearchQuery,
+                          style: AppTextStyles.bodyMedium,
+                          decoration: InputDecoration(
+                            hintText: 'Search rolls...',
+                            hintStyle: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textTertiary,
+                            ),
+                            border: InputBorder.none,
+                            prefixIcon: const Icon(Icons.search_rounded),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Filter chips
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Obx(
+                          () => Row(
+                            children: controller.availableFilters
+                                .map(
+                                  (filter) => Padding(
+                                    padding:
+                                        const EdgeInsets.only(right: 8),
+                                    child: FilterChip(
+                                      label: Text(filter),
+                                      selected:
+                                          controller.selectedFilter.value ==
+                                              filter,
+                                      onSelected: (_) =>
+                                          controller.setFilter(filter),
+                                      backgroundColor: AppColors.cardBg,
+                                      selectedColor: AppColors.primaryPurple,
+                                      labelStyle:
+                                          AppTextStyles.labelSmall.copyWith(
+                                        color: controller
+                                                    .selectedFilter.value ==
+                                                filter
+                                            ? AppColors.textPrimary
+                                            : AppColors.textSecondary,
+                                      ),
+                                      side: BorderSide(
+                                        color: controller
+                                                    .selectedFilter.value ==
+                                                filter
+                                            ? AppColors.primaryPurple
+                                            : AppColors.borderColor,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // History list
+                      Obx(
+                        () => controller.filteredHistory.isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 40,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.inbox_rounded,
+                                        size: 60,
+                                        color: AppColors.textTertiary,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'No rolls found',
+                                        style:
+                                            AppTextStyles.bodyMedium.copyWith(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    controller.filteredHistory.length,
+                                itemBuilder: (context, index) {
+                                  final item =
+                                      controller.filteredHistory[index];
+                                  return Padding(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 8),
+                                    child: HistoryCard(
+                                      item: item,
+                                      onDelete: () =>
+                                          controller.deleteItem(item.id),
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
-                Text('${item['total']}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              ],
-            ),
-          );
-        },
+        ),
       ),
     );
   }
