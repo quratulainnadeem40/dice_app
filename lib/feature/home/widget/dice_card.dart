@@ -1,96 +1,13 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:dice_app/core/routes/app_routes.dart';
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
 
-class DiceCard extends StatefulWidget {
+class DiceCard extends StatelessWidget {
   const DiceCard({super.key});
 
-  @override
-  State<DiceCard> createState() => _DiceCardState();
-}
-
-class _DiceCardState extends State<DiceCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _animationController;
-  late final AudioPlayer _audioPlayer;
-
-  bool _isRolling = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    );
-
-    // Initialize audio player
-    _audioPlayer = AudioPlayer();
-    _initAudio();
-  }
-
-  Future<void> _initAudio() async {
-    try {
-      await _audioPlayer.setAsset('assets/sounds/dice_sound.mp3');
-    } catch (e) {
-      debugPrint('Audio preload error: $e');
-    }
-  }
-
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  // ============================================================
-  // ROLL DICE -> SOUND + ANIMATION -> NAVIGATION
-  // ============================================================
-
-  Future<void> _rollAndNavigate() async {
-    if (_isRolling) return;
-
-    setState(() {
-      _isRolling = true;
-    });
-
-    _animationController.reset();
-
-    // Play rolling audio asset cleanly
-    _playRollSound();
-
-    // Start dice animation
-    await _animationController.forward();
-
-    if (!mounted) return;
-
-    setState(() {
-      _isRolling = false;
-    });
-
-    // Existing navigation
+  void _navigateToDiceScreen() {
     Get.toNamed(AppRoutes.rollDice);
-  }
-
-  // ============================================================
-  // ROLLING SOUND EXECUTOR
-  // ============================================================
-
-  Future<void> _playRollSound() async {
-    try {
-      // Reset sound position to beginning if re-triggered quickly
-      await _audioPlayer.seek(Duration.zero);
-      await _audioPlayer.play();
-    } catch (e) {
-      debugPrint('Error playing sound: $e');
-    }
   }
 
   @override
@@ -130,7 +47,6 @@ class _DiceCardState extends State<DiceCard>
           // ======================================================
           // HEADER
           // ======================================================
-
           Row(
             children: [
               Container(
@@ -146,9 +62,7 @@ class _DiceCardState extends State<DiceCard>
                   size: 18,
                 ),
               ),
-
               const SizedBox(width: 10),
-
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,81 +93,14 @@ class _DiceCardState extends State<DiceCard>
           const SizedBox(height: 22),
 
           // ======================================================
-          // CENTER DICE
+          // CENTER DICE (TAP TO NAVIGATE INSTANTLY)
           // ======================================================
-
           GestureDetector(
-            onTap: _rollAndNavigate,
+            onTap: _navigateToDiceScreen,
             child: SizedBox(
               width: 200,
               height: 190,
-              child: AnimatedBuilder(
-                animation: _animationController,
-                builder: (context, child) {
-                  final progress = _animationController.value;
-
-                  // No transformation at rest.
-                  if (progress == 0.0 || progress == 1.0) {
-                    return Center(
-                      child: child,
-                    );
-                  }
-
-                  // ------------------------------------------------
-                  // SMOOTH ROLL CURVE
-                  // ------------------------------------------------
-
-                  final rollCurve =
-                      Curves.easeInOutCubic.transform(progress);
-
-                  final bounceCurve =
-                      sin(progress * pi);
-
-                  // ------------------------------------------------
-                  // LIFT & MOVEMENT
-                  // ------------------------------------------------
-
-                  final lift = bounceCurve * 22;
-                  final moveX = sin(progress * pi * 5) * 11;
-                  final moveY = sin(progress * pi * 8) * 5;
-                  final scale = 1.0 + bounceCurve * 0.07;
-
-                  // ------------------------------------------------
-                  // 3D-LIKE ROTATION
-                  // ------------------------------------------------
-
-                  final rotationX = sin(rollCurve * pi * 2.0) * 0.55;
-                  final rotationY = rollCurve * pi * 2.0;
-                  final rotationZ = sin(rollCurve * pi * 3.0) * 0.38;
-
-                  return Center(
-                    child: Transform.translate(
-                      offset: Offset(
-                        moveX,
-                        -lift + moveY,
-                      ),
-                      child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()
-                          ..setEntry(
-                            3,
-                            2,
-                            0.0012,
-                          )
-                          ..rotateX(rotationX)
-                          ..rotateY(rotationY)
-                          ..rotateZ(rotationZ)
-                          ..scale(scale, scale, 1.0),
-                        child: child,
-                      ),
-                    ),
-                  );
-                },
-
-                // ==================================================
-                // ORIGINAL DICE
-                // ==================================================
-
+              child: Center(
                 child: _buildVisualDice(),
               ),
             ),
@@ -264,7 +111,6 @@ class _DiceCardState extends State<DiceCard>
           // ======================================================
           // TITLE
           // ======================================================
-
           const Text(
             'Ready to roll?',
             style: TextStyle(
@@ -287,14 +133,13 @@ class _DiceCardState extends State<DiceCard>
           const SizedBox(height: 17),
 
           // ======================================================
-          // ROLL BUTTON
+          // ROLL BUTTON (DIRECT NAVIGATION)
           // ======================================================
-
           SizedBox(
             width: double.infinity,
             height: 54,
             child: ElevatedButton.icon(
-              onPressed: _isRolling ? null : _rollAndNavigate,
+              onPressed: _navigateToDiceScreen,
               icon: const Icon(
                 Icons.casino_rounded,
                 color: Colors.white,
@@ -310,8 +155,6 @@ class _DiceCardState extends State<DiceCard>
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.purple,
-                disabledBackgroundColor:
-                    AppColors.purple.withValues(alpha: 0.65),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(17),
@@ -325,9 +168,8 @@ class _DiceCardState extends State<DiceCard>
   }
 
   // ============================================================
-  // ORIGINAL CENTER DICE
+  // VISUAL DICE
   // ============================================================
-
   Widget _buildVisualDice() {
     return Container(
       width: 155,
@@ -369,7 +211,6 @@ class _DiceCardState extends State<DiceCard>
   // ============================================================
   // PIP
   // ============================================================
-
   Widget _pip(
     double left,
     double top,
