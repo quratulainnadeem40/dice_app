@@ -6,6 +6,7 @@ import 'package:dice_app/feature/setting/widgets/dice_count_selector.dart';
 import 'package:dice_app/feature/setting/widgets/dices_sides_selector.dart';
 import 'package:dice_app/feature/setting/widgets/setting_section.dart';
 import 'package:dice_app/feature/setting/widgets/sound_setting_tile.dart';
+
 import 'package:dice_app/feature/setting/widgets/vibration_slides.dart';
 
 import 'package:flutter/material.dart';
@@ -60,18 +61,16 @@ class SettingsScreen extends GetView<SettingsController> {
                                 ],
                               ),
                             ),
-                            SettingsSection(
-                              title: '3. SOUND & VIBRATION',
-                              child: Column(
-                                children: [
-                                  const SoundSettingTile(),
-                                  const SizedBox(height: 10),
-                                  const VibrationSettingTile(),
-                                  const SizedBox(height: 10),
-                                  _buildRollSound(),
-                                ],
-                              ),
-                            ),
+                           SettingsSection(
+  title: '3. SOUND & VIBRATION',
+  child: Column(
+    children: const [
+      SoundSettingTile(),
+      SizedBox(height: 10),
+      VibrationSettingTile(),
+    ],
+  ),
+),
                             _buildPreview(),
                             const SizedBox(height: 4),
                             _buildSaveButton(),
@@ -130,101 +129,101 @@ class SettingsScreen extends GetView<SettingsController> {
     );
   }
 
-  Widget _buildRollSound() {
-    return Obx(
-      () => Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: const Color(0xFF111437),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: const [
-                Icon(
-                  Icons.casino_rounded,
-                  color: Color(0xFFB43DFF),
-                ),
-                SizedBox(width: 10),
-                Text(
-                  'Roll Sound',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: List.generate(
-                3,
-                (index) {
-                  final dice = index + 1;
-                  final selected = controller.selectedRollDice.value == dice;
+  // Widget _buildRollSound() {
+  //   return Obx(
+  //     () => Container(
+  //       padding: const EdgeInsets.all(14),
+  //       decoration: BoxDecoration(
+  //         color: const Color(0xFF111437),
+  //         borderRadius: BorderRadius.circular(15),
+  //       ),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Row(
+  //             children: const [
+  //               Icon(
+  //                 Icons.casino_rounded,
+  //                 color: Color(0xFFB43DFF),
+  //               ),
+  //               SizedBox(width: 10),
+  //               Text(
+  //                 'Roll Sound',
+  //                 style: TextStyle(
+  //                   color: Colors.white,
+  //                   fontSize: 16,
+  //                   fontWeight: FontWeight.w600,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           const SizedBox(height: 12),
+  //           Row(
+  //             children: List.generate(
+  //               3,
+  //               (index) {
+  //                 final dice = index + 1;
+  //                 final selected = controller.selectedRollDice.value == dice;
 
-                  return Expanded(
-                    child: GestureDetector(
-                      onTap: () => controller.selectRollDice(dice),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        margin: EdgeInsets.only(
-                          right: index == 2 ? 0 : 8,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: selected
-                              ? const Color(0xFF17183E)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: selected
-                                ? const Color(0xFFB43DFF)
-                                : const Color(0xFF292D55),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              selected
-                                  ? Icons.radio_button_checked
-                                  : Icons.radio_button_off,
-                              color: selected
-                                  ? const Color(0xFFB43DFF)
-                                  : const Color(0xFF999CB8),
-                              size: 18,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              'Dice $dice',
-                              style: TextStyle(
-                                color: selected
-                                    ? Colors.white
-                                    : const Color(0xFFB5B7CC),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //                 return Expanded(
+  //                   child: GestureDetector(
+  //                     onTap: () => controller.selectRollDice(dice),
+  //                     child: AnimatedContainer(
+  //                       duration: const Duration(milliseconds: 180),
+  //                       margin: EdgeInsets.only(
+  //                         right: index == 2 ? 0 : 8,
+  //                       ),
+  //                       padding: const EdgeInsets.symmetric(
+  //                         vertical: 12,
+  //                         horizontal: 8,
+  //                       ),
+  //                       decoration: BoxDecoration(
+  //                         color: selected
+  //                             ? const Color(0xFF17183E)
+  //                             : Colors.transparent,
+  //                         borderRadius: BorderRadius.circular(12),
+  //                         border: Border.all(
+  //                           color: selected
+  //                               ? const Color(0xFFB43DFF)
+  //                               : const Color(0xFF292D55),
+  //                         ),
+  //                       ),
+  //                       child: Row(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         children: [
+  //                           Icon(
+  //                             selected
+  //                                 ? Icons.radio_button_checked
+  //                                 : Icons.radio_button_off,
+  //                             color: selected
+  //                                 ? const Color(0xFFB43DFF)
+  //                                 : const Color(0xFF999CB8),
+  //                             size: 18,
+  //                           ),
+  //                           const SizedBox(width: 5),
+  //                           Text(
+  //                             'Dice $dice',
+  //                             style: TextStyle(
+  //                               color: selected
+  //                                   ? Colors.white
+  //                                   : const Color(0xFFB5B7CC),
+  //                               fontSize: 13,
+  //                               fontWeight: FontWeight.w600,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildPreview() {
     return SettingsSection(
