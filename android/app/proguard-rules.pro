@@ -6,6 +6,13 @@
 -keep class io.flutter.** { *; }
 -keep class io.flutter.plugins.** { *; }
 
+# Google Play Core & Deferred Components
+-dontwarn com.google.android.play.core.**
+
+# Flutter TTS
+-dontwarn com.tundralabs.fluttertts.**
+-keep class com.tundralabs.fluttertts.** { *; }
+
 # Audio & Hardware
 -dontwarn com.ryanheise.just_audio.**
 -keep class com.ryanheise.just_audio.** { *; }
