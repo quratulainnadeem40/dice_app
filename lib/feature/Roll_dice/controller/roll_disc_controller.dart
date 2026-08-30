@@ -24,7 +24,6 @@ class RollDiceController extends GetxController {
   // ==========================================================
 
   late final SettingsController settingsController;
-
   late final HistoryController historyController;
 
   // ==========================================================
@@ -38,9 +37,15 @@ class RollDiceController extends GetxController {
   final Rx<DiceTheme> selectedDiceTheme =
       DiceThemes.all.first.obs;
 
-  final diceValues = <int>[1].obs;
+  final RxList<int> diceValues = <int>[1].obs;
 
   final isRolling = false.obs;
+
+  // ==========================================================
+  // PLAYER NAMES
+  // ==========================================================
+
+  final RxList<String> playerNames = <String>[].obs;
 
   // ==========================================================
   // INIT
@@ -66,62 +71,57 @@ class RollDiceController extends GetxController {
     // HISTORY CONTROLLER
     // --------------------------------------------------------
 
-   if (Get.isRegistered<HistoryController>()) {
-  historyController = Get.find<HistoryController>();
-} else {
-  historyController = Get.put(
-    HistoryController(),
-    permanent: true,
-  );
-}
+    if (Get.isRegistered<HistoryController>()) {
+      historyController = Get.find<HistoryController>();
+    } else {
+      historyController = Get.put(
+        HistoryController(),
+        permanent: true,
+      );
+    }
 
     // --------------------------------------------------------
-    // APPLY SETTINGS
+    // APPLY CURRENT SETTINGS
     // --------------------------------------------------------
 
-  // APPLY SETTINGS
-applySettings();
+    applySettings();
 
-// SETTINGS LISTENERS
-ever(
-  settingsController.diceSides,
-  (int newSides) {
-    diceSides.value = newSides;
-    updateDiceCount();
-  },
-);
-
-ever(
-  settingsController.diceColor,
-  (Color newColor) {
-    updateThemeFromColor(newColor);
-  },
-);
-
-ever(
-  settingsController.diceCount,
-  (int newCount) {
-    playerCount.value = newCount.clamp(1, 7);
-    updateDiceCount();
-  },
-);
     // --------------------------------------------------------
-    // SETTINGS LISTENERS
+    // LISTEN TO DICE SIDES
     // --------------------------------------------------------
 
-    ever(
+    ever<int>(
       settingsController.diceSides,
       (int newSides) {
         diceSides.value = newSides;
-
         updateDiceCount();
       },
     );
 
-    ever(
+    // --------------------------------------------------------
+    // LISTEN TO DICE COLOR
+    // --------------------------------------------------------
+
+    ever<Color>(
       settingsController.diceColor,
       (Color newColor) {
         updateThemeFromColor(newColor);
+      },
+    );
+
+    // --------------------------------------------------------
+    // LISTEN TO DICE COUNT
+    // --------------------------------------------------------
+
+    ever<int>(
+      settingsController.diceCount,
+      (int newCount) {
+        final int count = newCount.clamp(1, 7);
+
+        playerCount.value = count;
+
+        updatePlayerNames();
+        updateDiceCount();
       },
     );
 
@@ -132,6 +132,8 @@ ever(
     updateThemeFromColor(
       settingsController.diceColor.value,
     );
+
+    updatePlayerNames();
 
     updateDiceCount();
 
@@ -149,18 +151,12 @@ ever(
   Future<void> _setupVoice() async {
     try {
       await flutterTts.setLanguage('en-US');
-
       await flutterTts.setSpeechRate(0.48);
-
       await flutterTts.setVolume(1.0);
-
       await flutterTts.setPitch(1.0);
-
       await flutterTts.awaitSpeakCompletion(true);
     } catch (e) {
-      debugPrint(
-        'Voice setup error: $e',
-      );
+      debugPrint('Voice setup error: $e');
     }
   }
 
@@ -185,38 +181,28 @@ ever(
       final int totalPlayers =
           diceValues.length.clamp(1, 7);
 
-      for (
-        int i = 0;
-        i < totalPlayers;
-        i++
-      ) {
-        final int playerNumber = i + 1;
+      for (int i = 0; i < totalPlayers; i++) {
+        final String playerName =
+            i < playerNames.length
+                ? playerNames[i]
+                : 'Player ${i + 1}';
 
-        final int diceNumber =
-            diceValues[i];
+        final int diceNumber = diceValues[i];
 
         final String sentence =
-            'Player $playerNumber rolled '
+            '$playerName rolled '
             '${_numberToWord(diceNumber)}';
 
-        await flutterTts.speak(
-          sentence,
-        );
+        await flutterTts.speak(sentence);
 
-        if (
-          i < totalPlayers - 1
-        ) {
+        if (i < totalPlayers - 1) {
           await Future.delayed(
-            const Duration(
-              milliseconds: 500,
-            ),
+            const Duration(milliseconds: 500),
           );
         }
       }
     } catch (e) {
-      debugPrint(
-        'Voice error: $e',
-      );
+      debugPrint('Voice error: $e');
     } finally {
       _isSpeaking = false;
     }
@@ -232,9 +218,7 @@ ever(
     try {
       await flutterTts.stop();
     } catch (e) {
-      debugPrint(
-        'Stop voice error: $e',
-      );
+      debugPrint('Stop voice error: $e');
     }
   }
 
@@ -266,8 +250,7 @@ ever(
       20: 'Twenty',
     };
 
-    return numbers[number] ??
-        number.toString();
+    return numbers[number] ?? number.toString();
   }
 
   // ==========================================================
@@ -275,51 +258,228 @@ ever(
   // ==========================================================
 
   void updateThemeFromColor(Color color) {
-  if (color == Colors.transparent) {
-    // Multi-color mode
-    selectedDiceTheme.value =
-        DiceThemes.all.first;
-    return;
-  }
+    if (color == Colors.transparent) {
+      selectedDiceTheme.value = DiceThemes.all.first;
+      return;
+    }
 
-  selectedDiceTheme.value = DiceTheme(
-    id: 'custom_theme_${color.value}',
-    name: 'Custom Theme',
-    colors: [
-      color,
-      color.withValues(alpha: 0.7),
-    ],
-    glowColor: color,
-  );
-}
+    selectedDiceTheme.value = DiceTheme(
+      id: 'custom_theme_${color.value}',
+      name: 'Custom Theme',
+      colors: [
+        color,
+        color.withValues(alpha: 0.7),
+      ],
+      glowColor: color,
+    );
+  }
 
   // ==========================================================
   // APPLY SETTINGS
   // ==========================================================
 
-void applySettings() {
-  playerCount.value = settingsController.diceCount.value.clamp(1, 7);
+  void applySettings() {
+    playerCount.value =
+        settingsController.diceCount.value.clamp(1, 7);
 
-  diceSides.value = settingsController.diceSides.value;
+    diceSides.value =
+        settingsController.diceSides.value;
 
-  updateThemeFromColor(
-    settingsController.diceColor.value,
-  );
+    updateThemeFromColor(
+      settingsController.diceColor.value,
+    );
 
-  updateDiceCount();
-}
+    updatePlayerNames();
+    updateDiceCount();
+  }
+
+  // ==========================================================
+  // UPDATE PLAYER NAMES
+  // ==========================================================
+
+  void updatePlayerNames() {
+    final List<String> oldNames =
+        List<String>.from(playerNames);
+
+    final List<String> newNames = List.generate(
+      playerCount.value,
+      (index) {
+        if (index < oldNames.length &&
+            oldNames[index].trim().isNotEmpty) {
+          return oldNames[index];
+        }
+
+        return 'Player ${index + 1}';
+      },
+    );
+
+    playerNames.assignAll(newNames);
+  }
+
+  // ==========================================================
+  // SET PLAYER NAME
+  // ==========================================================
+
+  void setPlayerName(
+    int index,
+    String name,
+  ) {
+    if (index < 0 || index >= playerNames.length) {
+      return;
+    }
+
+    final String trimmedName = name.trim();
+
+    if (trimmedName.isEmpty) {
+      playerNames[index] = 'Player ${index + 1}';
+    } else {
+      playerNames[index] = trimmedName;
+    }
+
+    playerNames.refresh();
+  }
+
+  // ==========================================================
+  // GET PLAYER NAME
+  // ==========================================================
+
+  String getPlayerName(int index) {
+    if (index < 0 || index >= playerNames.length) {
+      return 'Player ${index + 1}';
+    }
+
+    final String name = playerNames[index].trim();
+
+    if (name.isEmpty) {
+      return 'Player ${index + 1}';
+    }
+
+    return name;
+  }
+
+  // ==========================================================
+  // EDIT PLAYER NAME
+  // ==========================================================
+
+  Future<void> editPlayerName(
+    BuildContext context,
+    int index,
+  ) async {
+    if (index < 0 || index >= playerNames.length) {
+      return;
+    }
+
+    final TextEditingController textController =
+        TextEditingController(
+      text: getPlayerName(index),
+    );
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF111437),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          title: const Text(
+            'Edit Player Name',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          content: TextField(
+            controller: textController,
+            autofocus: true,
+            maxLength: 20,
+            textCapitalization:
+                TextCapitalization.words,
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+            decoration: InputDecoration(
+              hintText: 'Enter player name',
+              hintStyle: TextStyle(
+                color: Colors.white.withValues(
+                  alpha: 0.4,
+                ),
+              ),
+              counterStyle: TextStyle(
+                color: Colors.white.withValues(
+                  alpha: 0.4,
+                ),
+              ),
+              filled: true,
+              fillColor: Colors.white.withValues(
+                alpha: 0.06,
+              ),
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            onSubmitted: (_) {
+              setPlayerName(
+                index,
+                textController.text,
+              );
+
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.white70,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setPlayerName(
+                  index,
+                  textController.text,
+                );
+
+                Navigator.of(dialogContext).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    const Color(0xFF8B22E9),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Save',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    textController.dispose();
+  }
 
   // ==========================================================
   // PLAYER COUNT
   // ==========================================================
 
-  void setPlayerCount(
-    int count,
-  ) {
-    if (
-      count < 1 ||
-      count > 7
-    ) {
+  void setPlayerCount(int count) {
+    if (count < 1 || count > 7) {
       return;
     }
 
@@ -327,6 +487,7 @@ void applySettings() {
 
     playerCount.value = count;
 
+    updatePlayerNames();
     updateDiceCount();
   }
 
@@ -334,10 +495,8 @@ void applySettings() {
   // DICE SIDES
   // ==========================================================
 
-  void setDiceSides(
-    int sides,
-  ) {
-    if (sides < 2) {
+  void setDiceSides(int sides) {
+    if (sides < 3 || sides > 20) {
       return;
     }
 
@@ -352,11 +511,8 @@ void applySettings() {
   // DICE THEME
   // ==========================================================
 
-  void setDiceTheme(
-    DiceTheme theme,
-  ) {
-    selectedDiceTheme.value =
-        theme;
+  void setDiceTheme(DiceTheme theme) {
+    selectedDiceTheme.value = theme;
   }
 
   // ==========================================================
@@ -364,10 +520,30 @@ void applySettings() {
   // ==========================================================
 
   void updateDiceCount() {
+    final int count =
+        playerCount.value.clamp(1, 7);
+
     diceValues.assignAll(
       List.generate(
-        playerCount.value,
+        count,
         (_) => 1,
+      ),
+    );
+
+    final List<String> oldNames =
+        List<String>.from(playerNames);
+
+    playerNames.assignAll(
+      List.generate(
+        count,
+        (index) {
+          if (index < oldNames.length &&
+              oldNames[index].trim().isNotEmpty) {
+            return oldNames[index];
+          }
+
+          return 'Player ${index + 1}';
+        },
       ),
     );
   }
@@ -377,20 +553,20 @@ void applySettings() {
   // ==========================================================
 
   void _saveToHistory(List<int> results) {
-  if (results.isEmpty) {
-    return;
+    if (results.isEmpty) {
+      return;
+    }
+
+    historyController.addHistory(
+      results: List<int>.from(results),
+      playerCount: playerCount.value,
+      diceSides: diceSides.value,
+    );
+
+    debugPrint(
+      'History saved successfully: $results',
+    );
   }
-
-  historyController.addHistory(
-    results: List<int>.from(results),
-    playerCount: playerCount.value,
-    diceSides: diceSides.value,
-  );
-
-  debugPrint(
-    'History saved successfully: $results',
-  );
-}
 
   // ==========================================================
   // ROLL ALL DICE
@@ -401,58 +577,35 @@ void applySettings() {
       return;
     }
 
-    // --------------------------------------------------------
-    // STOP PREVIOUS VOICE
-    // --------------------------------------------------------
-
     await stopVoice();
-
-    // --------------------------------------------------------
-    // START ROLLING
-    // --------------------------------------------------------
 
     isRolling.value = true;
 
     try {
-      // ======================================================
+      // ------------------------------------------------------
       // ANIMATION SPEED
-      // ======================================================
+      // ------------------------------------------------------
 
       final double speed =
-          settingsController
-              .animationSpeed
-              .value;
+          settingsController.animationSpeed.value;
 
       final int stepDelay =
           ((250 - (speed * 180)))
               .round()
-              .clamp(
-                30,
-                250,
-              );
+              .clamp(30, 250);
 
       final int totalSteps =
-          ((800 - (speed * 500)) /
-                  stepDelay)
+          ((800 - (speed * 500)) / stepDelay)
               .round()
-              .clamp(
-                4,
-                12,
-              );
+              .clamp(4, 12);
 
-      // ======================================================
+      // ------------------------------------------------------
       // DICE ANIMATION
-      // ======================================================
+      // ------------------------------------------------------
 
-      for (
-        int i = 0;
-        i < totalSteps;
-        i++
-      ) {
+      for (int i = 0; i < totalSteps; i++) {
         await Future.delayed(
-          Duration(
-            milliseconds: stepDelay,
-          ),
+          Duration(milliseconds: stepDelay),
         );
 
         diceValues.assignAll(
@@ -468,42 +621,36 @@ void applySettings() {
         );
       }
 
-      // ======================================================
+      // ------------------------------------------------------
       // FINAL RESULTS
-      // ======================================================
+      // ------------------------------------------------------
 
       final List<int> finalResults =
-          List<int>.from(
-        diceValues,
-      );
+          List<int>.from(diceValues);
 
       debugPrint(
         'Final Results: $finalResults',
       );
 
-      // ======================================================
-      // SAVE ONCE
-      // ======================================================
+      // ------------------------------------------------------
+      // SAVE TO HISTORY
+      // ------------------------------------------------------
 
-      _saveToHistory(
-        finalResults,
-      );
+      _saveToHistory(finalResults);
 
-      // ======================================================
+      // ------------------------------------------------------
       // ROLL FINISHED
-      // ======================================================
+      // ------------------------------------------------------
 
       isRolling.value = false;
 
-      // ======================================================
-      // SPEAK FINAL RESULTS
-      // ======================================================
+      // ------------------------------------------------------
+      // SPEAK RESULTS
+      // ------------------------------------------------------
 
       await speakDiceResults();
     } catch (e) {
-      debugPrint(
-        'Roll error: $e',
-      );
+      debugPrint('Roll error: $e');
 
       isRolling.value = false;
     }
@@ -516,21 +663,15 @@ void applySettings() {
   void clearHistory() {
     historyController.clearHistory();
 
-    debugPrint(
-      'History cleared',
-    );
+    debugPrint('History cleared');
   }
 
   // ==========================================================
-  // REMOVE ONE HISTORY ITEM
+  // REMOVE HISTORY ITEM
   // ==========================================================
 
-  void removeHistoryItem(
-    int index,
-  ) {
-    historyController.removeHistory(
-      index,
-    );
+  void removeHistoryItem(int index) {
+    historyController.removeHistory(index);
   }
 
   // ==========================================================

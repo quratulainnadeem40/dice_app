@@ -46,69 +46,76 @@ class RollDiceScreen extends StatelessWidget {
           // MAIN CONTENT
           // ==================================================
 
-         SafeArea(
-  child: Column(
-    children: [
-      _buildTopBar(),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildTopBar(),
 
-      const SizedBox(height: 8),
+                const SizedBox(height: 8),
 
-      _buildHeading(controller),
+                _buildHeading(controller),
 
-      const SizedBox(height: 14),
+                const SizedBox(height: 14),
 
-      // ==========================
-      // NUMBER OF PLAYERS
-      // ==========================
-
-      const Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18),
-          child: Text(
-            'NUMBER OF PLAYERS',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.1,
-            ),
-          ),
-        ),
-      ),
-
-      const SizedBox(height: 7),
-
-      _buildPlayerSelector(controller),
-
-      const SizedBox(height: 14),
-
-      // ==========================
-      // NUMBER OF DICE SIDES
-      // ==========================
-
-      const Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18),
-          child: Text(
-            'NUMBER OF DICE SIDES',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.1,
-            ),
-          ),
-        ),
-      ),
-
-                
                 // ==================================================
-                // DICE SIDES SELECTOR
+                // NUMBER OF PLAYERS
                 // ==================================================
 
-                _buildDiceSidesSelector(controller),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(
+                      horizontal: 18,
+                    ),
+                    child: Text(
+                      'NUMBER OF PLAYERS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight:
+                            FontWeight.w800,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 7),
+
+                _buildPlayerSelector(controller),
+
+                const SizedBox(height: 14),
+
+                // ==================================================
+                // NUMBER OF DICE SIDES
+                // ==================================================
+
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(
+                      horizontal: 18,
+                    ),
+                    child: Text(
+                      'NUMBER OF DICE SIDES',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight:
+                            FontWeight.w800,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 7),
+
+                _buildDiceSidesSelector(
+                  controller,
+                ),
 
                 const SizedBox(height: 8),
 
@@ -188,7 +195,8 @@ class RollDiceScreen extends StatelessWidget {
                 color: Colors.white.withValues(
                   alpha: 0.045,
                 ),
-                borderRadius: BorderRadius.circular(13),
+                borderRadius:
+                    BorderRadius.circular(13),
                 border: Border.all(
                   color: Colors.white.withValues(
                     alpha: 0.08,
@@ -228,7 +236,8 @@ class RollDiceScreen extends StatelessWidget {
                 color: Colors.white.withValues(
                   alpha: 0.045,
                 ),
-                borderRadius: BorderRadius.circular(13),
+                borderRadius:
+                    BorderRadius.circular(13),
                 border: Border.all(
                   color: Colors.white.withValues(
                     alpha: 0.08,
@@ -305,7 +314,8 @@ class RollDiceScreen extends StatelessWidget {
           color: Colors.white.withValues(
             alpha: 0.045,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius:
+              BorderRadius.circular(16),
           border: Border.all(
             color: Colors.white.withValues(
               alpha: 0.075,
@@ -316,10 +326,11 @@ class RollDiceScreen extends StatelessWidget {
           children: List.generate(
             7,
             (index) {
-              final number = index + 1;
+              final int number = index + 1;
 
-              final selected =
-                  controller.playerCount.value == number;
+              final bool selected =
+                  controller.playerCount.value ==
+                      number;
 
               return Expanded(
                 child: GestureDetector(
@@ -329,20 +340,27 @@ class RollDiceScreen extends StatelessWidget {
                     );
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(
+                    duration:
+                        const Duration(
                       milliseconds: 180,
                     ),
                     height: 42,
-                    margin: const EdgeInsets.symmetric(
+                    margin:
+                        const EdgeInsets.symmetric(
                       horizontal: 2,
                     ),
-                    decoration: BoxDecoration(
+                    decoration:
+                        BoxDecoration(
                       borderRadius:
-                          BorderRadius.circular(11),
+                          BorderRadius.circular(
+                        11,
+                      ),
                       gradient: selected
                           ? const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                              begin:
+                                  Alignment.topLeft,
+                              end: Alignment
+                                  .bottomRight,
                               colors: [
                                 AppColors.purple,
                                 AppColors.violet,
@@ -351,13 +369,15 @@ class RollDiceScreen extends StatelessWidget {
                           : null,
                       color: selected
                           ? null
-                          : Colors.white.withValues(
+                          : Colors.white
+                              .withValues(
                               alpha: 0.025,
                             ),
                       border: Border.all(
                         color: selected
                             ? Colors.transparent
-                            : Colors.white.withValues(
+                            : Colors.white
+                                .withValues(
                                 alpha: 0.06,
                               ),
                       ),
@@ -368,11 +388,13 @@ class RollDiceScreen extends StatelessWidget {
                         style: TextStyle(
                           color: selected
                               ? Colors.white
-                              : Colors.white.withValues(
+                              : Colors.white
+                                  .withValues(
                                   alpha: 0.62,
                                 ),
                           fontSize: 13,
-                          fontWeight: FontWeight.w800,
+                          fontWeight:
+                              FontWeight.w800,
                         ),
                       ),
                     ),
@@ -395,7 +417,7 @@ class RollDiceScreen extends StatelessWidget {
   ) {
     return Obx(
       () {
-        final selectedSides =
+        final int selectedSides =
             controller.diceSides.value;
 
         return Container(
@@ -403,14 +425,16 @@ class RollDiceScreen extends StatelessWidget {
             horizontal: 18,
           ),
           height: 52,
-          padding: const EdgeInsets.symmetric(
+          padding:
+              const EdgeInsets.symmetric(
             horizontal: 5,
           ),
           decoration: BoxDecoration(
             color: Colors.white.withValues(
               alpha: 0.045,
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius:
+                BorderRadius.circular(16),
             border: Border.all(
               color: Colors.white.withValues(
                 alpha: 0.075,
@@ -419,28 +443,24 @@ class RollDiceScreen extends StatelessWidget {
           ),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(
+            physics:
+                const BouncingScrollPhysics(),
+            padding:
+                const EdgeInsets.symmetric(
               horizontal: 3,
             ),
-
-            // 3 through 20 = 18 values
             itemCount: 18,
-
-            separatorBuilder: (
-              context,
-              index,
-            ) {
-              return const SizedBox(width: 4);
+            separatorBuilder:
+                (context, index) {
+              return const SizedBox(
+                width: 4,
+              );
             },
+            itemBuilder:
+                (context, index) {
+              final int sides = index + 3;
 
-            itemBuilder: (
-              context,
-              index,
-            ) {
-              final sides = index + 3;
-
-              final isSelected =
+              final bool isSelected =
                   selectedSides == sides;
 
               return GestureDetector(
@@ -450,16 +470,21 @@ class RollDiceScreen extends StatelessWidget {
                   );
                 },
                 child: AnimatedContainer(
-                  duration: const Duration(
+                  duration:
+                      const Duration(
                     milliseconds: 180,
                   ),
                   width: 40,
-                  margin: const EdgeInsets.symmetric(
+                  margin:
+                      const EdgeInsets.symmetric(
                     vertical: 5,
                   ),
-                  decoration: BoxDecoration(
+                  decoration:
+                      BoxDecoration(
                     borderRadius:
-                        BorderRadius.circular(11),
+                        BorderRadius.circular(
+                      11,
+                    ),
                     gradient: isSelected
                         ? const LinearGradient(
                             colors: [
@@ -470,13 +495,15 @@ class RollDiceScreen extends StatelessWidget {
                         : null,
                     color: isSelected
                         ? null
-                        : Colors.white.withValues(
+                        : Colors.white
+                            .withValues(
                             alpha: 0.025,
                           ),
                     border: Border.all(
                       color: isSelected
                           ? Colors.transparent
-                          : Colors.white.withValues(
+                          : Colors.white
+                              .withValues(
                               alpha: 0.06,
                             ),
                     ),
@@ -487,11 +514,13 @@ class RollDiceScreen extends StatelessWidget {
                       style: TextStyle(
                         color: isSelected
                             ? Colors.white
-                            : Colors.white.withValues(
+                            : Colors.white
+                                .withValues(
                                 alpha: 0.62,
                               ),
                         fontSize: 13,
-                        fontWeight: FontWeight.w800,
+                        fontWeight:
+                            FontWeight.w800,
                       ),
                     ),
                   ),
@@ -514,12 +543,13 @@ class RollDiceScreen extends StatelessWidget {
   ) {
     return Obx(
       () {
-        final count =
+        final int count =
             controller.playerCount.value;
 
         if (count == 1) {
           return Center(
             child: _buildPlayerDice(
+              context,
               0,
               size: 155,
               controller: controller,
@@ -528,13 +558,13 @@ class RollDiceScreen extends StatelessWidget {
         }
 
         if (count == 2) {
-          final screenWidth =
+          final double screenWidth =
               MediaQuery.sizeOf(context).width;
 
-          final availableWidth =
+          final double availableWidth =
               screenWidth - 56;
 
-          final size =
+          final double size =
               ((availableWidth - 30) / 2)
                   .clamp(85.0, 120.0);
 
@@ -544,14 +574,14 @@ class RollDiceScreen extends StatelessWidget {
                   MainAxisAlignment.center,
               children: [
                 _buildPlayerDice(
+                  context,
                   0,
                   size: size,
                   controller: controller,
                 ),
-
                 const SizedBox(width: 20),
-
                 _buildPlayerDice(
+                  context,
                   1,
                   size: size,
                   controller: controller,
@@ -579,7 +609,7 @@ class RollDiceScreen extends StatelessWidget {
     BuildContext context,
     RollDiceController controller,
   ) {
-    final rows = <List<int>>[];
+    final List<List<int>> rows = [];
 
     if (count == 3) {
       rows.add([0, 1, 2]);
@@ -598,14 +628,15 @@ class RollDiceScreen extends StatelessWidget {
       rows.add([5, 6]);
     }
 
-    final screenWidth =
+    final double screenWidth =
         MediaQuery.sizeOf(context).width;
 
     return Center(
       child: SingleChildScrollView(
         physics:
             const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(
+        padding:
+            const EdgeInsets.symmetric(
           vertical: 8,
           horizontal: 8,
         ),
@@ -615,7 +646,7 @@ class RollDiceScreen extends StatelessWidget {
               MainAxisAlignment.center,
           children: rows.map(
             (row) {
-              final diceSize =
+              final double diceSize =
                   _responsiveDiceSize(
                 count: count,
                 rowCount: row.length,
@@ -637,10 +668,13 @@ class RollDiceScreen extends StatelessWidget {
                             const EdgeInsets.symmetric(
                           horizontal: 5,
                         ),
-                        child: _buildPlayerDice(
+                        child:
+                            _buildPlayerDice(
+                          context,
                           index,
                           size: diceSize,
-                          controller: controller,
+                          controller:
+                              controller,
                         ),
                       );
                     },
@@ -663,15 +697,15 @@ class RollDiceScreen extends StatelessWidget {
     required int rowCount,
     required double screenWidth,
   }) {
-    const horizontalPadding = 10.0;
-    const safetySpace = 12.0;
+    const double horizontalPadding = 10.0;
+    const double safetySpace = 12.0;
 
-    final availableWidth =
+    final double availableWidth =
         screenWidth -
         horizontalPadding -
         safetySpace;
 
-    final calculatedSize =
+    final double calculatedSize =
         (availableWidth / rowCount) -
         34 -
         10;
@@ -716,26 +750,18 @@ class RollDiceScreen extends StatelessWidget {
     RollDiceController controller,
   ) {
     final SettingsController settings =
-        Get.find<SettingsController>();
-
-    // ========================================================
-    // MULTI COLOR
-    // ========================================================
+        controller.settingsController;
 
     if (settings.isMultiColor) {
-      final themes = DiceThemes.all;
+      final List<DiceTheme> themes =
+          DiceThemes.all;
 
       if (themes.isEmpty) {
         return controller.selectedDiceTheme.value;
       }
 
-      return themes[
-          index % themes.length];
+      return themes[index % themes.length];
     }
-
-    // ========================================================
-    // SINGLE SELECTED COLOR
-    // ========================================================
 
     return controller.selectedDiceTheme.value;
   }
@@ -745,6 +771,7 @@ class RollDiceScreen extends StatelessWidget {
   // ==========================================================
 
   Widget _buildPlayerDice(
+    BuildContext context,
     int index, {
     required double size,
     required RollDiceController controller,
@@ -756,7 +783,7 @@ class RollDiceScreen extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        final value =
+        final int value =
             controller.diceValues[index];
 
         final DiceTheme theme =
@@ -770,45 +797,90 @@ class RollDiceScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                constraints:
-                    const BoxConstraints(
-                  minWidth: 78,
-                  maxWidth: 100,
-                ),
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 9,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: theme.glowColor
-                      .withValues(alpha: 0.08),
-                  borderRadius:
-                      BorderRadius.circular(20),
-                  border: Border.all(
-                    color: theme.glowColor
-                        .withValues(alpha: 0.18),
+              // ==================================================
+              // PLAYER NAME
+              // ==================================================
+
+              GestureDetector(
+                onTap: () {
+                  controller.editPlayerName(
+                    context,
+                    index,
+                  );
+                },
+                child: Container(
+                  constraints:
+                      const BoxConstraints(
+                    minWidth: 78,
+                    maxWidth: 100,
                   ),
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    'PLAYER ${index + 1}',
-                    maxLines: 1,
-                    style: TextStyle(
-                      color:
-                          theme.glowColor,
-                      fontSize: 8.5,
-                      fontWeight:
-                          FontWeight.w900,
-                      letterSpacing: 0.7,
+                  padding:
+                      const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 5,
+                  ),
+                  decoration:
+                      BoxDecoration(
+                    color: theme.glowColor
+                        .withValues(
+                      alpha: 0.08,
                     ),
+                    borderRadius:
+                        BorderRadius.circular(
+                      20,
+                    ),
+                    border: Border.all(
+                      color: theme.glowColor
+                          .withValues(
+                        alpha: 0.18,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize:
+                        MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          controller
+                              .getPlayerName(
+                            index,
+                          )
+                              .toUpperCase(),
+                          maxLines: 1,
+                          overflow:
+                              TextOverflow.ellipsis,
+                          textAlign:
+                              TextAlign.center,
+                          style: TextStyle(
+                            color:
+                                theme.glowColor,
+                            fontSize: 8.5,
+                            fontWeight:
+                                FontWeight.w900,
+                            letterSpacing: 0.7,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 3,
+                      ),
+                      Icon(
+                        Icons.edit_rounded,
+                        color:
+                            theme.glowColor,
+                        size: 9,
+                      ),
+                    ],
                   ),
                 ),
               ),
 
               const SizedBox(height: 8),
+
+              // ==================================================
+              // DICE
+              // ==================================================
 
               AnimatedScale(
                 duration:
@@ -875,34 +947,42 @@ class RollDiceScreen extends StatelessWidget {
         child: Container(
           width: size,
           height: size,
-          decoration: BoxDecoration(
+          decoration:
+              BoxDecoration(
             borderRadius:
                 BorderRadius.circular(
               size * 0.22,
             ),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin:
+                  Alignment.topLeft,
+              end:
+                  Alignment.bottomRight,
               colors: theme.colors,
             ),
             border: Border.all(
-              color: Colors.white.withValues(
+              color:
+                  Colors.white.withValues(
                 alpha: 0.85,
               ),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.glowColor
-                    .withValues(alpha: 0.40),
+                color:
+                    theme.glowColor.withValues(
+                  alpha: 0.40,
+                ),
                 blurRadius: 14,
                 spreadRadius: 1,
                 offset:
                     const Offset(-2, 4),
               ),
               BoxShadow(
-                color: Colors.black
-                    .withValues(alpha: 0.40),
+                color:
+                    Colors.black.withValues(
+                  alpha: 0.40,
+                ),
                 blurRadius: 8,
                 offset:
                     const Offset(3, 5),
@@ -911,6 +991,10 @@ class RollDiceScreen extends StatelessWidget {
           ),
           child: Stack(
             children: [
+              // ==================================================
+              // HIGHLIGHT
+              // ==================================================
+
               Positioned(
                 top: size * 0.07,
                 left: size * 0.10,
@@ -919,8 +1003,8 @@ class RollDiceScreen extends StatelessWidget {
                   height: size * 0.09,
                   decoration:
                       BoxDecoration(
-                    color: Colors.white
-                        .withValues(
+                    color:
+                        Colors.white.withValues(
                       alpha: 0.75,
                     ),
                     borderRadius:
@@ -930,6 +1014,10 @@ class RollDiceScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
+              // ==================================================
+              // DICE VALUE
+              // ==================================================
 
               Center(
                 child:
@@ -941,7 +1029,8 @@ class RollDiceScreen extends StatelessWidget {
                           )
                         : Text(
                             '$value',
-                            style: TextStyle(
+                            style:
+                                TextStyle(
                               color:
                                   Colors.white,
                               fontSize:
@@ -960,7 +1049,8 @@ class RollDiceScreen extends StatelessWidget {
                                     2,
                                     2,
                                   ),
-                                  blurRadius: 3,
+                                  blurRadius:
+                                      3,
                                 ),
                               ],
                             ),
@@ -981,7 +1071,7 @@ class RollDiceScreen extends StatelessWidget {
     required int value,
     required double size,
   }) {
-    final positions = switch (value) {
+    final List<int> positions = switch (value) {
       1 => [4],
       2 => [0, 8],
       3 => [0, 4, 8],
@@ -1003,10 +1093,8 @@ class RollDiceScreen extends StatelessWidget {
             const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
         ),
-        itemBuilder: (
-          context,
-          index,
-        ) {
+        itemBuilder:
+            (context, index) {
           if (!positions.contains(index)) {
             return const SizedBox.shrink();
           }
