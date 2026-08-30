@@ -7,6 +7,8 @@ import 'package:dice_app/feature/setting/controller/setting_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:vibration/vibration.dart';
 
 class RollDiceController extends GetxController {
   final Random _random = Random();
@@ -18,6 +20,12 @@ class RollDiceController extends GetxController {
   final FlutterTts flutterTts = FlutterTts();
 
   bool _isSpeaking = false;
+
+  // ==========================================================
+  // DICE ROLL SOUND
+  // ==========================================================
+
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   // ==========================================================
   // CONTROLLERS
@@ -142,6 +150,12 @@ class RollDiceController extends GetxController {
     // --------------------------------------------------------
 
     _setupVoice();
+
+    // --------------------------------------------------------
+    // SOUND
+    // --------------------------------------------------------
+
+    _setupSound();
   }
 
   // ==========================================================
@@ -157,6 +171,122 @@ class RollDiceController extends GetxController {
       await flutterTts.awaitSpeakCompletion(true);
     } catch (e) {
       debugPrint('Voice setup error: $e');
+    }
+  }
+
+  // ==========================================================
+  // SOUND SETUP
+  // ==========================================================
+
+  Future<void> _setupSound() async {
+    try {
+      await _audioPlayer.setAsset(
+        'assets/sounds/dice_sound.mp3',
+      );
+
+      await _audioPlayer.setVolume(
+        settingsController.soundVolume.value,
+      );
+
+      // Listen for volume changes.
+      ever<double>(
+        settingsController.soundVolume,
+        (double volume) async {
+          try {
+            await _audioPlayer.setVolume(
+              volume.clamp(0.0, 1.0),
+            );
+          } catch (e) {
+            debugPrint(
+              'Sound volume error: $e',
+            );
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint(
+        'Sound setup error: $e',
+      );
+    }
+  }
+
+  // ==========================================================
+  // PLAY DICE SOUND
+  // ==========================================================
+
+  Future<void> _playDiceSound() async {
+    if (!settingsController.soundEnabled.value) {
+      return;
+    }
+
+    try {
+      final double volume =
+          settingsController.soundVolume.value
+              .clamp(0.0, 1.0);
+
+      await _audioPlayer.setVolume(volume);
+
+      await _audioPlayer.seek(
+        Duration.zero,
+      );
+
+      await _audioPlayer.play();
+    } catch (e) {
+      debugPrint(
+        'Dice sound error: $e',
+      );
+    }
+  }
+
+  // ==========================================================
+  // STOP DICE SOUND
+  // ==========================================================
+
+  Future<void> _stopDiceSound() async {
+    try {
+      await _audioPlayer.stop();
+    } catch (e) {
+      debugPrint(
+        'Stop dice sound error: $e',
+      );
+    }
+  }
+
+  // ==========================================================
+  // VIBRATION
+  // ==========================================================
+
+  Future<void> _vibrate() async {
+    if (!settingsController.vibrationEnabled.value) {
+      return;
+    }
+
+    try {
+      final bool hasVibrator =
+          await Vibration.hasVibrator();
+
+      if (!hasVibrator) {
+        return;
+      }
+
+      final double intensity =
+          settingsController.vibrationIntensity.value
+              .clamp(0.0, 1.0);
+
+      if (intensity <= 0) {
+        return;
+      }
+
+      final int duration =
+          (20 + (intensity * 80)).round();
+
+      await Vibration.vibrate(
+        duration: duration,
+      );
+    } catch (e) {
+      debugPrint(
+        'Vibration error: $e',
+      );
     }
   }
 
@@ -187,22 +317,29 @@ class RollDiceController extends GetxController {
                 ? playerNames[i]
                 : 'Player ${i + 1}';
 
-        final int diceNumber = diceValues[i];
+        final int diceNumber =
+            diceValues[i];
 
         final String sentence =
             '$playerName rolled '
             '${_numberToWord(diceNumber)}';
 
-        await flutterTts.speak(sentence);
+        await flutterTts.speak(
+          sentence,
+        );
 
         if (i < totalPlayers - 1) {
           await Future.delayed(
-            const Duration(milliseconds: 500),
+            const Duration(
+              milliseconds: 500,
+            ),
           );
         }
       }
     } catch (e) {
-      debugPrint('Voice error: $e');
+      debugPrint(
+        'Voice error: $e',
+      );
     } finally {
       _isSpeaking = false;
     }
@@ -218,7 +355,9 @@ class RollDiceController extends GetxController {
     try {
       await flutterTts.stop();
     } catch (e) {
-      debugPrint('Stop voice error: $e');
+      debugPrint(
+        'Stop voice error: $e',
+      );
     }
   }
 
@@ -250,7 +389,8 @@ class RollDiceController extends GetxController {
       20: 'Twenty',
     };
 
-    return numbers[number] ?? number.toString();
+    return numbers[number] ??
+        number.toString();
   }
 
   // ==========================================================
@@ -259,11 +399,13 @@ class RollDiceController extends GetxController {
 
   void updateThemeFromColor(Color color) {
     if (color == Colors.transparent) {
-      selectedDiceTheme.value = DiceThemes.all.first;
+      selectedDiceTheme.value =
+          DiceThemes.all.first;
       return;
     }
 
-    selectedDiceTheme.value = DiceTheme(
+    selectedDiceTheme.value =
+        DiceTheme(
       id: 'custom_theme_${color.value}',
       name: 'Custom Theme',
       colors: [
@@ -280,7 +422,8 @@ class RollDiceController extends GetxController {
 
   void applySettings() {
     playerCount.value =
-        settingsController.diceCount.value.clamp(1, 7);
+        settingsController.diceCount.value
+            .clamp(1, 7);
 
     diceSides.value =
         settingsController.diceSides.value;
@@ -290,6 +433,7 @@ class RollDiceController extends GetxController {
     );
 
     updatePlayerNames();
+
     updateDiceCount();
   }
 
@@ -301,11 +445,14 @@ class RollDiceController extends GetxController {
     final List<String> oldNames =
         List<String>.from(playerNames);
 
-    final List<String> newNames = List.generate(
+    final List<String> newNames =
+        List.generate(
       playerCount.value,
       (index) {
         if (index < oldNames.length &&
-            oldNames[index].trim().isNotEmpty) {
+            oldNames[index]
+                .trim()
+                .isNotEmpty) {
           return oldNames[index];
         }
 
@@ -313,7 +460,9 @@ class RollDiceController extends GetxController {
       },
     );
 
-    playerNames.assignAll(newNames);
+    playerNames.assignAll(
+      newNames,
+    );
   }
 
   // ==========================================================
@@ -324,16 +473,20 @@ class RollDiceController extends GetxController {
     int index,
     String name,
   ) {
-    if (index < 0 || index >= playerNames.length) {
+    if (index < 0 ||
+        index >= playerNames.length) {
       return;
     }
 
-    final String trimmedName = name.trim();
+    final String trimmedName =
+        name.trim();
 
     if (trimmedName.isEmpty) {
-      playerNames[index] = 'Player ${index + 1}';
+      playerNames[index] =
+          'Player ${index + 1}';
     } else {
-      playerNames[index] = trimmedName;
+      playerNames[index] =
+          trimmedName;
     }
 
     playerNames.refresh();
@@ -344,11 +497,13 @@ class RollDiceController extends GetxController {
   // ==========================================================
 
   String getPlayerName(int index) {
-    if (index < 0 || index >= playerNames.length) {
+    if (index < 0 ||
+        index >= playerNames.length) {
       return 'Player ${index + 1}';
     }
 
-    final String name = playerNames[index].trim();
+    final String name =
+        playerNames[index].trim();
 
     if (name.isEmpty) {
       return 'Player ${index + 1}';
@@ -365,11 +520,13 @@ class RollDiceController extends GetxController {
     BuildContext context,
     int index,
   ) async {
-    if (index < 0 || index >= playerNames.length) {
+    if (index < 0 ||
+        index >= playerNames.length) {
       return;
     }
 
-    final TextEditingController textController =
+    final TextEditingController
+        textController =
         TextEditingController(
       text: getPlayerName(index),
     );
@@ -378,46 +535,63 @@ class RollDiceController extends GetxController {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF111437),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+          backgroundColor:
+              const Color(0xFF111437),
+          shape:
+              RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(18),
           ),
           title: const Text(
             'Edit Player Name',
             style: TextStyle(
               color: Colors.white,
-              fontWeight: FontWeight.w800,
+              fontWeight:
+                  FontWeight.w800,
             ),
           ),
           content: TextField(
-            controller: textController,
+            controller:
+                textController,
             autofocus: true,
             maxLength: 20,
             textCapitalization:
                 TextCapitalization.words,
-            style: const TextStyle(
+            style:
+                const TextStyle(
               color: Colors.white,
             ),
-            decoration: InputDecoration(
-              hintText: 'Enter player name',
-              hintStyle: TextStyle(
-                color: Colors.white.withValues(
+            decoration:
+                InputDecoration(
+              hintText:
+                  'Enter player name',
+              hintStyle:
+                  TextStyle(
+                color: Colors.white
+                    .withValues(
                   alpha: 0.4,
                 ),
               ),
-              counterStyle: TextStyle(
-                color: Colors.white.withValues(
+              counterStyle:
+                  TextStyle(
+                color: Colors.white
+                    .withValues(
                   alpha: 0.4,
                 ),
               ),
               filled: true,
-              fillColor: Colors.white.withValues(
+              fillColor: Colors.white
+                  .withValues(
                 alpha: 0.06,
               ),
-              border: OutlineInputBorder(
+              border:
+                  OutlineInputBorder(
                 borderRadius:
-                    BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+                    BorderRadius.circular(
+                  12,
+                ),
+                borderSide:
+                    BorderSide.none,
               ),
             ),
             onSubmitted: (_) {
@@ -426,18 +600,23 @@ class RollDiceController extends GetxController {
                 textController.text,
               );
 
-              Navigator.of(dialogContext).pop();
+              Navigator.of(
+                dialogContext,
+              ).pop();
             },
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(dialogContext).pop();
+                Navigator.of(
+                  dialogContext,
+                ).pop();
               },
               child: const Text(
                 'Cancel',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color:
+                      Colors.white70,
                 ),
               ),
             ),
@@ -448,21 +627,30 @@ class RollDiceController extends GetxController {
                   textController.text,
                 );
 
-                Navigator.of(dialogContext).pop();
+                Navigator.of(
+                  dialogContext,
+                ).pop();
               },
-              style: ElevatedButton.styleFrom(
+              style:
+                  ElevatedButton.styleFrom(
                 backgroundColor:
-                    const Color(0xFF8B22E9),
-                shape: RoundedRectangleBorder(
+                    const Color(
+                  0xFF8B22E9,
+                ),
+                shape:
+                    RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(10),
+                      BorderRadius.circular(
+                    10,
+                  ),
                 ),
               ),
               child: const Text(
                 'Save',
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.w700,
+                  fontWeight:
+                      FontWeight.w700,
                 ),
               ),
             ),
@@ -478,14 +666,18 @@ class RollDiceController extends GetxController {
   // PLAYER COUNT
   // ==========================================================
 
-  void setPlayerCount(int count) {
-    if (count < 1 || count > 7) {
+  void setPlayerCount(
+    int count,
+  ) {
+    if (count < 1 ||
+        count > 7) {
       return;
     }
 
     stopVoice();
 
-    playerCount.value = count;
+    playerCount.value =
+        count;
 
     updatePlayerNames();
     updateDiceCount();
@@ -495,14 +687,18 @@ class RollDiceController extends GetxController {
   // DICE SIDES
   // ==========================================================
 
-  void setDiceSides(int sides) {
-    if (sides < 3 || sides > 20) {
+  void setDiceSides(
+    int sides,
+  ) {
+    if (sides < 3 ||
+        sides > 20) {
       return;
     }
 
     stopVoice();
 
-    diceSides.value = sides;
+    diceSides.value =
+        sides;
 
     updateDiceCount();
   }
@@ -511,8 +707,11 @@ class RollDiceController extends GetxController {
   // DICE THEME
   // ==========================================================
 
-  void setDiceTheme(DiceTheme theme) {
-    selectedDiceTheme.value = theme;
+  void setDiceTheme(
+    DiceTheme theme,
+  ) {
+    selectedDiceTheme.value =
+        theme;
   }
 
   // ==========================================================
@@ -521,7 +720,8 @@ class RollDiceController extends GetxController {
 
   void updateDiceCount() {
     final int count =
-        playerCount.value.clamp(1, 7);
+        playerCount.value
+            .clamp(1, 7);
 
     diceValues.assignAll(
       List.generate(
@@ -531,14 +731,19 @@ class RollDiceController extends GetxController {
     );
 
     final List<String> oldNames =
-        List<String>.from(playerNames);
+        List<String>.from(
+      playerNames,
+    );
 
     playerNames.assignAll(
       List.generate(
         count,
         (index) {
-          if (index < oldNames.length &&
-              oldNames[index].trim().isNotEmpty) {
+          if (index <
+                  oldNames.length &&
+              oldNames[index]
+                  .trim()
+                  .isNotEmpty) {
             return oldNames[index];
           }
 
@@ -552,19 +757,25 @@ class RollDiceController extends GetxController {
   // SAVE RESULT TO HISTORY
   // ==========================================================
 
-  void _saveToHistory(List<int> results) {
+  void _saveToHistory(
+    List<int> results,
+  ) {
     if (results.isEmpty) {
       return;
     }
 
     historyController.addHistory(
-      results: List<int>.from(results),
-      playerCount: playerCount.value,
-      diceSides: diceSides.value,
+      results:
+          List<int>.from(results),
+      playerCount:
+          playerCount.value,
+      diceSides:
+          diceSides.value,
     );
 
     debugPrint(
-      'History saved successfully: $results',
+      'History saved successfully: '
+      '$results',
     );
   }
 
@@ -578,6 +789,7 @@ class RollDiceController extends GetxController {
     }
 
     await stopVoice();
+    await _stopDiceSound();
 
     isRolling.value = true;
 
@@ -587,26 +799,54 @@ class RollDiceController extends GetxController {
       // ------------------------------------------------------
 
       final double speed =
-          settingsController.animationSpeed.value;
+          settingsController
+              .animationSpeed
+              .value
+              .clamp(0.0, 1.0);
 
       final int stepDelay =
-          ((250 - (speed * 180)))
+          ((250 -
+                  (speed * 180)))
               .round()
-              .clamp(30, 250);
+              .clamp(
+                30,
+                250,
+              );
 
       final int totalSteps =
-          ((800 - (speed * 500)) / stepDelay)
+          ((800 -
+                      (speed * 500)) /
+                  stepDelay)
               .round()
-              .clamp(4, 12);
+              .clamp(
+                4,
+                12,
+              );
+
+      // ------------------------------------------------------
+      // START SOUND
+      // ------------------------------------------------------
+
+      await _playDiceSound();
 
       // ------------------------------------------------------
       // DICE ANIMATION
       // ------------------------------------------------------
 
-      for (int i = 0; i < totalSteps; i++) {
+      for (
+        int i = 0;
+        i < totalSteps;
+        i++
+      ) {
         await Future.delayed(
-          Duration(milliseconds: stepDelay),
+          Duration(
+            milliseconds:
+                stepDelay,
+          ),
         );
+
+        // Vibration on every animation step.
+        await _vibrate();
 
         diceValues.assignAll(
           List.generate(
@@ -626,23 +866,35 @@ class RollDiceController extends GetxController {
       // ------------------------------------------------------
 
       final List<int> finalResults =
-          List<int>.from(diceValues);
+          List<int>.from(
+        diceValues,
+      );
 
       debugPrint(
-        'Final Results: $finalResults',
+        'Final Results: '
+        '$finalResults',
       );
 
       // ------------------------------------------------------
       // SAVE TO HISTORY
       // ------------------------------------------------------
 
-      _saveToHistory(finalResults);
+      _saveToHistory(
+        finalResults,
+      );
 
       // ------------------------------------------------------
       // ROLL FINISHED
       // ------------------------------------------------------
 
-      isRolling.value = false;
+      isRolling.value =
+          false;
+
+      // ------------------------------------------------------
+      // STOP ROLL SOUND
+      // ------------------------------------------------------
+
+      await _stopDiceSound();
 
       // ------------------------------------------------------
       // SPEAK RESULTS
@@ -650,9 +902,14 @@ class RollDiceController extends GetxController {
 
       await speakDiceResults();
     } catch (e) {
-      debugPrint('Roll error: $e');
+      debugPrint(
+        'Roll error: $e',
+      );
 
-      isRolling.value = false;
+      isRolling.value =
+          false;
+
+      await _stopDiceSound();
     }
   }
 
@@ -663,15 +920,20 @@ class RollDiceController extends GetxController {
   void clearHistory() {
     historyController.clearHistory();
 
-    debugPrint('History cleared');
+    debugPrint(
+      'History cleared',
+    );
   }
 
   // ==========================================================
   // REMOVE HISTORY ITEM
   // ==========================================================
 
-  void removeHistoryItem(int index) {
-    historyController.removeHistory(index);
+  void removeHistoryItem(
+    int index,
+  ) {
+    historyController
+        .removeHistory(index);
   }
 
   // ==========================================================
@@ -683,6 +945,8 @@ class RollDiceController extends GetxController {
     _isSpeaking = false;
 
     flutterTts.stop();
+
+    _audioPlayer.dispose();
 
     super.onClose();
   }

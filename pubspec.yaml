@@ -31,3 +31,4 @@ flutter:
 
   assets:
     - assets/imagesfolder/disciamge.png
+    - assets/sounds/dice_sound.mp3
