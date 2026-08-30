@@ -44,97 +44,53 @@ class HomePage extends StatelessWidget {
  
   Widget _buildHeader() { 
     return Row( 
-      mainAxisAlignment: MainAxisAlignment.spaceBetween, 
       children: [ 
-        Row( 
-          children: [ 
-            Container( 
-              width: 48, 
-              height: 48, 
-              decoration: BoxDecoration( 
-                borderRadius: BorderRadius.circular(15), 
-                boxShadow: [ 
-                  BoxShadow( 
-                    color: AppColors.purple.withValues(alpha: 0.35), 
-                    blurRadius: 18, 
-                    spreadRadius: 1, 
-                  ), 
-                ], 
-              ), 
-              child: ClipRRect( 
-                borderRadius: BorderRadius.circular(15), 
-                child: Image.asset( 
-                  'assets/imagesfolder/logo_dice.png', 
-                  fit: BoxFit.cover, 
-                ), 
-              ), 
-            ), 
- 
-            const SizedBox(width: 13), 
- 
-            Column( 
-              crossAxisAlignment: CrossAxisAlignment.start, 
-              children: [ 
-                const Text( 
-                  'DICEROLL', 
-                  style: TextStyle( 
-                    color: Colors.white, 
-                    fontSize: 19, 
-                    fontWeight: FontWeight.w900, 
-                    letterSpacing: 3, 
-                  ), 
-                ), 
-                Text( 
-                  'ROLL • PLAY • WIN', 
-                  style: TextStyle( 
-                    color: Colors.white.withValues(alpha: 0.42), 
-                    fontSize: 8, 
-                    fontWeight: FontWeight.w600, 
-                    letterSpacing: 1.2, 
-                  ), 
-                ), 
-              ], 
-            ), 
-          ], 
-        ), 
-        
-        // Notification Icon Button from the screenshot
         Container( 
-          width: 46, 
-          height: 46, 
+          width: 48, 
+          height: 48, 
           decoration: BoxDecoration( 
-            shape: BoxShape.circle, 
-            color: Colors.white.withValues(alpha: 0.035), 
-            border: Border.all( 
-              color: Colors.white.withValues(alpha: 0.07), 
-            ), 
-          ), 
-          child: Stack( 
-            children: [ 
-              IconButton( 
-                onPressed: () { 
-                  // Add your notification action here 
-                }, 
-                icon: const Icon( 
-                  Icons.notifications_none_rounded, 
-                  color: Colors.white, 
-                  size: 20, 
-                ), 
-              ), 
-              Positioned( 
-                top: 11, 
-                right: 12, 
-                child: Container( 
-                  width: 7, 
-                  height: 7, 
-                  decoration: const BoxDecoration( 
-                    color: Colors.pinkAccent, 
-                    shape: BoxShape.circle, 
-                  ), 
-                ), 
+            borderRadius: BorderRadius.circular(15), 
+            boxShadow: [ 
+              BoxShadow( 
+                color: AppColors.purple.withValues(alpha: 0.35), 
+                blurRadius: 18, 
+                spreadRadius: 1, 
               ), 
             ], 
           ), 
+          child: ClipRRect( 
+            borderRadius: BorderRadius.circular(15), 
+            child: Image.asset( 
+              'assets/imagesfolder/logo_dice.png', 
+              fit: BoxFit.cover, 
+            ), 
+          ), 
+        ), 
+
+        const SizedBox(width: 13), 
+
+        Column( 
+          crossAxisAlignment: CrossAxisAlignment.start, 
+          children: [ 
+            const Text( 
+              'DICEROLL', 
+              style: TextStyle( 
+                color: Colors.white, 
+                fontSize: 19, 
+                fontWeight: FontWeight.w900, 
+                letterSpacing: 3, 
+              ), 
+            ), 
+            Text( 
+              'ROLL • PLAY • WIN', 
+              style: TextStyle( 
+                color: Colors.white.withValues(alpha: 0.42), 
+                fontSize: 8, 
+                fontWeight: FontWeight.w600, 
+                letterSpacing: 1.2, 
+              ), 
+            ), 
+          ], 
         ), 
       ], 
     ); 
