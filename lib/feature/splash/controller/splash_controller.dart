@@ -15,6 +15,7 @@ class SplashController extends GetxController
   final RxInt activeDot = 0.obs;
 
   Timer? _timer;
+  Timer? _dotsTimer;
 
   @override
   void onInit() {
@@ -50,7 +51,7 @@ class SplashController extends GetxController
   }
 
   void _startLoadingDots() {
-    Timer.periodic(
+    _dotsTimer = Timer.periodic(
       const Duration(milliseconds: 350),
       (timer) {
         if (isClosed) {
@@ -65,9 +66,11 @@ class SplashController extends GetxController
 
   void _startSplashTimer() {
     _timer = Timer(
-      const Duration(seconds: 2),
+      const Duration(seconds: 3),
       () {
-        Get.offNamed(AppRoutes.home);
+        if (!isClosed) {
+          Get.offNamed(AppRoutes.home);
+        }
       },
     );
   }
@@ -75,6 +78,7 @@ class SplashController extends GetxController
   @override
   void onClose() {
     _timer?.cancel();
+    _dotsTimer?.cancel();
     animationController.dispose();
     super.onClose();
   }

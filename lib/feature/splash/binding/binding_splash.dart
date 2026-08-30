@@ -1,4 +1,4 @@
-import 'package:dice_app/feature/splash/controller/spalsh_controller.dart';
+import 'package:dice_app/feature/splash/controller/splash_controller.dart';
 
 import 'package:get/get.dart';
 

@@ -1,7 +1,7 @@
 import 'package:dice_app/core/routes/app_routes.dart';
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/core/theme/custom_textstyle.dart';
-import 'package:dice_app/feature/splash/controller/spalsh_controller.dart';
+import 'package:dice_app/feature/splash/controller/splash_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -41,31 +41,49 @@ class SplashScreen extends GetView<SplashController> {
       const SizedBox(height: 24),
 
       // GET READY
-      GestureDetector(
-        onTap: () {
-          Get.offNamed(AppRoutes.home);
-        },
-        child: const Text(
+      
+         const Text(
           'G E T   R E A D Y . . .',
           style: AppTextStyles.loading,
         ),
-      ),
+    
 
       const SizedBox(height: 22),
 
       // Dots
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildLoadingDot(AppColors.violet),
-          const SizedBox(width: 14),
-          _buildLoadingDot(AppColors.purple),
-          const SizedBox(width: 14),
-          _buildLoadingDot(AppColors.purple),
-          const SizedBox(width: 14),
-          _buildLoadingDot(AppColors.purple),
-        ],
+     Obx(
+  () => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: List.generate(
+      4,
+      (index) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 7),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: controller.activeDot.value == index ? 27 : 23,
+          height: controller.activeDot.value == index ? 27 : 23,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: controller.activeDot.value == index
+                ? AppColors.violet
+                : AppColors.purple,
+            boxShadow: [
+              BoxShadow(
+                color: (controller.activeDot.value == index
+                        ? AppColors.violet
+                        : AppColors.purple)
+                    .withOpacity(0.5),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+        ),
       ),
+    ),
+  ),
+),
+      
     ],
   ),
 ),

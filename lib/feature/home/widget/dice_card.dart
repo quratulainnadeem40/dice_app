@@ -115,6 +115,7 @@ class DiceCard extends StatelessWidget {
               onPressed: () {
                 Get.toNamed(AppRoutes.rollDice);
               },
+            
               icon: const Icon(
                 Icons.casino_rounded,
                 color: Colors.white,
