@@ -66,13 +66,14 @@ class RollDiceController extends GetxController {
     // HISTORY CONTROLLER
     // --------------------------------------------------------
 
-    if (Get.isRegistered<HistoryController>()) {
-      historyController = Get.find<HistoryController>();
-    } else {
-      historyController = Get.put(
-        HistoryController(),
-      );
-    }
+   if (Get.isRegistered<HistoryController>()) {
+  historyController = Get.find<HistoryController>();
+} else {
+  historyController = Get.put(
+    HistoryController(),
+    permanent: true,
+  );
+}
 
     // --------------------------------------------------------
     // APPLY SETTINGS
@@ -375,23 +376,21 @@ void applySettings() {
   // SAVE RESULT TO HISTORY
   // ==========================================================
 
-  void _saveToHistory(
-    List<int> results,
-  ) {
-    if (results.isEmpty) {
-      return;
-    }
-
-    historyController.addHistory(
-      results: results,
-      playerCount: playerCount.value,
-      diceSides: diceSides.value,
-    );
-
-    debugPrint(
-      'History saved: $results',
-    );
+  void _saveToHistory(List<int> results) {
+  if (results.isEmpty) {
+    return;
   }
+
+  historyController.addHistory(
+    results: List<int>.from(results),
+    playerCount: playerCount.value,
+    diceSides: diceSides.value,
+  );
+
+  debugPrint(
+    'History saved successfully: $results',
+  );
+}
 
   // ==========================================================
   // ROLL ALL DICE

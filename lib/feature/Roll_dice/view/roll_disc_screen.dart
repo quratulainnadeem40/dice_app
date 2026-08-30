@@ -46,25 +46,64 @@ class RollDiceScreen extends StatelessWidget {
           // MAIN CONTENT
           // ==================================================
 
-          SafeArea(
-            child: Column(
-              children: [
-                _buildTopBar(),
+         SafeArea(
+  child: Column(
+    children: [
+      _buildTopBar(),
 
-                const SizedBox(height: 8),
+      const SizedBox(height: 8),
 
-                _buildHeading(controller),
+      _buildHeading(controller),
 
-                const SizedBox(height: 14),
+      const SizedBox(height: 14),
 
-                // ==================================================
-                // PLAYER SELECTOR
-                // ==================================================
+      // ==========================
+      // NUMBER OF PLAYERS
+      // ==========================
 
-                _buildPlayerSelector(controller),
+      const Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18),
+          child: Text(
+            'NUMBER OF PLAYERS',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.1,
+            ),
+          ),
+        ),
+      ),
 
-                const SizedBox(height: 8),
+      const SizedBox(height: 7),
 
+      _buildPlayerSelector(controller),
+
+      const SizedBox(height: 14),
+
+      // ==========================
+      // NUMBER OF DICE SIDES
+      // ==========================
+
+      const Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18),
+          child: Text(
+            'NUMBER OF DICE SIDES',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.1,
+            ),
+          ),
+        ),
+      ),
+
+                
                 // ==================================================
                 // DICE SIDES SELECTOR
                 // ==================================================
