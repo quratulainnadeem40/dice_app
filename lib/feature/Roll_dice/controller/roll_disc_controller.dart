@@ -130,6 +130,8 @@ ever<int>(
     _setupSound();
   }
 
+  int _speechSessionId = 0;
+
   // ==========================================================
   // VOICE SETUP
   // ==========================================================
@@ -137,8 +139,10 @@ ever<int>(
   Future<void> _setupVoice() async {
     try {
       await flutterTts.setLanguage('en-US');
-      await flutterTts.setSpeechRate(0.48);
-      await flutterTts.setVolume(1.0);
+      await flutterTts.setSpeechRate(0.50);
+      await flutterTts.setVolume(
+        settingsController.settings.soundVolume.clamp(0.0, 1.0),
+      );
       await flutterTts.setPitch(1.0);
       await flutterTts.awaitSpeakCompletion(true);
     } catch (e) {
@@ -249,7 +253,13 @@ ever<int>(
   // ==========================================================
 
   Future<void> speakDiceResults() async {
-    if (_isSpeaking) {
+    if (!settingsController.settings.soundEnabled) {
+      return;
+    }
+
+    final double volume =
+        settingsController.settings.soundVolume.clamp(0.0, 1.0);
+    if (volume <= 0.0) {
       return;
     }
 
@@ -257,15 +267,23 @@ ever<int>(
       return;
     }
 
+    final int currentSession = ++_speechSessionId;
     _isSpeaking = true;
 
     try {
       await flutterTts.stop();
+      await flutterTts.setVolume(volume);
+      await flutterTts.setSpeechRate(0.50);
+      await flutterTts.setPitch(1.0);
 
       final int totalPlayers =
           diceValues.length.clamp(1, 7);
 
       for (int i = 0; i < totalPlayers; i++) {
+        if (_speechSessionId != currentSession) {
+          break;
+        }
+
         final int diceNumber =
             diceValues[i];
 
@@ -279,7 +297,7 @@ ever<int>(
                   : 'Player ${i + 1}';
 
           sentence =
-              '$playerName rolled '
+              '$playerName, '
               '${_numberToWord(diceNumber)}';
         }
 
@@ -287,10 +305,14 @@ ever<int>(
           sentence,
         );
 
+        if (_speechSessionId != currentSession) {
+          break;
+        }
+
         if (i < totalPlayers - 1) {
           await Future.delayed(
             const Duration(
-              milliseconds: 500,
+              milliseconds: 320,
             ),
           );
         }
@@ -300,7 +322,9 @@ ever<int>(
         'Voice error: $e',
       );
     } finally {
-      _isSpeaking = false;
+      if (_speechSessionId == currentSession) {
+        _isSpeaking = false;
+      }
     }
   }
 
@@ -309,6 +333,7 @@ ever<int>(
   // ==========================================================
 
   Future<void> stopVoice() async {
+    _speechSessionId++;
     _isSpeaking = false;
 
     try {
@@ -804,6 +829,12 @@ void setPlayerCount(
       // ------------------------------------------------------
 
       await _stopDiceSound();
+
+      await Future.delayed(
+        const Duration(
+          milliseconds: 140,
+        ),
+      );
 
       // ------------------------------------------------------
       // SPEAK RESULTS
