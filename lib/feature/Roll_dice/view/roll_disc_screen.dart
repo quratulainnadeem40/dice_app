@@ -290,7 +290,7 @@ class RollDiceScreen extends StatelessWidget {
           return Center(
             child: _buildPlayerDice(
               0,
-              size: 155,
+              size: 180,
               controller: controller,
             ),
           );
@@ -299,8 +299,7 @@ class RollDiceScreen extends StatelessWidget {
         if (count == 2) {
           final screenWidth = MediaQuery.sizeOf(context).width;
           final availableWidth = screenWidth - 56;
-          final size = ((availableWidth - 30) / 2).clamp(85.0, 120.0);
-
+         final size = ((availableWidth - 30) / 2).clamp(90.0, 135.0);
           return Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -421,23 +420,23 @@ class RollDiceScreen extends StatelessWidget {
     double maxSize;
 
     switch (count) {
-      case 3:
-        maxSize = 95;
-        break;
-      case 4:
-        maxSize = 90;
-        break;
-      case 5:
-        maxSize = 85;
-        break;
-      case 6:
-        maxSize = 80;
-        break;
-      case 7:
-      default:
-        maxSize = 75;
-        break;
-    }
+  case 3:
+    maxSize = 105;
+    break;
+  case 4:
+    maxSize = 100;
+    break;
+  case 5:
+    maxSize = 95;
+    break;
+  case 6:
+    maxSize = 90;
+    break;
+  case 7:
+  default:
+    maxSize = 85;
+    break;
+}
 
     return calculatedSize.clamp(55.0, maxSize);
   }
