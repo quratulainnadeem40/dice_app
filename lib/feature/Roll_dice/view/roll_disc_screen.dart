@@ -226,6 +226,39 @@ class RollDiceScreen extends StatelessWidget {
           const SizedBox(width: 8),
 
           // ======================================================
+          // HISTORY BUTTON
+          // ======================================================
+
+          GestureDetector(
+            onTap: () {
+              controller.stopVoice();
+              Get.toNamed('/history');
+            },
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(
+                  alpha: 0.045,
+                ),
+                borderRadius: BorderRadius.circular(13),
+                border: Border.all(
+                  color: Colors.white.withValues(
+                    alpha: 0.08,
+                  ),
+                ),
+              ),
+              child: const Icon(
+                Icons.history_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // ======================================================
           // SETTINGS BUTTON
           // ======================================================
 
