@@ -60,91 +60,37 @@ class RollDiceScreen extends StatelessWidget {
                 children: [
                   _buildTopBar(controller),
 
+                  const SizedBox(height: 10),
+
+                  // ==================================================
+                  // PLAYERS & SIDES DROPDOWNS
+                  // ==================================================
+
+                  _buildDropdownSelectors(controller),
+
+                  const SizedBox(height: 10),
+
+                  // ==================================================
+                  // DICE AREA
+                  // ==================================================
+
+                  Expanded(
+                    child: _buildDiceArea(
+                      context,
+                      controller,
+                    ),
+                  ),
+
+                  // ==================================================
+                  // ROLL BUTTON
+                  // ==================================================
+
+                  _buildRollButton(controller),
+
                   const SizedBox(height: 12),
-
-                // ==================================================
-                // NUMBER OF PLAYERS
-                // ==================================================
-
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(
-                      horizontal: 18,
-                    ),
-                    child: Text(
-                      'NUMBER OF PLAYERS',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight:
-                            FontWeight.w800,
-                        letterSpacing: 1.1,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 7),
-
-                _buildPlayerSelector(controller),
-
-                const SizedBox(height: 14),
-
-                // ==================================================
-                // NUMBER OF DICE SIDES
-                // ==================================================
-
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(
-                      horizontal: 18,
-                    ),
-                    child: Text(
-                      'NUMBER OF DICE SIDES',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight:
-                            FontWeight.w800,
-                        letterSpacing: 1.1,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 7),
-
-                _buildDiceSidesSelector(
-                  controller,
-                ),
-
-                const SizedBox(height: 8),
-
-                // ==================================================
-                // DICE AREA
-                // ==================================================
-
-                Expanded(
-                  child: _buildDiceArea(
-                    context,
-                    controller,
-                  ),
-                ),
-
-                // ==================================================
-                // ROLL BUTTON
-                // ==================================================
-
-                _buildRollButton(controller),
-
-                const SizedBox(height: 12),
-              ],
+                ],
+              ),
             ),
-          ),
         ],
       ),
     ),
@@ -268,243 +214,174 @@ class RollDiceScreen extends StatelessWidget {
 
 
   // ==========================================================
-  // PLAYER SELECTOR
+  // PLAYERS & SIDES DROPDOWNS
   // ==========================================================
 
-  Widget _buildPlayerSelector(
-    RollDiceController controller,
-  ) {
-    return Obx(
-      () => Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 18,
-        ),
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(
-            alpha: 0.045,
-          ),
-          borderRadius:
-              BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white.withValues(
-              alpha: 0.075,
-            ),
-          ),
-        ),
-        child: Row(
-          children: List.generate(
-            7,
-            (index) {
-              final int number = index + 1;
+  Widget _buildDropdownSelectors(RollDiceController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: Row(
+        children: [
+          // ======================================================
+          // PLAYERS DROPDOWN
+          // ======================================================
 
-              final bool selected =
-                  controller.playerCount.value ==
-                      number;
-
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    controller.setPlayerCount(
-                      number,
-                    );
-                  },
-                  child: AnimatedContainer(
-                    duration:
-                        const Duration(
-                      milliseconds: 180,
-                    ),
-                    height: 42,
-                    margin:
-                        const EdgeInsets.symmetric(
-                      horizontal: 2,
-                    ),
-                    decoration:
-                        BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(
-                        11,
-                      ),
-                      gradient: selected
-                          ? const LinearGradient(
-                              begin:
-                                  Alignment.topLeft,
-                              end: Alignment
-                                  .bottomRight,
-                              colors: [
-                                AppColors.purple,
-                                AppColors.violet,
-                              ],
-                            )
-                          : null,
-                      color: selected
-                          ? null
-                          : Colors.white
-                              .withValues(
-                              alpha: 0.025,
-                            ),
-                      border: Border.all(
-                        color: selected
-                            ? Colors.transparent
-                            : Colors.white
-                                .withValues(
-                                alpha: 0.06,
-                              ),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$number',
-                        style: TextStyle(
-                          color: selected
-                              ? Colors.white
-                              : Colors.white
-                                  .withValues(
-                                  alpha: 0.62,
-                                ),
-                          fontSize: 13,
-                          fontWeight:
-                              FontWeight.w800,
-                        ),
-                      ),
-                    ),
+          Expanded(
+            child: Obx(
+              () => Container(
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: AppColors.purple.withValues(alpha: 0.35),
+                    width: 1.2,
                   ),
                 ),
-              );
-            },
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: controller.playerCount.value,
+                    dropdownColor: const Color(0xFF181238),
+                    borderRadius: BorderRadius.circular(16),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.violet,
+                      size: 20,
+                    ),
+                    isExpanded: true,
+                    items: List.generate(7, (index) {
+                      final int count = index + 1;
+                      final bool isSelected =
+                          count == controller.playerCount.value;
+
+                      return DropdownMenuItem<int>(
+                        value: count,
+                        child: Row(
+                          children: [
+                            Icon(
+                              count == 1
+                                  ? Icons.person_rounded
+                                  : Icons.people_alt_rounded,
+                              color: isSelected
+                                  ? AppColors.violet
+                                  : Colors.white70,
+                              size: 17,
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                '$count ${count == 1 ? 'Player' : 'Players'}',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.white70,
+                                  fontSize: 13,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w800
+                                      : FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.setPlayerCount(value);
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
+
+          const SizedBox(width: 12),
+
+          // ======================================================
+          // SIDES DROPDOWN
+          // ======================================================
+
+          Expanded(
+            child: Obx(
+              () => Container(
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: AppColors.purple.withValues(alpha: 0.35),
+                    width: 1.2,
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: controller.diceSides.value,
+                    dropdownColor: const Color(0xFF181238),
+                    borderRadius: BorderRadius.circular(16),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.violet,
+                      size: 20,
+                    ),
+                    isExpanded: true,
+                    items: List.generate(18, (index) {
+                      final int sides = index + 3;
+                      final bool isSelected =
+                          sides == controller.diceSides.value;
+
+                      return DropdownMenuItem<int>(
+                        value: sides,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.casino_rounded,
+                              color: isSelected
+                                  ? AppColors.violet
+                                  : Colors.white70,
+                              size: 17,
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                'D$sides ($sides Sides)',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.white70,
+                                  fontSize: 13,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w800
+                                      : FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.setDiceSides(value);
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   // ==========================================================
-  // DICE SIDES SELECTOR
-  // ==========================================================
-
-  Widget _buildDiceSidesSelector(
-    RollDiceController controller,
-  ) {
-    return Obx(
-      () {
-        final int selectedSides =
-            controller.diceSides.value;
-
-        return Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 18,
-          ),
-          height: 52,
-          padding:
-              const EdgeInsets.symmetric(
-            horizontal: 5,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(
-              alpha: 0.045,
-            ),
-            borderRadius:
-                BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(
-                alpha: 0.075,
-              ),
-            ),
-          ),
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            physics:
-                const BouncingScrollPhysics(),
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 3,
-            ),
-            itemCount: 18,
-            separatorBuilder:
-                (context, index) {
-              return const SizedBox(
-                width: 4,
-              );
-            },
-            itemBuilder:
-                (context, index) {
-              final int sides = index + 3;
-
-              final bool isSelected =
-                  selectedSides == sides;
-
-              return GestureDetector(
-                onTap: () {
-                  controller.setDiceSides(
-                    sides,
-                  );
-                },
-                child: AnimatedContainer(
-                  duration:
-                      const Duration(
-                    milliseconds: 180,
-                  ),
-                  width: 40,
-                  margin:
-                      const EdgeInsets.symmetric(
-                    vertical: 5,
-                  ),
-                  decoration:
-                      BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(
-                      11,
-                    ),
-                    gradient: isSelected
-                        ? const LinearGradient(
-                            colors: [
-                              AppColors.purple,
-                              AppColors.violet,
-                            ],
-                          )
-                        : null,
-                    color: isSelected
-                        ? null
-                        : Colors.white
-                            .withValues(
-                            alpha: 0.025,
-                          ),
-                    border: Border.all(
-                      color: isSelected
-                          ? Colors.transparent
-                          : Colors.white
-                              .withValues(
-                              alpha: 0.06,
-                            ),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$sides',
-                      style: TextStyle(
-                        color: isSelected
-                            ? Colors.white
-                            : Colors.white
-                                .withValues(
-                                alpha: 0.62,
-                              ),
-                        fontSize: 13,
-                        fontWeight:
-                            FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  // ==========================================================
-  // DICE AREA
+  // DICE AREA (INCREASED SIZE & BALANCED SPACING)
   // ==========================================================
 
   Widget _buildDiceArea(
@@ -519,9 +396,9 @@ class RollDiceScreen extends StatelessWidget {
                 controller.playerCount.value;
 
             if (count == 1) {
-              final double maxH = (constraints.maxHeight - 48).clamp(55.0, 160.0);
-              final double maxW = (constraints.maxWidth - 40).clamp(55.0, 160.0);
-              final double size = maxH < maxW ? maxH : maxW;
+              final double maxH = (constraints.maxHeight - 20).clamp(90.0, 230.0);
+              final double maxW = (constraints.maxWidth - 40).clamp(90.0, 230.0);
+              final double size = (maxH < maxW ? maxH : maxW).clamp(90.0, 230.0);
 
               return Center(
                 child: FittedBox(
@@ -538,10 +415,10 @@ class RollDiceScreen extends StatelessWidget {
 
             if (count == 2) {
               final double availableWidth =
-                  constraints.maxWidth - 56;
-              final double maxH = (constraints.maxHeight - 48).clamp(50.0, 120.0);
-              final double maxW = ((availableWidth - 30) / 2).clamp(50.0, 120.0);
-              final double size = maxH < maxW ? maxH : maxW;
+                  constraints.maxWidth - 44;
+              final double maxH = (constraints.maxHeight - 32).clamp(75.0, 165.0);
+              final double maxW = ((availableWidth - 24) / 2).clamp(75.0, 165.0);
+              final double size = (maxH < maxW ? maxH : maxW).clamp(75.0, 165.0);
 
               return Center(
                 child: FittedBox(
@@ -556,7 +433,7 @@ class RollDiceScreen extends StatelessWidget {
                         size: size,
                         controller: controller,
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 24),
                       _buildPlayerDice(
                         context,
                         1,
@@ -621,8 +498,8 @@ class RollDiceScreen extends StatelessWidget {
             const BouncingScrollPhysics(),
         padding:
             const EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 8,
+          vertical: 6,
+          horizontal: 6,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -642,7 +519,7 @@ class RollDiceScreen extends StatelessWidget {
               return Padding(
                 padding:
                     const EdgeInsets.symmetric(
-                  vertical: 4,
+                  vertical: 6,
                 ),
                 child: Row(
                   mainAxisAlignment:
@@ -652,7 +529,7 @@ class RollDiceScreen extends StatelessWidget {
                       return Padding(
                         padding:
                             const EdgeInsets.symmetric(
-                          horizontal: 4,
+                          horizontal: 6,
                         ),
                         child:
                             _buildPlayerDice(
@@ -675,7 +552,7 @@ class RollDiceScreen extends StatelessWidget {
   }
 
   // ==========================================================
-  // RESPONSIVE DICE SIZE
+  // RESPONSIVE DICE SIZE (LARGER BOUNDS)
   // ==========================================================
 
   double _responsiveDiceSize({
@@ -685,7 +562,7 @@ class RollDiceScreen extends StatelessWidget {
     double? availableHeight,
     int totalRows = 1,
   }) {
-    const double horizontalPadding = 10.0;
+    const double horizontalPadding = 12.0;
     const double safetySpace = 12.0;
 
     final double availableWidth =
@@ -695,48 +572,48 @@ class RollDiceScreen extends StatelessWidget {
 
     final double calculatedSize =
         (availableWidth / rowCount) -
-        34 -
+        30 -
         10;
 
     double maxSize;
 
     switch (count) {
       case 3:
-        maxSize = 105;
+        maxSize = 135;
         break;
 
       case 4:
-        maxSize = 100;
+        maxSize = 130;
         break;
 
       case 5:
-        maxSize = 95;
+        maxSize = 120;
         break;
 
       case 6:
-        maxSize = 90;
+        maxSize = 115;
         break;
 
       case 7:
       default:
-        maxSize = 85;
+        maxSize = 105;
         break;
     }
 
     double size = calculatedSize.clamp(
-      45.0,
+      50.0,
       maxSize,
     );
 
     if (availableHeight != null && totalRows > 0) {
       final double maxRowHeight = (availableHeight - 16) / totalRows;
-      final double heightConstrainedSize = maxRowHeight - 48;
-      if (heightConstrainedSize > 40 && heightConstrainedSize < size) {
+      final double heightConstrainedSize = maxRowHeight - 42;
+      if (heightConstrainedSize > 45 && heightConstrainedSize < size) {
         size = heightConstrainedSize;
       }
     }
 
-    return size.clamp(45.0, maxSize);
+    return size.clamp(50.0, maxSize);
   }
 
   // ==========================================================
