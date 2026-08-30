@@ -38,17 +38,20 @@ class HomeBottomNav extends StatelessWidget {
 
           selectedIndex:
               controller.selectedBottomIndex.value,
-
-          onDestinationSelected: (index) {
-            if (index == 2) {
-              // Open Settings Screen
-              Get.toNamed(AppRoutes.settings);
-            } else {
-              // Home / History
-              controller.changeBottomIndex(index);
-            }
-          },
-
+onDestinationSelected: (index) {
+  if (index == 0) {
+    // Home
+    if (Get.currentRoute != AppRoutes.home) {
+      Get.offNamed(AppRoutes.home);
+    }
+  } else if (index == 1) {
+    // History
+    Get.toNamed(AppRoutes.history);
+  } else if (index == 2) {
+    // Settings
+    Get.toNamed(AppRoutes.settings);
+  }
+},
           indicatorColor:
               AppColors.purple.withOpacity(0.18),
 
