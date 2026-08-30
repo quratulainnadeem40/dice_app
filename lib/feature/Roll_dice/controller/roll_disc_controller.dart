@@ -318,7 +318,7 @@ ever<int>(
       await flutterTts.setPitch(1.0);
 
       final int totalPlayers =
-          diceValues.length.clamp(1, 7);
+          diceValues.length.clamp(1, 8);
 
       if (_speechSessionId != currentSession) {
         return;
@@ -686,7 +686,7 @@ void setPlayerCount(
   void updateDiceCount() {
     final int count =
         playerCount.value
-            .clamp(1, 7);
+            .clamp(1, 8);
 
     diceValues.assignAll(
       List.generate(
