@@ -67,9 +67,7 @@ class SettingsScreen extends GetView<SettingsController> {
                               ),
                             ),
                             _buildPreview(),
-                            const SizedBox(height: 4),
-                            _buildSaveButton(),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),
@@ -293,8 +291,7 @@ class SettingsScreen extends GetView<SettingsController> {
                   height: 52,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      controller.saveSettingsSilently();
-                      Get.back();
+                      Get.toNamed(AppRoutes.rollDice);
                     },
                     icon: const Icon(
                       Icons.casino_rounded,
@@ -408,37 +405,6 @@ class SettingsScreen extends GetView<SettingsController> {
           );
         },
       ).toList(),
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 58,
-      child: ElevatedButton.icon(
-        onPressed: controller.saveSettings,
-        icon: const Icon(
-          Icons.save_rounded,
-          color: Colors.white,
-        ),
-        label: const Text(
-          'SAVE SETTINGS',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF8B22E9),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          elevation: 8,
-          shadowColor: const Color(0xFF8B22E9).withValues(alpha: 0.4),
-        ),
-      ),
     );
   }
 }
