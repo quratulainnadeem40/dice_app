@@ -8,10 +8,10 @@ class HistoryCard extends StatelessWidget {
   final VoidCallback onDismissed;
 
   const HistoryCard({
-    Key? key,
+    super.key,
     required this.item,
     required this.onDismissed,
-  }) : super(key: key);
+  });
 
   String _formatDate(DateTime dateTime) {
     final now = DateTime.now();
@@ -37,7 +37,7 @@ class HistoryCard extends StatelessWidget {
         padding: const EdgeInsets.only(right: 20.0),
         margin: const EdgeInsets.only(bottom: 12.0),
         decoration: BoxDecoration(
-          color: Colors.redAccent.withOpacity(0.8),
+          color: Colors.redAccent.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Icon(Icons.delete, color: AppColors.white),
@@ -47,10 +47,10 @@ class HistoryCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12.0),
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: AppColors.purple.withOpacity(0.15),
+          color: AppColors.purple.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.white.withOpacity(0.05),
+            color: AppColors.white.withValues(alpha: 0.05),
           ),
         ),
         child: Row(
@@ -58,7 +58,7 @@ class HistoryCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.purple.withOpacity(0.2),
+                color: AppColors.purple.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -93,7 +93,7 @@ class HistoryCard extends StatelessWidget {
             Text(
               _formatDate(item.dateTime),
               style: TextStyle(
-                color: AppColors.lightText.withOpacity(0.6),
+                color: AppColors.lightText.withValues(alpha: 0.6),
                 fontSize: 12,
               ),
             ),

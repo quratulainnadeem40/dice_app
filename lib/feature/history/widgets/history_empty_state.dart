@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HistoryEmptyState extends StatelessWidget {
-  const HistoryEmptyState({Key? key}) : super(key: key);
+  const HistoryEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +12,13 @@ class HistoryEmptyState extends StatelessWidget {
           Icon(
             Icons.history_toggle_off_rounded,
             size: 80,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
             'No History Yet',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 18,
               fontWeight: FontWeight.w500,
             ),
@@ -27,7 +27,7 @@ class HistoryEmptyState extends StatelessWidget {
           Text(
             'Your dice rolls will appear here.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.4),
+              color: Colors.white.withValues(alpha: 0.4),
               fontSize: 14,
             ),
           ),

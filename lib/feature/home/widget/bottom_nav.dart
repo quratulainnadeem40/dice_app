@@ -22,11 +22,11 @@ class HomeBottomNav extends StatelessWidget {
           color: const Color(0xFF121022),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: AppColors.purple.withOpacity(0.18),
+            color: AppColors.purple.withValues(alpha: 0.18),
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.purple.withOpacity(0.08),
+              color: AppColors.purple.withValues(alpha: 0.08),
               blurRadius: 25,
             ),
           ],
@@ -53,7 +53,7 @@ onDestinationSelected: (index) {
   }
 },
           indicatorColor:
-              AppColors.purple.withOpacity(0.18),
+              AppColors.purple.withValues(alpha: 0.18),
 
           destinations: const [
             // HOME
@@ -98,7 +98,7 @@ onDestinationSelected: (index) {
 
           labelTextStyle: WidgetStatePropertyAll(
             TextStyle(
-              color: Colors.white.withOpacity(0.65),
+              color: Colors.white.withValues(alpha: 0.65),
               fontSize: 10,
               fontWeight: FontWeight.w600,
             ),

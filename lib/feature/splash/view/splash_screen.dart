@@ -41,7 +41,7 @@ class SplashScreen extends GetView<SplashController> {
                         borderRadius: BorderRadius.circular(10),
                         child: LinearProgressIndicator(
                           value: value,
-                          backgroundColor: AppColors.purple.withOpacity(0.3),
+                          backgroundColor: AppColors.purple.withValues(alpha: 0.3),
                           valueColor: const AlwaysStoppedAnimation<Color>(AppColors.violet),
                           minHeight: 8,
                         ),

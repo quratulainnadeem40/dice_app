@@ -1,6 +1,4 @@
 
-import 'dart:math';
-
 import 'package:dice_app/core/dice_theme.dart';
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/feature/Roll_dice/controller/roll_disc_controller.dart';
@@ -56,39 +54,46 @@ class RollDiceScreen extends StatelessWidget {
             // ==================================================
 
             SafeArea(
-              child: Column(
-                children: [
-                  _buildTopBar(controller),
-
-                  const SizedBox(height: 10),
-
-                  // ==================================================
-                  // PLAYERS & SIDES DROPDOWNS
-                  // ==================================================
-
-                  _buildDropdownSelectors(controller),
-
-                  const SizedBox(height: 10),
-
-                  // ==================================================
-                  // DICE AREA
-                  // ==================================================
-
-                  Expanded(
-                    child: _buildDiceArea(
-                      context,
-                      controller,
-                    ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 700,
                   ),
+                  child: Column(
+                    children: [
+                      _buildTopBar(controller),
 
-                  // ==================================================
-                  // ROLL BUTTON
-                  // ==================================================
+                      const SizedBox(height: 10),
 
-                  _buildRollButton(controller),
+                      // ==================================================
+                      // PLAYERS & SIDES DROPDOWNS
+                      // ==================================================
 
-                  const SizedBox(height: 12),
-                ],
+                      _buildDropdownSelectors(controller),
+
+                      const SizedBox(height: 10),
+
+                      // ==================================================
+                      // DICE AREA
+                      // ==================================================
+
+                      Expanded(
+                        child: _buildDiceArea(
+                          context,
+                          controller,
+                        ),
+                      ),
+
+                      // ==================================================
+                      // ROLL BUTTON
+                      // ==================================================
+
+                      _buildRollButton(controller),
+
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
               ),
             ),
         ],

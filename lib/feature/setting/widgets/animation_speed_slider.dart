@@ -51,7 +51,7 @@ class AnimationSpeedSlider extends StatelessWidget {
                       thumbColor: Colors.white,
                       overlayColor:
                           const Color(0xFFA92BFF)
-                              .withOpacity(0.15),
+                              .withValues(alpha: 0.15),
                       trackHeight: 5,
                     ),
                     child: Slider(

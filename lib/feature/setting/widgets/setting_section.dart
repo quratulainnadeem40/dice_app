@@ -17,7 +17,7 @@ class SettingsSection extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 18),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF090C2B).withOpacity(0.88),
+        color: const Color(0xFF090C2B).withValues(alpha: 0.88),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: const Color(0xFF343461),
@@ -25,7 +25,7 @@ class SettingsSection extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6F2CFF).withOpacity(0.08),
+            color: const Color(0xFF6F2CFF).withValues(alpha: 0.08),
             blurRadius: 18,
             spreadRadius: 1,
           ),

@@ -19,7 +19,6 @@ class _DiceCardState extends State<DiceCard>
   late final AnimationController _animationController;
   late final AudioPlayer _audioPlayer;
 
-  final Random _random = Random();
   bool _isRolling = false;
 
   @override
@@ -116,11 +115,11 @@ class _DiceCardState extends State<DiceCard>
           ],
         ),
         border: Border.all(
-          color: AppColors.purple.withOpacity(0.28),
+          color: AppColors.purple.withValues(alpha: 0.28),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.purple.withOpacity(0.16),
+            color: AppColors.purple.withValues(alpha: 0.16),
             blurRadius: 30,
             spreadRadius: 1,
           ),
@@ -139,7 +138,7 @@ class _DiceCardState extends State<DiceCard>
                 height: 36,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(11),
-                  color: AppColors.purple.withOpacity(0.14),
+                  color: AppColors.purple.withValues(alpha: 0.14),
                 ),
                 child: const Icon(
                   Icons.auto_awesome_rounded,
@@ -244,7 +243,7 @@ class _DiceCardState extends State<DiceCard>
                           ..rotateX(rotationX)
                           ..rotateY(rotationY)
                           ..rotateZ(rotationZ)
-                          ..scale(scale),
+                          ..scale(scale, scale, 1.0),
                         child: child,
                       ),
                     ),
@@ -280,7 +279,7 @@ class _DiceCardState extends State<DiceCard>
           Text(
             'Start a new dice game',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.42),
+              color: Colors.white.withValues(alpha: 0.42),
               fontSize: 11,
             ),
           ),
@@ -312,7 +311,7 @@ class _DiceCardState extends State<DiceCard>
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.purple,
                 disabledBackgroundColor:
-                    AppColors.purple.withOpacity(0.65),
+                    AppColors.purple.withValues(alpha: 0.65),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(17),
@@ -345,12 +344,12 @@ class _DiceCardState extends State<DiceCard>
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.purple.withOpacity(0.45),
+            color: AppColors.purple.withValues(alpha: 0.45),
             blurRadius: 35,
             spreadRadius: 4,
           ),
           BoxShadow(
-            color: AppColors.blue.withOpacity(0.15),
+            color: AppColors.blue.withValues(alpha: 0.15),
             blurRadius: 50,
           ),
         ],

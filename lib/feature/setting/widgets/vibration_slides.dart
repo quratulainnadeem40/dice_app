@@ -46,7 +46,7 @@ class VibrationSettingTile extends StatelessWidget {
                       controller.vibrationEnabled.value,
                   onChanged:
                       controller.toggleVibration,
-                  activeColor: Colors.white,
+                  activeThumbColor: Colors.white,
                   activeTrackColor:
                       const Color(0xFFA52DFF),
                   inactiveTrackColor:

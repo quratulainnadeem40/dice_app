@@ -6,11 +6,11 @@ class HistoryHeader extends StatelessWidget {
   final bool showClearButton;
 
   const HistoryHeader({
-    Key? key,
+    super.key,
     required this.onBackPressed,
     required this.onClearAllPressed,
     this.showClearButton = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

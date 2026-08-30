@@ -3,7 +3,6 @@ import 'package:dice_app/core/theme/custom_textstyle.dart';
 import 'package:dice_app/feature/Roll_dice/view/roll_disc_screen.dart';
 import 'package:dice_app/feature/home/widget/bottom_nav.dart';
 import 'package:dice_app/feature/home/widget/dice_card.dart';
-
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,24 +13,28 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 110),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 30),
-              _buildWelcome(),
-              const SizedBox(height: 24),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 650),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 110),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 30),
+                  _buildWelcome(),
+                  const SizedBox(height: 24),
 
-              DiceCard(),
+                  const DiceCard(),
 
-              const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-              // Context pass kiya hai navigation ke liye
-              _buildInfoCard(context),
-            ],
+                  _buildInfoCard(context),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -58,7 +61,7 @@ class HomePage extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.purple.withOpacity(0.35),
+                color: AppColors.purple.withValues(alpha: 0.35),
                 blurRadius: 18,
                 spreadRadius: 1,
               ),
@@ -88,7 +91,7 @@ class HomePage extends StatelessWidget {
             Text(
               'ROLL • PLAY • WIN',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.42),
+                color: Colors.white.withValues(alpha: 0.42),
                 fontSize: 8,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
@@ -96,10 +99,6 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-
-      
-
-        
       ],
     );
   }
@@ -168,9 +167,9 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          color: Colors.white.withOpacity(0.035),
+          color: Colors.white.withValues(alpha: 0.035),
           border: Border.all(
-            color: Colors.white.withOpacity(0.07),
+            color: Colors.white.withValues(alpha: 0.07),
           ),
         ),
         child: Row(
@@ -180,7 +179,7 @@ class HomePage extends StatelessWidget {
               height: 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(13),
-                color: AppColors.purple.withOpacity(0.12),
+                color: AppColors.purple.withValues(alpha: 0.12),
               ),
               child: const Icon(
                 Icons.auto_awesome_rounded,

@@ -28,12 +28,12 @@ class QuickActionCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withOpacity(0.065),
-                Colors.white.withOpacity(0.025),
+                Colors.white.withValues(alpha: 0.065),
+                Colors.white.withValues(alpha: 0.025),
               ],
             ),
             border: Border.all(
-              color: Colors.white.withOpacity(0.08),
+              color: Colors.white.withValues(alpha: 0.08),
             ),
           ),
           child: Column(
@@ -46,8 +46,8 @@ class QuickActionCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.purple.withOpacity(0.20),
-                      AppColors.blue.withOpacity(0.10),
+                      AppColors.purple.withValues(alpha: 0.20),
+                      AppColors.blue.withValues(alpha: 0.10),
                     ],
                   ),
                 ),

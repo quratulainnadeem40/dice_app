@@ -90,7 +90,10 @@ class SettingsScreen extends GetView<SettingsController> {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Get.back(),
+            onPressed: () {
+              controller.saveSettingsSilently();
+              Get.back();
+            },
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
               color: Colors.white,
@@ -274,6 +277,7 @@ class SettingsScreen extends GetView<SettingsController> {
                   height: 52,
                   child: ElevatedButton.icon(
                     onPressed: () {
+                      controller.saveSettingsSilently();
                       Get.back();
                     },
                     icon: const Icon(
@@ -321,7 +325,7 @@ class SettingsScreen extends GetView<SettingsController> {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.45),
+              color: color.withValues(alpha: 0.45),
               blurRadius: 20,
               spreadRadius: 2,
             ),
@@ -416,7 +420,7 @@ class SettingsScreen extends GetView<SettingsController> {
             borderRadius: BorderRadius.circular(14),
           ),
           elevation: 8,
-          shadowColor: const Color(0xFF8B22E9).withOpacity(0.4),
+          shadowColor: const Color(0xFF8B22E9).withValues(alpha: 0.4),
         ),
       ),
     );

@@ -18,8 +18,8 @@ class RollDiceController extends GetxController {
   // ==========================================================
 
   final FlutterTts flutterTts = FlutterTts();
-
   bool _isSpeaking = false;
+  bool get isSpeaking => _isSpeaking;
 
   // ==========================================================
   // DICE ROLL SOUND
@@ -418,7 +418,7 @@ ever<int>(
 
     selectedDiceTheme.value =
         DiceTheme(
-      id: 'custom_theme_${color.value}',
+      id: 'custom_theme_${color.toARGB32()}',
       name: 'Custom Theme',
       colors: [
         color,

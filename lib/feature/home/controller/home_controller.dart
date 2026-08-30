@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -22,7 +23,7 @@ class HomeController extends GetxController {
     try {
       await _audioPlayer.setAsset('assets/sounds/dice_sound.mp3');
     } catch (e) {
-      print('Audio initialization error: $e');
+      debugPrint('Audio initialization error: $e');
     }
   }
 
@@ -37,7 +38,7 @@ class HomeController extends GetxController {
       await _audioPlayer.seek(Duration.zero);
       _audioPlayer.play();
     } catch (e) {
-      print('Audio playback error: $e');
+      debugPrint('Audio playback error: $e');
     }
 
     // Rolling delay before changing value

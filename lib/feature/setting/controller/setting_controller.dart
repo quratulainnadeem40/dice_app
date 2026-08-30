@@ -204,17 +204,29 @@ class SettingsController extends GetxController {
   // =========================
   // Save Settings
   // =========================
+  void saveSettingsSilently() {
+    _persistSettings();
+  }
+
   void saveSettings() {
     _persistSettings();
 
     Get.snackbar(
       'Settings Saved',
-      'Your dice settings have been saved successfully.',
+      'Your settings have been saved successfully!',
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(16),
-      backgroundColor: const Color(0xFF171434),
+      backgroundColor: const Color(0xFF1E1442),
       colorText: Colors.white,
+      icon: const Icon(
+        Icons.check_circle_rounded,
+        color: Color(0xFF34D399),
+        size: 24,
+      ),
       duration: const Duration(seconds: 2),
+      borderRadius: 14,
+      borderWidth: 1.2,
+      borderColor: const Color(0xFF8B22E9).withValues(alpha: 0.5),
     );
   }
 }

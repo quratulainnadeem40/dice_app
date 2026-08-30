@@ -43,7 +43,7 @@ class SoundSettingTile extends StatelessWidget {
                 Switch(
                   value: controller.soundEnabled.value,
                   onChanged: controller.toggleSound,
-                  activeColor: Colors.white,
+                  activeThumbColor: Colors.white,
                   activeTrackColor:
                       const Color(0xFFA52DFF),
                   inactiveTrackColor:

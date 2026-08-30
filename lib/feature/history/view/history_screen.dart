@@ -1,7 +1,7 @@
+import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/feature/history/model/history_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dice_app/core/theme/custom_color.dart'; // Ensure correct path for AppColors
 
 import '../controller/history_controller.dart';
 import '../widgets/history_card.dart';
@@ -9,7 +9,7 @@ import '../widgets/history_empty_state.dart';
 import '../widgets/history_header.dart';
 
 class HistoryScreen extends GetView<HistoryController> {
-  const HistoryScreen({Key? key}) : super(key: key);
+  const HistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,51 +25,56 @@ class HistoryScreen extends GetView<HistoryController> {
           ),
         ),
       ),
-      body: Obx(() {
-        if (controller.historyList.isEmpty) {
-          return const HistoryEmptyState();
-        }
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 750),
+          child: Obx(() {
+            if (controller.historyList.isEmpty) {
+              return const HistoryEmptyState();
+            }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: controller.historyList.length,
-          itemBuilder: (context, index) {
-            final RollHistoryModel item = controller.historyList[index];
-            return HistoryCard(
-              item: item,
-              onDismissed: () {
-                final removedItem = item;
-                controller.removeHistory(index);
+            return ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: controller.historyList.length,
+              itemBuilder: (context, index) {
+                final RollHistoryModel item = controller.historyList[index];
+                return HistoryCard(
+                  item: item,
+                  onDismissed: () {
+                    final removedItem = item;
+                    controller.removeHistory(index);
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: AppColors.purple.withOpacity(0.9),
-                    content: const Text(
-                      'Item deleted',
-                      style: TextStyle(color: AppColors.white),
-                    ),
-                    action: SnackBarAction(
-                      label: 'UNDO',
-                      textColor: AppColors.violet,
-                      onPressed: () {
-                        controller.insertHistory(index, removedItem);
-                      },
-                    ),
-                    duration: const Duration(seconds: 3),
-                  ),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: AppColors.purple.withValues(alpha: 0.9),
+                        content: const Text(
+                          'Item deleted',
+                          style: TextStyle(color: AppColors.white),
+                        ),
+                        action: SnackBarAction(
+                          label: 'UNDO',
+                          textColor: AppColors.violet,
+                          onPressed: () {
+                            controller.insertHistory(index, removedItem);
+                          },
+                        ),
+                        duration: const Duration(seconds: 3),
+                      ),
+                    );
+                  },
                 );
               },
             );
-          },
-        );
-      }),
+          }),
+        ),
+      ),
     );
   }
 
   void _showClearAllDialog(BuildContext context) {
     Get.dialog(
       AlertDialog(
-        backgroundColor: AppColors.purple.withOpacity(0.95),
+        backgroundColor: AppColors.purple.withValues(alpha: 0.95),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Clear History?',

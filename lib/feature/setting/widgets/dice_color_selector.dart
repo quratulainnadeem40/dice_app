@@ -83,8 +83,8 @@ class DiceColorSelector extends StatelessWidget {
                                       BoxShadow(
                                         color: isMultiColorOption
                                             ? const Color(0xFF8B2CFF)
-                                                .withOpacity(0.65)
-                                            : color.withOpacity(0.65),
+                                                .withValues(alpha: 0.65)
+                                            : color.withValues(alpha: 0.65),
                                         blurRadius: 10,
                                         spreadRadius: 1,
                                       ),
