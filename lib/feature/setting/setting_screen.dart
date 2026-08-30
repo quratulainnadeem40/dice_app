@@ -10,11 +10,15 @@ import 'package:dice_app/feature/setting/widgets/vibration_slides.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SettingsScreen extends GetView<SettingsController> {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final SettingsController controller = Get.isRegistered<SettingsController>()
+        ? Get.find<SettingsController>()
+        : Get.put(SettingsController(), permanent: true);
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -36,7 +40,7 @@ class SettingsScreen extends GetView<SettingsController> {
                 ),
                 child: Column(
                   children: [
-                    _buildAppBar(),
+                    _buildAppBar(controller),
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
@@ -66,7 +70,7 @@ class SettingsScreen extends GetView<SettingsController> {
                                 ],
                               ),
                             ),
-                            _buildPreview(),
+                            _buildPreview(controller),
                             const SizedBox(height: 14),
                             _buildPrivacyPolicyTile(context),
                             const SizedBox(height: 24),
@@ -156,7 +160,7 @@ class SettingsScreen extends GetView<SettingsController> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(SettingsController controller) {
     return Container(
       height: 72,
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -199,7 +203,7 @@ class SettingsScreen extends GetView<SettingsController> {
     );
   }
 
-  Widget _buildPreview() {
+  Widget _buildPreview(SettingsController controller) {
     return SettingsSection(
       title: '3. PREVIEW',
       child: Obx(

@@ -4,6 +4,11 @@ import '../controller/history_controller.dart';
 class HistoryBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HistoryController>(() => HistoryController());
+    if (!Get.isRegistered<HistoryController>()) {
+      Get.put<HistoryController>(
+        HistoryController(),
+        permanent: true,
+      );
+    }
   }
 }

@@ -150,12 +150,14 @@ class SettingsController extends GetxController {
   // =========================
   void selectDiceColor(Color color) {
     diceColor.value = color;
+    settings.diceColor = color;
     _persistSettings();
   }
 
   // Alias method
   void setDiceColor(Color color) {
     diceColor.value = color;
+    settings.diceColor = color;
     _persistSettings();
   }
 
@@ -164,6 +166,7 @@ class SettingsController extends GetxController {
   // =========================
   void setAnimationSpeed(double value) {
     animationSpeed.value = value;
+    settings.animationSpeed = value;
     _persistSettings();
   }
 
@@ -172,11 +175,13 @@ class SettingsController extends GetxController {
   // =========================
   void toggleSound(bool value) {
     soundEnabled.value = value;
+    settings.soundEnabled = value;
     _persistSettings();
   }
 
   void setSoundVolume(double value) {
     soundVolume.value = value;
+    settings.soundVolume = value;
     _persistSettings();
   }
 
@@ -185,11 +190,13 @@ class SettingsController extends GetxController {
   // =========================
   void toggleVibration(bool value) {
     vibrationEnabled.value = value;
+    settings.vibrationEnabled = value;
     _persistSettings();
   }
 
   void setVibrationIntensity(double value) {
     vibrationIntensity.value = value;
+    settings.vibrationIntensity = value;
     _persistSettings();
   }
 
