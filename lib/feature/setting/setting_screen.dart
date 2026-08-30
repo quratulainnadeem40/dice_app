@@ -120,7 +120,7 @@ class SettingsScreen extends GetView<SettingsController> {
           ),
         ),
         subtitle: const Text(
-          'Innovex Technologies • 100% Offline & Safe',
+          'Innovexa Technologies • 100% Offline & Safe',
           style: TextStyle(
             color: Colors.white54,
             fontSize: 11,
