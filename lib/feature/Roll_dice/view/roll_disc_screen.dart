@@ -136,27 +136,27 @@ class RollDiceScreen extends StatelessWidget {
   Widget _buildTopBar(RollDiceController controller) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        18,
+        16,
         8,
-        18,
+        16,
         0,
       ),
       child: Row(
         children: [
+          // BACK BUTTON
           GestureDetector(
             onTap: () {
               controller.stopVoice();
               Get.back();
             },
             child: Container(
-              width: 42,
-              height: 42,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(
                   alpha: 0.045,
                 ),
-                borderRadius:
-                    BorderRadius.circular(13),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: Colors.white.withValues(
                     alpha: 0.08,
@@ -166,29 +166,37 @@ class RollDiceScreen extends StatelessWidget {
               child: const Icon(
                 Icons.arrow_back_ios_new_rounded,
                 color: Colors.white,
-                size: 17,
+                size: 16,
               ),
             ),
           ),
 
-          const Spacer(),
+          const SizedBox(width: 8),
 
-          const Text(
-            'ROLL DICE',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.4,
+          // TITLE
+          Expanded(
+            child: Center(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: const Text(
+                  'ROLL DICE',
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
             ),
           ),
 
-          const Spacer(),
+          const SizedBox(width: 8),
 
           // ======================================================
           // SOUND TOGGLE BUTTON
           // ======================================================
-
           Obx(() {
             final bool isSoundOn =
                 controller.settingsController.soundEnabled.value;
@@ -199,13 +207,13 @@ class RollDiceScreen extends StatelessWidget {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
-                width: 42,
-                height: 42,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: isSoundOn
                       ? AppColors.purple.withValues(alpha: 0.25)
                       : Colors.white.withValues(alpha: 0.045),
-                  borderRadius: BorderRadius.circular(13),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSoundOn
                         ? AppColors.violet.withValues(alpha: 0.55)
@@ -217,31 +225,30 @@ class RollDiceScreen extends StatelessWidget {
                       ? Icons.volume_up_rounded
                       : Icons.volume_off_rounded,
                   color: isSoundOn ? AppColors.violet : Colors.white54,
-                  size: 19,
+                  size: 18,
                 ),
               ),
             );
           }),
 
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
 
           // ======================================================
           // HISTORY BUTTON
           // ======================================================
-
           GestureDetector(
             onTap: () {
               controller.stopVoice();
               Get.toNamed('/history');
             },
             child: Container(
-              width: 42,
-              height: 42,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(
                   alpha: 0.045,
                 ),
-                borderRadius: BorderRadius.circular(13),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: Colors.white.withValues(
                     alpha: 0.08,
@@ -251,31 +258,29 @@ class RollDiceScreen extends StatelessWidget {
               child: const Icon(
                 Icons.history_rounded,
                 color: Colors.white,
-                size: 20,
+                size: 19,
               ),
             ),
           ),
 
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
 
           // ======================================================
           // SETTINGS BUTTON
           // ======================================================
-
           GestureDetector(
             onTap: () {
               controller.stopVoice();
               Get.toNamed('/settings');
             },
             child: Container(
-              width: 42,
-              height: 42,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(
                   alpha: 0.045,
                 ),
-                borderRadius:
-                    BorderRadius.circular(13),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: Colors.white.withValues(
                     alpha: 0.08,
@@ -285,7 +290,7 @@ class RollDiceScreen extends StatelessWidget {
               child: const Icon(
                 Icons.settings_rounded,
                 color: Colors.white,
-                size: 18,
+                size: 17,
               ),
             ),
           ),
