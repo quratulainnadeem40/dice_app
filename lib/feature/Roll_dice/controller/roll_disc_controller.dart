@@ -168,6 +168,23 @@ ever<int>(
     );
   }
 }
+
+  // ==========================================================
+  // TOGGLE SOUND (QUICK ACTION)
+  // ==========================================================
+
+  void toggleSound() {
+    final bool current = settingsController.soundEnabled.value;
+    final bool newValue = !current;
+    settingsController.soundEnabled.value = newValue;
+    settingsController.settings.soundEnabled = newValue;
+    settingsController.settingsVersion.value++;
+    if (!newValue) {
+      stopVoice();
+      _stopDiceSound();
+    }
+  }
+
   // ==========================================================
   // PLAY DICE SOUND
   // ==========================================================
@@ -212,7 +229,7 @@ ever<int>(
   bool? _hasVibratorCached;
 
   // ==========================================================
-  // VIBRATION (NON-BLOCKING & HIGH-PERFORMANCE)
+  // VIBRATION (PERFECTLY SYNCHRONIZED WITH ROLL TIMING)
   // ==========================================================
 
   Future<bool> _checkVibrator() async {
@@ -225,7 +242,10 @@ ever<int>(
     return _hasVibratorCached ?? false;
   }
 
-  void _triggerVibration() {
+  void _triggerRollVibration({
+    required int totalDurationMs,
+    required int stepDelay,
+  }) {
     if (!settingsController.settings.vibrationEnabled) {
       return;
     }
@@ -236,20 +256,36 @@ ever<int>(
       return;
     }
 
-    final int duration = (25 + (intensity * 75)).round();
-
     _checkVibrator().then((hasVib) {
-      if (hasVib) {
-        Vibration.vibrate(
-          pattern: [0, duration, 35, (duration * 0.7).round()],
-          intensities: [
-            (intensity * 255).round(),
-            (intensity * 180).round(),
-          ],
-        ).catchError((_) {
-          Vibration.vibrate(duration: duration).catchError((_) {});
-        });
+      if (!hasVib) return;
+
+      final int pulseOn = (stepDelay * 0.40).round().clamp(14, 30);
+      final int pulseOff = (stepDelay * 0.60).round().clamp(16, 40);
+      final int stepCount =
+          (totalDurationMs / (pulseOn + pulseOff)).floor().clamp(3, 10);
+
+      final List<int> pattern = [];
+      final List<int> intensities = [];
+
+      for (int i = 0; i < stepCount; i++) {
+        pattern.add(i == 0 ? 0 : pulseOff);
+        pattern.add(pulseOn);
+
+        final double factor = 0.5 + (0.5 * (i / stepCount));
+        intensities.add(((intensity * factor) * 255).round().clamp(1, 255));
       }
+
+      // Crisp landing tap matching dice stop
+      pattern.add(pulseOff);
+      pattern.add((35 * intensity).round().clamp(20, 55));
+      intensities.add((intensity * 255).round().clamp(1, 255));
+
+      Vibration.vibrate(
+        pattern: pattern,
+        intensities: intensities,
+      ).catchError((_) {
+        Vibration.vibrate(duration: totalDurationMs).catchError((_) {});
+      });
     }).catchError((_) {});
   }
 
@@ -398,7 +434,7 @@ ever<int>(
 
   void applySettings() {
   playerCount.value =
-      settingsController.settings.diceCount.clamp(1, 7);
+      settingsController.settings.diceCount.clamp(1, 8);
 
   diceSides.value =
       settingsController.settings.diceSides;
@@ -599,7 +635,7 @@ void setPlayerCount(
     int count,
   ) {
     if (count < 1 ||
-        count > 7) {
+        count > 8) {
       return;
     }
 
@@ -730,9 +766,12 @@ void setPlayerCount(
           (850 - (speed * 400)).round().clamp(450, 900);
       final int totalSteps = (totalDurationMs / stepDelay).round();
 
-      // Trigger roll sound and non-blocking haptic feedback
+      // Trigger roll sound and perfectly matched haptic vibration
       _playDiceSound();
-      _triggerVibration();
+      _triggerRollVibration(
+        totalDurationMs: totalDurationMs,
+        stepDelay: stepDelay,
+      );
 
       for (int i = 0; i < totalSteps; i++) {
         await Future.delayed(

@@ -32,7 +32,7 @@ class SettingsModel {
     return {
       'diceCount': diceCount,
       'diceSides': diceSides,
-      'diceColor': diceColor.value,
+      'diceColor': diceColor.toARGB32(),
       'animationSpeed': animationSpeed,
       'soundEnabled': soundEnabled,
       'soundVolume': soundVolume,

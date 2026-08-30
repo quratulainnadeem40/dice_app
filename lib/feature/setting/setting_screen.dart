@@ -2,13 +2,9 @@
 import 'package:dice_app/feature/setting/controller/setting_controller.dart';
 import 'package:dice_app/feature/setting/widgets/animation_speed_slider.dart';
 import 'package:dice_app/feature/setting/widgets/dice_color_selector.dart';
-import 'package:dice_app/feature/setting/widgets/dice_count_selector.dart';
-import 'package:dice_app/feature/setting/widgets/dices_sides_selector.dart';
 import 'package:dice_app/feature/setting/widgets/setting_section.dart';
 import 'package:dice_app/feature/setting/widgets/sound_setting_tile.dart';
-
 import 'package:dice_app/feature/setting/widgets/vibration_slides.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -42,17 +38,7 @@ class SettingsScreen extends GetView<SettingsController> {
                         child: Column(
                           children: [
                             SettingsSection(
-                              title: '1. DICE CONFIGURATION',
-                              child: Column(
-                                children: const [
-                                  DiceCountSelector(),
-                                  SizedBox(height: 10),
-                                  DiceSidesSelector(),
-                                ],
-                              ),
-                            ),
-                            SettingsSection(
-                              title: '2. THEME & APPEARANCE',
+                              title: '1. THEME & APPEARANCE',
                               child: Column(
                                 children: const [
                                   DiceColorSelector(),
@@ -61,16 +47,16 @@ class SettingsScreen extends GetView<SettingsController> {
                                 ],
                               ),
                             ),
-                           SettingsSection(
-  title: '3. SOUND & VIBRATION',
-  child: Column(
-    children: const [
-      SoundSettingTile(),
-      SizedBox(height: 10),
-      VibrationSettingTile(),
-    ],
-  ),
-),
+                            SettingsSection(
+                              title: '2. SOUND & VIBRATION',
+                              child: Column(
+                                children: const [
+                                  SoundSettingTile(),
+                                  SizedBox(height: 10),
+                                  VibrationSettingTile(),
+                                ],
+                              ),
+                            ),
                             _buildPreview(),
                             const SizedBox(height: 4),
                             _buildSaveButton(),

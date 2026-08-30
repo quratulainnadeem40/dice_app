@@ -180,6 +180,50 @@ class RollDiceScreen extends StatelessWidget {
 
           const Spacer(),
 
+          // ======================================================
+          // SOUND TOGGLE BUTTON
+          // ======================================================
+
+          Obx(() {
+            final bool isSoundOn =
+                controller.settingsController.soundEnabled.value;
+
+            return GestureDetector(
+              onTap: () {
+                controller.toggleSound();
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: isSoundOn
+                      ? AppColors.purple.withValues(alpha: 0.25)
+                      : Colors.white.withValues(alpha: 0.045),
+                  borderRadius: BorderRadius.circular(13),
+                  border: Border.all(
+                    color: isSoundOn
+                        ? AppColors.violet.withValues(alpha: 0.55)
+                        : Colors.white.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: Icon(
+                  isSoundOn
+                      ? Icons.volume_up_rounded
+                      : Icons.volume_off_rounded,
+                  color: isSoundOn ? AppColors.violet : Colors.white54,
+                  size: 19,
+                ),
+              ),
+            );
+          }),
+
+          const SizedBox(width: 8),
+
+          // ======================================================
+          // SETTINGS BUTTON
+          // ======================================================
+
           GestureDetector(
             onTap: () {
               controller.stopVoice();
@@ -250,7 +294,7 @@ class RollDiceScreen extends StatelessWidget {
                       size: 20,
                     ),
                     isExpanded: true,
-                    items: List.generate(7, (index) {
+                    items: List.generate(8, (index) {
                       final int count = index + 1;
                       final bool isSelected =
                           count == controller.playerCount.value;
@@ -487,6 +531,9 @@ class RollDiceScreen extends StatelessWidget {
       rows.add([0, 1, 2]);
       rows.add([3, 4]);
       rows.add([5, 6]);
+    } else if (count == 8) {
+      rows.add([0, 1, 2, 3]);
+      rows.add([4, 5, 6, 7]);
     }
 
     final double screenWidth =
@@ -519,29 +566,32 @@ class RollDiceScreen extends StatelessWidget {
               return Padding(
                 padding:
                     const EdgeInsets.symmetric(
-                  vertical: 6,
+                  vertical: 4,
                 ),
-                child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
-                  children: row.map(
-                    (index) {
-                      return Padding(
-                        padding:
-                            const EdgeInsets.symmetric(
-                          horizontal: 6,
-                        ),
-                        child:
-                            _buildPlayerDice(
-                          context,
-                          index,
-                          size: diceSize,
-                          controller:
-                              controller,
-                        ),
-                      );
-                    },
-                  ).toList(),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.center,
+                    children: row.map(
+                      (index) {
+                        return Padding(
+                          padding:
+                              const EdgeInsets.symmetric(
+                            horizontal: 4,
+                          ),
+                          child:
+                              _buildPlayerDice(
+                            context,
+                            index,
+                            size: diceSize,
+                            controller:
+                                controller,
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ),
                 ),
               );
             },
@@ -552,7 +602,7 @@ class RollDiceScreen extends StatelessWidget {
   }
 
   // ==========================================================
-  // RESPONSIVE DICE SIZE (LARGER BOUNDS)
+  // RESPONSIVE DICE SIZE (LARGER BOUNDS & SAFE MARGINS)
   // ==========================================================
 
   double _responsiveDiceSize({
@@ -562,46 +612,45 @@ class RollDiceScreen extends StatelessWidget {
     double? availableHeight,
     int totalRows = 1,
   }) {
-    const double horizontalPadding = 12.0;
-    const double safetySpace = 12.0;
+    const double horizontalPadding = 20.0;
 
     final double availableWidth =
-        screenWidth -
-        horizontalPadding -
-        safetySpace;
+        screenWidth - horizontalPadding;
 
     final double calculatedSize =
-        (availableWidth / rowCount) -
-        30 -
-        10;
+        (availableWidth / rowCount) - 38;
 
     double maxSize;
 
     switch (count) {
       case 3:
-        maxSize = 135;
+        maxSize = 125;
         break;
 
       case 4:
-        maxSize = 130;
-        break;
-
-      case 5:
         maxSize = 120;
         break;
 
+      case 5:
+        maxSize = 110;
+        break;
+
       case 6:
-        maxSize = 115;
+        maxSize = 105;
         break;
 
       case 7:
+        maxSize = 98;
+        break;
+
+      case 8:
       default:
-        maxSize = 105;
+        maxSize = 90;
         break;
     }
 
     double size = calculatedSize.clamp(
-      50.0,
+      45.0,
       maxSize,
     );
 
