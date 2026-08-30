@@ -1,3 +1,4 @@
+import 'package:dice_app/core/routes/app_routes.dart';
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/feature/history/model/history_model.dart';
 import 'package:dice_app/feature/home/widget/bottom_nav.dart';
@@ -14,18 +15,24 @@ class HistoryScreen extends GetView<HistoryController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Obx(
-          () => HistoryHeader(
-            onBackPressed: () => Get.back(),
-            onClearAllPressed: () => _showClearAllDialog(context),
-            showClearButton: controller.historyList.isNotEmpty,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        Get.offAllNamed(AppRoutes.home);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Obx(
+            () => HistoryHeader(
+              onBackPressed: () => Get.offAllNamed(AppRoutes.home),
+              onClearAllPressed: () => _showClearAllDialog(context),
+              showClearButton: controller.historyList.isNotEmpty,
+            ),
           ),
         ),
-      ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 750),
@@ -148,8 +155,9 @@ class HistoryScreen extends GetView<HistoryController> {
         ),
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 1),
-    );
-  }
+    ),
+  );
+}
 
   void _showClearAllDialog(BuildContext context) {
     Get.dialog(

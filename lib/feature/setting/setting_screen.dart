@@ -1,4 +1,5 @@
 
+import 'package:dice_app/core/routes/app_routes.dart';
 import 'package:dice_app/feature/home/widget/bottom_nav.dart';
 import 'package:dice_app/feature/setting/controller/setting_controller.dart';
 import 'package:dice_app/feature/setting/widgets/animation_speed_slider.dart';
@@ -14,8 +15,15 @@ class SettingsScreen extends GetView<SettingsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF05071D),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        controller.saveSettingsSilently();
+        Get.offAllNamed(AppRoutes.home);
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF05071D),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -74,8 +82,9 @@ class SettingsScreen extends GetView<SettingsController> {
         ),
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 2),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildAppBar() {
     return Container(
@@ -94,7 +103,7 @@ class SettingsScreen extends GetView<SettingsController> {
           IconButton(
             onPressed: () {
               controller.saveSettingsSilently();
-              Get.back();
+              Get.offAllNamed(AppRoutes.home);
             },
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
