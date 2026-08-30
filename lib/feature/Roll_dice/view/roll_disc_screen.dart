@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:dice_app/core/dice_theme.dart';
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/feature/Roll_dice/controller/roll_disc_controller.dart';
@@ -881,23 +883,11 @@ class RollDiceScreen extends StatelessWidget {
               // DICE
               // ==================================================
 
-              AnimatedScale(
-                duration:
-                    const Duration(
-                  milliseconds: 250,
-                ),
-                scale:
-                    controller.isRolling.value
-                        ? 0.88
-                        : 1.0,
-                curve:
-                    Curves.easeOutBack,
-                child: _buildDiceFace(
-                  value: value,
-                  size: size,
-                  theme: theme,
-                  controller: controller,
-                ),
+              _buildDiceFace(
+                value: value,
+                size: size,
+                theme: theme,
+                controller: controller,
               ),
             ],
           ),
@@ -907,7 +897,7 @@ class RollDiceScreen extends StatelessWidget {
   }
 
   // ==========================================================
-  // 3D DICE FACE
+  // DICE FACE (CLEAN 2D)
   // ==========================================================
 
   Widget _buildDiceFace({
@@ -916,147 +906,101 @@ class RollDiceScreen extends StatelessWidget {
     required DiceTheme theme,
     required RollDiceController controller,
   }) {
-    return AnimatedContainer(
-      duration:
-          const Duration(milliseconds: 250),
-      curve: Curves.easeOutBack,
-      child: Transform(
-        transform: Matrix4.identity()
-          ..setEntry(
-            3,
-            2,
-            0.0008,
-          )
-          ..rotateX(
-            controller.isRolling.value
-                ? 0.25
-                : 0.05,
-          )
-          ..rotateY(
-            controller.isRolling.value
-                ? -0.30
-                : -0.05,
-          )
-          ..rotateZ(
-            controller.isRolling.value
-                ? 0.10
-                : 0.0,
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 180),
+      scale: controller.isRolling.value ? 0.93 : 1.0,
+      curve: Curves.easeInOut,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(
+            size * 0.22,
           ),
-        alignment: Alignment.center,
-        child: Container(
-          width: size,
-          height: size,
-          decoration:
-              BoxDecoration(
-            borderRadius:
-                BorderRadius.circular(
-              size * 0.22,
-            ),
-            gradient: LinearGradient(
-              begin:
-                  Alignment.topLeft,
-              end:
-                  Alignment.bottomRight,
-              colors: theme.colors,
-            ),
-            border: Border.all(
-              color:
-                  Colors.white.withValues(
-                alpha: 0.85,
-              ),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color:
-                    theme.glowColor.withValues(
-                  alpha: 0.40,
-                ),
-                blurRadius: 14,
-                spreadRadius: 1,
-                offset:
-                    const Offset(-2, 4),
-              ),
-              BoxShadow(
-                color:
-                    Colors.black.withValues(
-                  alpha: 0.40,
-                ),
-                blurRadius: 8,
-                offset:
-                    const Offset(3, 5),
-              ),
-            ],
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: theme.colors,
           ),
-          child: Stack(
-            children: [
-              // ==================================================
-              // HIGHLIGHT
-              // ==================================================
+          border: Border.all(
+            color: Colors.white.withValues(
+              alpha: 0.85,
+            ),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: theme.glowColor.withValues(
+                alpha: 0.35,
+              ),
+              blurRadius: 16,
+              spreadRadius: 1,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(
+                alpha: 0.30,
+              ),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // ==================================================
+            // HIGHLIGHT
+            // ==================================================
 
-              Positioned(
-                top: size * 0.07,
-                left: size * 0.10,
-                child: Container(
-                  width: size * 0.35,
-                  height: size * 0.09,
-                  decoration:
-                      BoxDecoration(
-                    color:
-                        Colors.white.withValues(
-                      alpha: 0.75,
-                    ),
-                    borderRadius:
-                        BorderRadius.circular(
-                      50,
-                    ),
+            Positioned(
+              top: size * 0.07,
+              left: size * 0.10,
+              child: Container(
+                width: size * 0.35,
+                height: size * 0.09,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(
+                    alpha: 0.75,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    50,
                   ),
                 ),
               ),
+            ),
 
-              // ==================================================
-              // DICE VALUE
-              // ==================================================
+            // ==================================================
+            // DICE VALUE
+            // ==================================================
 
-              Center(
-                child:
-                    controller.diceSides.value <=
-                            6
-                        ? _buildDiceDots(
-                            value: value,
-                            size: size,
-                          )
-                        : Text(
-                            '$value',
-                            style:
-                                TextStyle(
-                              color:
-                                  Colors.white,
-                              fontSize:
-                                  size * 0.34,
-                              fontWeight:
-                                  FontWeight.w900,
-                              shadows: [
-                                Shadow(
-                                  color: Colors
-                                      .black
-                                      .withValues(
-                                    alpha: 0.45,
-                                  ),
-                                  offset:
-                                      const Offset(
-                                    2,
-                                    2,
-                                  ),
-                                  blurRadius:
-                                      3,
-                                ),
-                              ],
+            Center(
+              child: controller.diceSides.value <= 6
+                  ? _buildDiceDots(
+                      value: value,
+                      size: size,
+                    )
+                  : Text(
+                      '$value',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: size * 0.34,
+                        fontWeight: FontWeight.w900,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(
+                              alpha: 0.45,
                             ),
+                            offset: const Offset(
+                              2,
+                              2,
+                            ),
+                            blurRadius: 3,
                           ),
-              ),
-            ],
-          ),
+                        ],
+                      ),
+                    ),
+            ),
+          ],
         ),
       ),
     );

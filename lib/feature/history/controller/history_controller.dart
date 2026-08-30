@@ -1,13 +1,63 @@
 import 'package:dice_app/feature/history/model/history_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class HistoryController extends GetxController {
+  final GetStorage _storage = GetStorage();
+  static const String _storageKey = 'dice_roll_history';
+
   // ==========================================================
   // HISTORY LIST
   // ==========================================================
 
   final RxList<RollHistoryModel> historyList =
       <RollHistoryModel>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadHistoryFromStorage();
+  }
+
+  // ==========================================================
+  // LOAD HISTORY FROM STORAGE
+  // ==========================================================
+
+  void _loadHistoryFromStorage() {
+    try {
+      final dynamic rawData = _storage.read(_storageKey);
+      if (rawData != null && rawData is List) {
+        final List<RollHistoryModel> loaded = [];
+        for (final item in rawData) {
+          if (item is Map<String, dynamic>) {
+            loaded.add(RollHistoryModel.fromMap(item));
+          } else if (item is Map) {
+            loaded.add(RollHistoryModel.fromMap(Map<String, dynamic>.from(item)));
+          }
+        }
+        historyList.assignAll(loaded);
+        debugPrint('Loaded ${loaded.length} history items from local storage.');
+      }
+    } catch (e) {
+      debugPrint('Error loading history from storage: $e');
+    }
+  }
+
+  // ==========================================================
+  // SAVE HISTORY TO STORAGE
+  // ==========================================================
+
+  Future<void> _saveHistoryToStorage() async {
+    try {
+      final List<Map<String, dynamic>> rawList =
+          historyList.map((item) => item.toMap()).toList();
+      await _storage.write(_storageKey, rawList);
+      debugPrint('Saved ${rawList.length} history items to local storage.');
+    } catch (e) {
+      debugPrint('Error saving history to storage: $e');
+    }
+  }
 
   // ==========================================================
   // ADD HISTORY
@@ -41,11 +91,11 @@ class HistoryController extends GetxController {
 
     // Newest result goes to the top
     historyList.insert(0, newHistory);
-
-    // Make sure GetX updates listeners
     historyList.refresh();
 
-    print(
+    _saveHistoryToStorage();
+
+    debugPrint(
       'HISTORY ADDED: ${newHistory.title} '
       '${newHistory.diceValues}',
     );
@@ -61,6 +111,8 @@ class HistoryController extends GetxController {
     }
 
     historyList.removeAt(index);
+    historyList.refresh();
+    _saveHistoryToStorage();
   }
 
   // ==========================================================
@@ -76,6 +128,8 @@ class HistoryController extends GetxController {
     }
 
     historyList.insert(index, item);
+    historyList.refresh();
+    _saveHistoryToStorage();
   }
 
   // ==========================================================
@@ -84,6 +138,8 @@ class HistoryController extends GetxController {
 
   void clearHistory() {
     historyList.clear();
+    historyList.refresh();
+    _saveHistoryToStorage();
   }
 
   // Alias

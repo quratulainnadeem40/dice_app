@@ -209,42 +209,48 @@ ever<int>(
     }
   }
 
+  bool? _hasVibratorCached;
+
   // ==========================================================
-  // VIBRATION
+  // VIBRATION (NON-BLOCKING & HIGH-PERFORMANCE)
   // ==========================================================
 
-  Future<void> _vibrate() async {
-   if (!settingsController.settings.vibrationEnabled) {
+  Future<bool> _checkVibrator() async {
+    if (_hasVibratorCached != null) return _hasVibratorCached!;
+    try {
+      _hasVibratorCached = await Vibration.hasVibrator();
+    } catch (_) {
+      _hasVibratorCached = false;
+    }
+    return _hasVibratorCached ?? false;
+  }
+
+  void _triggerVibration() {
+    if (!settingsController.settings.vibrationEnabled) {
       return;
     }
 
-    try {
-      final bool hasVibrator =
-          await Vibration.hasVibrator();
-
-      if (!hasVibrator) {
-        return;
-      }
-
-     final double intensity =
-    settingsController.settings.vibrationIntensity
-        .clamp(0.0, 1.0);
-
-      if (intensity <= 0) {
-        return;
-      }
-
-      final int duration =
-          (20 + (intensity * 80)).round();
-
-      await Vibration.vibrate(
-        duration: duration,
-      );
-    } catch (e) {
-      debugPrint(
-        'Vibration error: $e',
-      );
+    final double intensity =
+        settingsController.settings.vibrationIntensity.clamp(0.0, 1.0);
+    if (intensity <= 0) {
+      return;
     }
+
+    final int duration = (25 + (intensity * 75)).round();
+
+    _checkVibrator().then((hasVib) {
+      if (hasVib) {
+        Vibration.vibrate(
+          pattern: [0, duration, 35, (duration * 0.7).round()],
+          intensities: [
+            (intensity * 255).round(),
+            (intensity * 180).round(),
+          ],
+        ).catchError((_) {
+          Vibration.vibrate(duration: duration).catchError((_) {});
+        });
+      }
+    }).catchError((_) {});
   }
 
   // ==========================================================
@@ -717,103 +723,42 @@ void setPlayerCount(
     isRolling.value = true;
 
     try {
-      // ------------------------------------------------------
-      // ANIMATION SPEED
-      // ------------------------------------------------------
-
       final double speed =
-    settingsController.settings.animationSpeed
-        .clamp(0.0, 1.0);
-      final int stepDelay =
-          ((250 -
-                  (speed * 180)))
-              .round()
-              .clamp(
-                30,
-                250,
-              );
+          settingsController.settings.animationSpeed.clamp(0.0, 1.0);
+      final int stepDelay = (65 - (speed * 30)).round().clamp(30, 70);
+      final int totalDurationMs =
+          (850 - (speed * 400)).round().clamp(450, 900);
+      final int totalSteps = (totalDurationMs / stepDelay).round();
 
-      final int totalSteps =
-          ((800 -
-                      (speed * 500)) /
-                  stepDelay)
-              .round()
-              .clamp(
-                4,
-                12,
-              );
+      // Trigger roll sound and non-blocking haptic feedback
+      _playDiceSound();
+      _triggerVibration();
 
-      // ------------------------------------------------------
-      // START SOUND
-      // ------------------------------------------------------
-
-      await _playDiceSound();
-
-      // ------------------------------------------------------
-      // DICE ANIMATION
-      // ------------------------------------------------------
-
-      for (
-        int i = 0;
-        i < totalSteps;
-        i++
-      ) {
+      for (int i = 0; i < totalSteps; i++) {
         await Future.delayed(
-          Duration(
-            milliseconds:
-                stepDelay,
-          ),
+          Duration(milliseconds: stepDelay),
         );
 
-        // Vibration on every animation step.
-        await _vibrate();
+        if (!isRolling.value) break;
 
         diceValues.assignAll(
           List.generate(
             playerCount.value,
-            (_) {
-              return _random.nextInt(
-                    diceSides.value,
-                  ) +
-                  1;
-            },
+            (_) => _random.nextInt(diceSides.value) + 1,
           ),
         );
       }
 
-      // ------------------------------------------------------
-      // FINAL RESULTS
-      // ------------------------------------------------------
-
-      final List<int> finalResults =
-          List<int>.from(
-        diceValues,
+      final List<int> finalResults = List.generate(
+        playerCount.value,
+        (_) => _random.nextInt(diceSides.value) + 1,
       );
+      diceValues.assignAll(finalResults);
 
-      debugPrint(
-        'Final Results: '
-        '$finalResults',
-      );
+      debugPrint('Final Results: $finalResults');
+      _saveToHistory(finalResults);
 
-      // ------------------------------------------------------
-      // SAVE TO HISTORY
-      // ------------------------------------------------------
-
-      _saveToHistory(
-        finalResults,
-      );
-
-      // ------------------------------------------------------
-      // ROLL FINISHED
-      // ------------------------------------------------------
-
-      isRolling.value =
-          false;
-
-      // ------------------------------------------------------
-      // STOP ROLL SOUND
-      // ------------------------------------------------------
-
+      isRolling.value = false;
       await _stopDiceSound();
 
       await Future.delayed(
@@ -821,10 +766,6 @@ void setPlayerCount(
           milliseconds: 140,
         ),
       );
-
-      // ------------------------------------------------------
-      // SPEAK RESULTS
-      // ------------------------------------------------------
 
       await speakDiceResults();
     } catch (e) {
