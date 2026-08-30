@@ -139,12 +139,11 @@ ever<int>(
   Future<void> _setupVoice() async {
     try {
       await flutterTts.setLanguage('en-US');
-      await flutterTts.setSpeechRate(0.50);
+      await flutterTts.setSpeechRate(0.58);
       await flutterTts.setVolume(
         settingsController.settings.soundVolume.clamp(0.0, 1.0),
       );
       await flutterTts.setPitch(1.0);
-      await flutterTts.awaitSpeakCompletion(true);
     } catch (e) {
       debugPrint('Voice setup error: $e');
     }
@@ -273,49 +272,36 @@ ever<int>(
     try {
       await flutterTts.stop();
       await flutterTts.setVolume(volume);
-      await flutterTts.setSpeechRate(0.50);
+      await flutterTts.setSpeechRate(0.58);
       await flutterTts.setPitch(1.0);
 
       final int totalPlayers =
           diceValues.length.clamp(1, 7);
 
-      for (int i = 0; i < totalPlayers; i++) {
-        if (_speechSessionId != currentSession) {
-          break;
-        }
+      if (_speechSessionId != currentSession) {
+        return;
+      }
 
-        final int diceNumber =
-            diceValues[i];
-
-        final String sentence;
-        if (totalPlayers == 1) {
-          sentence = _numberToWord(diceNumber);
-        } else {
+      if (totalPlayers == 1) {
+        final int diceNumber = diceValues[0];
+        final String sentence = _numberToWord(diceNumber);
+        await flutterTts.speak(sentence);
+      } else {
+        final List<String> playerParts = [];
+        for (int i = 0; i < totalPlayers; i++) {
+          final int diceNumber = diceValues[i];
           final String playerName =
               i < playerNames.length
                   ? playerNames[i]
                   : 'Player ${i + 1}';
 
-          sentence =
-              '$playerName, '
-              '${_numberToWord(diceNumber)}';
-        }
-
-        await flutterTts.speak(
-          sentence,
-        );
-
-        if (_speechSessionId != currentSession) {
-          break;
-        }
-
-        if (i < totalPlayers - 1) {
-          await Future.delayed(
-            const Duration(
-              milliseconds: 320,
-            ),
+          playerParts.add(
+            '$playerName: ${_numberToWord(diceNumber)}',
           );
         }
+
+        final String sentence = playerParts.join('. ');
+        await flutterTts.speak(sentence);
       }
     } catch (e) {
       debugPrint(

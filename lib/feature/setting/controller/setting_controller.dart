@@ -8,7 +8,7 @@ class SettingsController extends GetxController {
   // =========================
   // Dice Settings
   // =========================
-  final RxInt diceCount = 3.obs;
+  final RxInt diceCount = 1.obs;
   final RxInt diceSides = 6.obs;
 
   // =========================

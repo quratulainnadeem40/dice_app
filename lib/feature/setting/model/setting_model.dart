@@ -15,7 +15,7 @@ class SettingsModel {
   int rollSoundDice;
 
   SettingsModel({
-    this.diceCount = 3,
+    this.diceCount = 1,
     this.diceSides = 6,
     // Default transparent set kiya hai (Default Multi-Color mode ke liye)
     this.diceColor = Colors.transparent,
@@ -45,7 +45,7 @@ class SettingsModel {
   // Loading from saved data safely
   factory SettingsModel.fromMap(Map<String, dynamic> map) {
     return SettingsModel(
-      diceCount: map['diceCount'] ?? 3,
+      diceCount: map['diceCount'] ?? 1,
       diceSides: map['diceSides'] ?? 6,
       diceColor: map['diceColor'] != null
           ? Color(map['diceColor'])

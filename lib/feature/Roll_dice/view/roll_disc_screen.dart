@@ -16,42 +16,49 @@ class RollDiceScreen extends StatelessWidget {
             ? Get.find<RollDiceController>()
             : Get.put(RollDiceController());
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          // ==================================================
-          // BACKGROUND GLOW
-          // ==================================================
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          controller.stopVoice();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            // ==================================================
+            // BACKGROUND GLOW
+            // ==================================================
 
-          Positioned(
-            top: -130,
-            right: -100,
-            child: _buildGlow(
-              AppColors.purple.withValues(alpha: 0.13),
-              290,
+            Positioned(
+              top: -130,
+              right: -100,
+              child: _buildGlow(
+                AppColors.purple.withValues(alpha: 0.13),
+                290,
+              ),
             ),
-          ),
 
-          Positioned(
-            bottom: 100,
-            left: -150,
-            child: _buildGlow(
-              AppColors.blue.withValues(alpha: 0.08),
-              300,
+            Positioned(
+              bottom: 100,
+              left: -150,
+              child: _buildGlow(
+                AppColors.blue.withValues(alpha: 0.08),
+                300,
+              ),
             ),
-          ),
 
-          // ==================================================
-          // MAIN CONTENT
-          // ==================================================
+            // ==================================================
+            // MAIN CONTENT
+            // ==================================================
 
-          SafeArea(
-            child: Column(
-              children: [
-                _buildTopBar(),
+            SafeArea(
+              child: Column(
+                children: [
+                  _buildTopBar(controller),
 
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                 // ==================================================
                 // NUMBER OF PLAYERS
@@ -138,8 +145,9 @@ class RollDiceScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   // ==========================================================
   // BACKGROUND GLOW
@@ -172,7 +180,7 @@ class RollDiceScreen extends StatelessWidget {
   // TOP BAR
   // ==========================================================
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(RollDiceController controller) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         18,
@@ -183,7 +191,10 @@ class RollDiceScreen extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => Get.back(),
+            onTap: () {
+              controller.stopVoice();
+              Get.back();
+            },
             child: Container(
               width: 42,
               height: 42,
@@ -223,6 +234,7 @@ class RollDiceScreen extends StatelessWidget {
 
           GestureDetector(
             onTap: () {
+              controller.stopVoice();
               Get.toNamed('/settings');
             },
             child: Container(
@@ -1133,7 +1145,9 @@ class RollDiceScreen extends StatelessWidget {
             label: Text(
               controller.isRolling.value
                   ? 'ROLLING...'
-                  : 'ROLL ALL DICE',
+                  : (controller.playerCount.value == 1
+                      ? 'ROLL DICE'
+                      : 'ROLL ALL DICE'),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 13,
