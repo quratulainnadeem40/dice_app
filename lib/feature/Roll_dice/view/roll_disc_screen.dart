@@ -14,7 +14,7 @@ class RollDiceScreen extends StatelessWidget {
     final RollDiceController controller =
         Get.isRegistered<RollDiceController>()
             ? Get.find<RollDiceController>()
-            : Get.put(RollDiceController());
+            : Get.put(RollDiceController(), permanent: true);
 
     return PopScope(
       canPop: true,
