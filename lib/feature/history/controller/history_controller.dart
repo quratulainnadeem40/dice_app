@@ -67,6 +67,7 @@ class HistoryController extends GetxController {
     required List<int> results,
     required int playerCount,
     required int diceSides,
+    List<String>? playerNames,
   }) {
     if (results.isEmpty) {
       return;
@@ -78,13 +79,22 @@ class HistoryController extends GetxController {
     final String title =
         '$playerCount Player${playerCount > 1 ? 's' : ''} (D$diceSides)';
 
+    final List<String> resolvedNames = playerNames ??
+        List.generate(
+          results.length,
+          (i) => 'Player ${i + 1}',
+        );
+
     final RollHistoryModel newHistory =
         RollHistoryModel(
       id: DateTime.now()
           .microsecondsSinceEpoch
           .toString(),
       title: title,
+      playerCount: playerCount,
+      diceSides: diceSides,
       diceValues: List<int>.from(results),
+      playerNames: resolvedNames,
       totalResult: total,
       dateTime: DateTime.now(),
     );
@@ -97,7 +107,8 @@ class HistoryController extends GetxController {
 
     debugPrint(
       'HISTORY ADDED: ${newHistory.title} '
-      '${newHistory.diceValues}',
+      'Names: ${newHistory.playerNames} '
+      'Values: ${newHistory.diceValues}',
     );
   }
 

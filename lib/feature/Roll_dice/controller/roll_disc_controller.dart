@@ -729,18 +729,21 @@ void setPlayerCount(
       return;
     }
 
+    final List<String> currentNames = List<String>.generate(
+      playerCount.value,
+      (i) => getPlayerName(i),
+    );
+
     historyController.addHistory(
-      results:
-          List<int>.from(results),
-      playerCount:
-          playerCount.value,
-      diceSides:
-          diceSides.value,
+      results: List<int>.from(results),
+      playerCount: playerCount.value,
+      diceSides: diceSides.value,
+      playerNames: currentNames,
     );
 
     debugPrint(
       'History saved successfully: '
-      '$results',
+      '$results for $currentNames',
     );
   }
 
