@@ -170,15 +170,13 @@ ever<int>(
 }
 
   // ==========================================================
-  // TOGGLE SOUND (QUICK ACTION)
+  // TOGGLE SOUND (QUICK ACTION - AUTO SAVED TO LOCAL STORAGE)
   // ==========================================================
 
   void toggleSound() {
     final bool current = settingsController.soundEnabled.value;
     final bool newValue = !current;
-    settingsController.soundEnabled.value = newValue;
-    settingsController.settings.soundEnabled = newValue;
-    settingsController.settingsVersion.value++;
+    settingsController.toggleSound(newValue);
     if (!newValue) {
       stopVoice();
       _stopDiceSound();
@@ -429,24 +427,14 @@ ever<int>(
   }
 
   // ==========================================================
-  // APPLY SETTINGS
+  // APPLY SETTINGS (PERSISTENT THEME & SOUND SYNC)
   // ==========================================================
 
   void applySettings() {
-  playerCount.value =
-      settingsController.settings.diceCount.clamp(1, 8);
-
-  diceSides.value =
-      settingsController.settings.diceSides;
-
-  updateThemeFromColor(
-    settingsController.settings.diceColor,
-  );
-
-  updatePlayerNames();
-
-  updateDiceCount();
-}
+    updateThemeFromColor(
+      settingsController.settings.diceColor,
+    );
+  }
 
   // ==========================================================
   // UPDATE PLAYER NAMES
@@ -631,40 +619,34 @@ Future<void> editPlayerName(
 // PLAYER COUNT
 // ==========================================================
 
-void setPlayerCount(
+  void setPlayerCount(
     int count,
   ) {
-    if (count < 1 ||
-        count > 8) {
+    if (count < 1 || count > 8) {
       return;
     }
 
     stopVoice();
 
-    playerCount.value =
-        count;
-
+    playerCount.value = count;
     updatePlayerNames();
     updateDiceCount();
   }
 
   // ==========================================================
-  // DICE SIDES
+  // DICE SIDES (SESSION-ONLY)
   // ==========================================================
 
   void setDiceSides(
     int sides,
   ) {
-    if (sides < 3 ||
-        sides > 20) {
+    if (sides < 3 || sides > 20) {
       return;
     }
 
     stopVoice();
 
-    diceSides.value =
-        sides;
-
+    diceSides.value = sides;
     updateDiceCount();
   }
 

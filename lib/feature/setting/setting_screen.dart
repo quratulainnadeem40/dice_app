@@ -96,117 +96,62 @@ class SettingsScreen extends GetView<SettingsController> {
           color: Colors.white.withValues(alpha: 0.08),
         ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: const Color(0xFF8B2CFF).withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.privacy_tip_rounded,
-            color: Color(0xFF8B2CFF),
-            size: 20,
-          ),
-        ),
-        title: const Text(
-          'Privacy Policy',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        subtitle: const Text(
-          'Innovexa Technologies • 100% Offline & Safe',
-          style: TextStyle(
-            color: Colors.white54,
-            fontSize: 11,
-          ),
-        ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios_rounded,
-          color: Colors.white38,
-          size: 14,
-        ),
-        onTap: () => _showPrivacyPolicyDialog(context),
-      ),
-    );
-  }
-
-  void _showPrivacyPolicyDialog(BuildContext context) {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: const Color(0xFF14122E),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-          side: BorderSide(
-            color: const Color(0xFF8B2CFF).withValues(alpha: 0.35),
-            width: 1.2,
-          ),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.shield_rounded, color: Color(0xFF8B2CFF), size: 24),
-            SizedBox(width: 10),
-            Text(
-              'Privacy Policy',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-                fontSize: 18,
-              ),
-            ),
-          ],
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Text(
-                  'Innovex Technologies',
-                  style: TextStyle(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => Get.toNamed(AppRoutes.privacyPolicy),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF8B2CFF).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.privacy_tip_rounded,
                     color: Color(0xFF8B2CFF),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
+                    size: 20,
                   ),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'Dice Roller is built with strict respect for user privacy:\n\n'
-                  '• Zero Data Collection: We do not collect, track, or share any personal information.\n'
-                  '• 100% Offline: The app operates entirely locally on your device.\n'
-                  '• Permissions: Only vibration permission is used for tactile feedback.\n'
-                  '• Local Storage: Settings and roll history remain solely on your device.\n\n'
-                  'Support & Inquiries:\ninnovexa.technologies01@gmail.com',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                    height: 1.5,
+                const SizedBox(width: 14),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Privacy Policy',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Innovexa Technologies • 100% Offline & Safe',
+                        style: TextStyle(
+                          color: Colors.white54,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.white38,
+                  size: 14,
                 ),
               ],
             ),
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text(
-              'CLOSE',
-              style: TextStyle(
-                color: Color(0xFF8B2CFF),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

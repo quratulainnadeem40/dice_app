@@ -3,120 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Dice Roller</title>
+    <title>Privacy Policy - Dice Roller | Innovexa Technologies</title>
     <style>
+        :root {
+            --primary: #8B2CFF;
+            --primary-dark: #6C1BC7;
+            --secondary: #087FF5;
+            --bg-dark: #080A1C;
+            --card-bg: #12142E;
+            --text-main: #FFFFFF;
+            --text-sub: #B4B9D2;
+            --border: rgba(139, 44, 255, 0.22);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #080A1C;
-            color: #E2DEFF;
-            line-height: 1.6;
-            padding: 30px 15px;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.7;
+            padding: 40px 18px;
         }
 
         .container {
-            max-width: 720px;
+            max-width: 840px;
             margin: 0 auto;
-            background: #12142E;
-            border: 1px solid rgba(139, 44, 255, 0.25);
-            border-radius: 20px;
-            padding: 32px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 42px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 28px;
+            margin-bottom: 32px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            padding: 6px 18px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
         }
 
         h1 {
-            font-size: 26px;
-            color: #FFFFFF;
-            margin-bottom: 6px;
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFF, #C5BAFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .meta {
-            font-size: 13px;
-            color: #9E9EB8;
-            margin-bottom: 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 12px;
+            color: var(--text-sub);
+            font-size: 14px;
+        }
+
+        .summary-card {
+            background: rgba(139, 44, 255, 0.08);
+            border: 1px solid rgba(139, 44, 255, 0.28);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card strong {
+            color: #FFF;
         }
 
         h2 {
-            font-size: 17px;
-            color: #FFFFFF;
-            margin-top: 22px;
-            margin-bottom: 8px;
+            font-size: 19px;
+            font-weight: 700;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            color: #E2DEFF;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 2px;
         }
 
         p, ul {
-            font-size: 14px;
-            color: #B4B9D2;
-            margin-bottom: 12px;
+            color: var(--text-sub);
+            font-size: 15px;
+            margin-bottom: 15px;
         }
 
         ul {
-            padding-left: 20px;
+            padding-left: 22px;
         }
 
         li {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .contact-box {
-            background: rgba(139, 44, 255, 0.1);
-            border: 1px solid rgba(139, 44, 255, 0.25);
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 24px;
+            background: linear-gradient(135deg, rgba(139, 44, 255, 0.15), rgba(8, 127, 245, 0.15));
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            text-align: center;
+            margin-top: 35px;
         }
 
         .contact-box a {
-            color: #A388FF;
+            color: #B69AFF;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
         }
 
         footer {
             text-align: center;
-            margin-top: 24px;
-            font-size: 12px;
+            margin-top: 35px;
+            font-size: 13px;
             color: #6C7293;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 10px;
+            }
+            .container {
+                padding: 24px;
+                border-radius: 18px;
+            }
+            h1 {
+                font-size: 23px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Privacy Policy</h1>
-    <div class="meta">
-        <strong>App:</strong> Dice Roller &nbsp;|&nbsp; 
-        <strong>Developer:</strong> Innovexa Technologies &nbsp;|&nbsp; 
-        <strong>Effective Date:</strong> August 30, 2026
+    <div class="header">
+        <span class="badge">Official Privacy Policy</span>
+        <h1>Dice Roller Application</h1>
+        <p class="meta"><strong>Innovexa Technologies</strong> &nbsp;|&nbsp; Effective Date: August 30, 2026</p>
     </div>
 
-    <h2>1. Data Collection & Usage</h2>
-    <p>Dice Roller does <strong>not collect, store, or share any personal information</strong>. The application functions entirely offline and does not require account creation, login, or internet access.</p>
+    <div class="summary-card">
+        <strong>Privacy Commitment:</strong> The <strong>Dice Roller</strong> app created by <strong>Innovexa Technologies</strong> is designed with privacy-by-default. We <strong>DO NOT collect, store, share, sell, or transmit</strong> any personal information or device tracking data. The application operates 100% locally on your device.
+    </div>
 
-    <h2>2. Permissions</h2>
+    <h2>1. Information Collection & Usage</h2>
+    <p>We respect your privacy. Our application does not collect any personally identifiable information (PII) such as your name, email address, phone number, location, or device identifiers.</p>
     <ul>
-        <li><strong>Vibration (<code>android.permission.VIBRATE</code>):</strong> Used solely to provide tactile vibration feedback when rolling dice. It has no access to private files, camera, microphone, or contacts.</li>
+        <li><strong>No Account Required:</strong> You can use all features of the app without registration or sign-in.</li>
+        <li><strong>No Tracking:</strong> We do not use advertising identifiers, analytics SDKs, or behavioral trackers.</li>
+        <li><strong>100% Offline:</strong> All dice rolling simulations and voice announcers operate locally on your device.</li>
     </ul>
 
-    <h2>3. Local Storage</h2>
-    <p>User preferences (such as dice themes, sounds, and vibration settings) and roll history are stored strictly on the local device. This data never leaves the device and can be cleared at any time within the app.</p>
+    <h2>2. System Permissions Requested</h2>
+    <p>The app only requests the minimum essential system permission required for tactile feedback:</p>
+    <ul>
+        <li><strong>Vibrate (<code>android.permission.VIBRATE</code>):</strong> Used strictly to provide physical tactile vibration when rolling dice. This permission has zero access to private files, camera, microphone, location, or contacts.</li>
+    </ul>
 
-    <h2>4. Third-Party Services</h2>
-    <p>This app does not use any third-party analytics, advertising networks, or tracking services.</p>
+    <h2>3. Local Data Storage & User Control</h2>
+    <p>The app saves non-personal preferences locally on your device for user experience continuity:</p>
+    <ul>
+        <li><strong>App Settings:</strong> Chosen dice themes, custom colors, animation speed, sound volume, and vibration intensity.</li>
+        <li><strong>Roll History:</strong> Past roll records, player names, and winner highlights.</li>
+    </ul>
+    <p>All stored data remains strictly inside your local device storage and is never uploaded to any cloud server. You can erase all saved history at any time using the <strong>"Clear History"</strong> button inside the app.</p>
 
-    <h2>5. Children's Privacy</h2>
-    <p>The app does not collect personal data from anyone, including children under the age of 13, in full compliance with COPPA and GDPR.</p>
+    <h2>4. Third-Party Services & Advertising</h2>
+    <p>This application contains no third-party advertising SDKs, behavioral trackers, or external monetization services.</p>
+
+    <h2>5. Children's Privacy (COPPA & GDPR Compliance)</h2>
+    <p>Our application is family-friendly and suitable for users of all ages (3+). Because we do not collect any personal data whatsoever, we fully comply with the <strong>Children's Online Privacy Protection Act (COPPA)</strong> and global data protection regulations.</p>
+
+    <h2>6. Security of Your Data</h2>
+    <p>Since no personal information is transmitted across the internet or stored on external servers, your data is completely secure from unauthorized access, interception, or server breaches.</p>
+
+    <h2>7. Changes to This Privacy Policy</h2>
+    <p>We may update our Privacy Policy periodically. Any updates will be published on this page with a revised "Effective Date".</p>
 
     <div class="contact-box">
         <h2>Contact Us</h2>
-        <p>If you have any questions regarding this Privacy Policy, please contact:</p>
-        <p><strong>Innovexa Technologies</strong><br>
-        Email: <a href="mailto:innovexa.technologies01@gmail.com">innovexa.technologies01@gmail.com</a></p>
+        <p>If you have any questions, suggestions, or concerns regarding this Privacy Policy, please contact:</p>
+        <p style="margin-top: 10px;"><strong>Innovexa Technologies</strong><br>
+        Support Email: <a href="mailto:innovexa.technologies01@gmail.com">innovexa.technologies01@gmail.com</a></p>
     </div>
 </div>
 

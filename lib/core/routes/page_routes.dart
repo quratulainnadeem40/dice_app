@@ -3,6 +3,7 @@ import 'package:dice_app/feature/history/binding/history_binding.dart';
 import 'package:dice_app/feature/history/view/history_screen.dart';
 import 'package:dice_app/feature/home/binding/home_binding.dart';
 import 'package:dice_app/feature/home/home_screen.dart';
+import 'package:dice_app/feature/privacy_policy/view/privacy_policy_screen.dart';
 import 'package:dice_app/feature/roll_dice/binding/roll_dice_binding.dart';
 import 'package:dice_app/feature/setting/binding/setting_binding.dart';
 import 'package:dice_app/feature/setting/setting_screen.dart';
@@ -64,6 +65,15 @@ class AppPages {
       name: AppRoutes.history,
       page: () => const HistoryScreen(),
       binding: HistoryBinding(),
+    ),
+
+    // ==========================================================
+    // PRIVACY POLICY
+    // ==========================================================
+
+    GetPage(
+      name: AppRoutes.privacyPolicy,
+      page: () => const PrivacyPolicyScreen(),
     ),
   ];
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 class SettingsModel {
+  // Session-only game state (Always resets to default on app start)
   int diceCount;
   int diceSides;
+
+  // Persistent settings (Saved in Local Storage)
   Color diceColor;
   double animationSpeed;
 
@@ -17,7 +20,7 @@ class SettingsModel {
   SettingsModel({
     this.diceCount = 1,
     this.diceSides = 6,
-    // Default transparent set kiya hai (Default Multi-Color mode ke liye)
+    // Default transparent set (Gradient mode)
     this.diceColor = Colors.transparent,
     this.animationSpeed = 0.5,
     this.soundEnabled = true,
@@ -27,11 +30,9 @@ class SettingsModel {
     this.rollSoundDice = 1,
   });
 
-  // Color Value to ARGB int conversion for saving
+  // Only persistent settings are saved to local storage
   Map<String, dynamic> toMap() {
     return {
-      'diceCount': diceCount,
-      'diceSides': diceSides,
       'diceColor': diceColor.toARGB32(),
       'animationSpeed': animationSpeed,
       'soundEnabled': soundEnabled,
@@ -42,11 +43,11 @@ class SettingsModel {
     };
   }
 
-  // Loading from saved data safely
+  // Loading from saved data safely (diceCount & diceSides always default to 1 & 6)
   factory SettingsModel.fromMap(Map<String, dynamic> map) {
     return SettingsModel(
-      diceCount: map['diceCount'] ?? 1,
-      diceSides: map['diceSides'] ?? 6,
+      diceCount: 1, // Session default
+      diceSides: 6, // Session default
       diceColor: map['diceColor'] != null
           ? Color(map['diceColor'])
           : Colors.transparent,
