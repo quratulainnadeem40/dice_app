@@ -83,8 +83,13 @@ class DiceCard extends StatelessWidget {
           const SizedBox(height: 22),
 
           // Visual Dice
-          _buildVisualDice(),
-
+         // Visual Dice
+GestureDetector(
+  onTap: () {
+    Get.toNamed(AppRoutes.rollDice);
+  },
+  child: _buildVisualDice(),
+),
           const SizedBox(height: 20),
 
           const Text(
