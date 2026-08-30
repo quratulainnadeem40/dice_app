@@ -75,7 +75,7 @@ class SettingsController extends GetxController {
   // Dice Count
   // =========================
   void incrementDice() {
-    if (diceCount.value < 10) {
+    if (diceCount.value < 7) {
       diceCount.value++;
     }
   }

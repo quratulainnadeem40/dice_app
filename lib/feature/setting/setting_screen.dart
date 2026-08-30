@@ -1,4 +1,4 @@
-import 'package:dice_app/feature/Roll_dice/view/roll_disc_screen.dart';
+
 import 'package:dice_app/feature/setting/controller/setting_controller.dart';
 import 'package:dice_app/feature/setting/widgets/animation_speed_slider.dart';
 import 'package:dice_app/feature/setting/widgets/dice_color_selector.dart';
@@ -289,7 +289,7 @@ class SettingsScreen extends GetView<SettingsController> {
                   height: 52,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      Get.to(() => const  RollDiceScreen());
+                      Get.back();
                     },
                     icon: const Icon(
                       Icons.casino_rounded,

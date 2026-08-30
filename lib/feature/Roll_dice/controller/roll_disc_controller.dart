@@ -78,8 +78,32 @@ class RollDiceController extends GetxController {
     // APPLY SETTINGS
     // --------------------------------------------------------
 
-    applySettings();
+  // APPLY SETTINGS
+applySettings();
 
+// SETTINGS LISTENERS
+ever(
+  settingsController.diceSides,
+  (int newSides) {
+    diceSides.value = newSides;
+    updateDiceCount();
+  },
+);
+
+ever(
+  settingsController.diceColor,
+  (Color newColor) {
+    updateThemeFromColor(newColor);
+  },
+);
+
+ever(
+  settingsController.diceCount,
+  (int newCount) {
+    playerCount.value = newCount.clamp(1, 7);
+    updateDiceCount();
+  },
+);
     // --------------------------------------------------------
     // SETTINGS LISTENERS
     // --------------------------------------------------------
@@ -249,31 +273,40 @@ class RollDiceController extends GetxController {
   // UPDATE DICE THEME
   // ==========================================================
 
-  void updateThemeFromColor(
-    Color color,
-  ) {
+  void updateThemeFromColor(Color color) {
+  if (color == Colors.transparent) {
+    // Multi-color mode
     selectedDiceTheme.value =
-        DiceTheme(
-      id: 'custom_theme_${color.value}',
-      name: 'Custom Theme',
-      colors: [
-        color,
-        color.withValues(
-          alpha: 0.7,
-        ),
-      ],
-      glowColor: color,
-    );
+        DiceThemes.all.first;
+    return;
   }
+
+  selectedDiceTheme.value = DiceTheme(
+    id: 'custom_theme_${color.value}',
+    name: 'Custom Theme',
+    colors: [
+      color,
+      color.withValues(alpha: 0.7),
+    ],
+    glowColor: color,
+  );
+}
 
   // ==========================================================
   // APPLY SETTINGS
   // ==========================================================
 
-  void applySettings() {
-    diceSides.value =
-        settingsController.diceSides.value;
-  }
+void applySettings() {
+  playerCount.value = settingsController.diceCount.value.clamp(1, 7);
+
+  diceSides.value = settingsController.diceSides.value;
+
+  updateThemeFromColor(
+    settingsController.diceColor.value,
+  );
+
+  updateDiceCount();
+}
 
   // ==========================================================
   // PLAYER COUNT

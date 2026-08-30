@@ -1,6 +1,8 @@
+
 import 'package:dice_app/core/dice_theme.dart';
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/feature/Roll_dice/controller/roll_disc_controller.dart';
+import 'package:dice_app/feature/setting/controller/setting_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +11,10 @@ class RollDiceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final RollDiceController controller = Get.put(RollDiceController());
+    final RollDiceController controller =
+        Get.isRegistered<RollDiceController>()
+            ? Get.find<RollDiceController>()
+            : Get.put(RollDiceController());
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -52,13 +57,36 @@ class RollDiceScreen extends StatelessWidget {
 
                 const SizedBox(height: 14),
 
+                // ==================================================
+                // PLAYER SELECTOR
+                // ==================================================
+
                 _buildPlayerSelector(controller),
 
                 const SizedBox(height: 8),
 
+                // ==================================================
+                // DICE SIDES SELECTOR
+                // ==================================================
+
+                _buildDiceSidesSelector(controller),
+
+                const SizedBox(height: 8),
+
+                // ==================================================
+                // DICE AREA
+                // ==================================================
+
                 Expanded(
-                  child: _buildDiceArea(context, controller),
+                  child: _buildDiceArea(
+                    context,
+                    controller,
+                  ),
                 ),
+
+                // ==================================================
+                // ROLL BUTTON
+                // ==================================================
 
                 _buildRollButton(controller),
 
@@ -75,7 +103,10 @@ class RollDiceScreen extends StatelessWidget {
   // BACKGROUND GLOW
   // ==========================================================
 
-  Widget _buildGlow(Color color, double size) {
+  Widget _buildGlow(
+    Color color,
+    double size,
+  ) {
     return IgnorePointer(
       child: Container(
         width: size,
@@ -101,7 +132,12 @@ class RollDiceScreen extends StatelessWidget {
 
   Widget _buildTopBar() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 8, 18, 0),
+      padding: const EdgeInsets.fromLTRB(
+        18,
+        8,
+        18,
+        0,
+      ),
       child: Row(
         children: [
           GestureDetector(
@@ -110,10 +146,14 @@ class RollDiceScreen extends StatelessWidget {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.045),
+                color: Colors.white.withValues(
+                  alpha: 0.045,
+                ),
                 borderRadius: BorderRadius.circular(13),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: Colors.white.withValues(
+                    alpha: 0.08,
+                  ),
                 ),
               ),
               child: const Icon(
@@ -146,10 +186,14 @@ class RollDiceScreen extends StatelessWidget {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.045),
+                color: Colors.white.withValues(
+                  alpha: 0.045,
+                ),
                 borderRadius: BorderRadius.circular(13),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: Colors.white.withValues(
+                    alpha: 0.08,
+                  ),
                 ),
               ),
               child: const Icon(
@@ -168,7 +212,9 @@ class RollDiceScreen extends StatelessWidget {
   // HEADING
   // ==========================================================
 
-  Widget _buildHeading(RollDiceController controller) {
+  Widget _buildHeading(
+    RollDiceController controller,
+  ) {
     return Obx(
       () => Column(
         children: [
@@ -183,13 +229,17 @@ class RollDiceScreen extends StatelessWidget {
               letterSpacing: -0.4,
             ),
           ),
+
           const SizedBox(height: 4),
+
           Text(
             controller.isRolling.value
                 ? 'Rolling your dice...'
                 : 'Choose players and roll',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.42),
+              color: Colors.white.withValues(
+                alpha: 0.42,
+              ),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -203,16 +253,24 @@ class RollDiceScreen extends StatelessWidget {
   // PLAYER SELECTOR
   // ==========================================================
 
-  Widget _buildPlayerSelector(RollDiceController controller) {
+  Widget _buildPlayerSelector(
+    RollDiceController controller,
+  ) {
     return Obx(
       () => Container(
-        margin: const EdgeInsets.symmetric(horizontal: 18),
+        margin: const EdgeInsets.symmetric(
+          horizontal: 18,
+        ),
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.045),
+          color: Colors.white.withValues(
+            alpha: 0.045,
+          ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.075),
+            color: Colors.white.withValues(
+              alpha: 0.075,
+            ),
           ),
         ),
         child: Row(
@@ -220,19 +278,28 @@ class RollDiceScreen extends StatelessWidget {
             7,
             (index) {
               final number = index + 1;
-              final selected = controller.playerCount.value == number;
+
+              final selected =
+                  controller.playerCount.value == number;
 
               return Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    controller.setPlayerCount(number);
+                    controller.setPlayerCount(
+                      number,
+                    );
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
+                    duration: const Duration(
+                      milliseconds: 180,
+                    ),
                     height: 42,
-                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 2,
+                    ),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(11),
+                      borderRadius:
+                          BorderRadius.circular(11),
                       gradient: selected
                           ? const LinearGradient(
                               begin: Alignment.topLeft,
@@ -245,11 +312,15 @@ class RollDiceScreen extends StatelessWidget {
                           : null,
                       color: selected
                           ? null
-                          : Colors.white.withValues(alpha: 0.025),
+                          : Colors.white.withValues(
+                              alpha: 0.025,
+                            ),
                       border: Border.all(
                         color: selected
                             ? Colors.transparent
-                            : Colors.white.withValues(alpha: 0.06),
+                            : Colors.white.withValues(
+                                alpha: 0.06,
+                              ),
                       ),
                     ),
                     child: Center(
@@ -258,7 +329,9 @@ class RollDiceScreen extends StatelessWidget {
                         style: TextStyle(
                           color: selected
                               ? Colors.white
-                              : Colors.white.withValues(alpha: 0.62),
+                              : Colors.white.withValues(
+                                  alpha: 0.62,
+                                ),
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                         ),
@@ -275,6 +348,124 @@ class RollDiceScreen extends StatelessWidget {
   }
 
   // ==========================================================
+  // DICE SIDES SELECTOR
+  // ==========================================================
+
+  Widget _buildDiceSidesSelector(
+    RollDiceController controller,
+  ) {
+    return Obx(
+      () {
+        final selectedSides =
+            controller.diceSides.value;
+
+        return Container(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 18,
+          ),
+          height: 52,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 5,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(
+              alpha: 0.045,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(
+                alpha: 0.075,
+              ),
+            ),
+          ),
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 3,
+            ),
+
+            // 3 through 20 = 18 values
+            itemCount: 18,
+
+            separatorBuilder: (
+              context,
+              index,
+            ) {
+              return const SizedBox(width: 4);
+            },
+
+            itemBuilder: (
+              context,
+              index,
+            ) {
+              final sides = index + 3;
+
+              final isSelected =
+                  selectedSides == sides;
+
+              return GestureDetector(
+                onTap: () {
+                  controller.setDiceSides(
+                    sides,
+                  );
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(
+                    milliseconds: 180,
+                  ),
+                  width: 40,
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(11),
+                    gradient: isSelected
+                        ? const LinearGradient(
+                            colors: [
+                              AppColors.purple,
+                              AppColors.violet,
+                            ],
+                          )
+                        : null,
+                    color: isSelected
+                        ? null
+                        : Colors.white.withValues(
+                            alpha: 0.025,
+                          ),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.transparent
+                          : Colors.white.withValues(
+                              alpha: 0.06,
+                            ),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$sides',
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : Colors.white.withValues(
+                                alpha: 0.62,
+                              ),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  // ==========================================================
   // DICE AREA
   // ==========================================================
 
@@ -284,32 +475,43 @@ class RollDiceScreen extends StatelessWidget {
   ) {
     return Obx(
       () {
-        final count = controller.playerCount.value;
+        final count =
+            controller.playerCount.value;
 
         if (count == 1) {
           return Center(
             child: _buildPlayerDice(
               0,
-              size: 180,
+              size: 155,
               controller: controller,
             ),
           );
         }
 
         if (count == 2) {
-          final screenWidth = MediaQuery.sizeOf(context).width;
-          final availableWidth = screenWidth - 56;
-         final size = ((availableWidth - 30) / 2).clamp(90.0, 135.0);
+          final screenWidth =
+              MediaQuery.sizeOf(context).width;
+
+          final availableWidth =
+              screenWidth - 56;
+
+          final size =
+              ((availableWidth - 30) / 2)
+                  .clamp(85.0, 120.0);
+
           return Center(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment:
+                  MainAxisAlignment.center,
               children: [
                 _buildPlayerDice(
                   0,
                   size: size,
                   controller: controller,
                 ),
+
                 const SizedBox(width: 20),
+
                 _buildPlayerDice(
                   1,
                   size: size,
@@ -330,7 +532,7 @@ class RollDiceScreen extends StatelessWidget {
   }
 
   // ==========================================================
-  // BALANCED LAYOUT
+  // BALANCED PLAYER LAYOUT
   // ==========================================================
 
   Widget _buildBalancedPlayerLayout(
@@ -357,34 +559,45 @@ class RollDiceScreen extends StatelessWidget {
       rows.add([5, 6]);
     }
 
-    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenWidth =
+        MediaQuery.sizeOf(context).width;
 
     return Center(
       child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics:
+            const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(
-          vertical: 10,
+          vertical: 8,
           horizontal: 8,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment:
+              MainAxisAlignment.center,
           children: rows.map(
             (row) {
-              final diceSize = _responsiveDiceSize(
+              final diceSize =
+                  _responsiveDiceSize(
                 count: count,
                 rowCount: row.length,
                 screenWidth: screenWidth,
               );
 
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(
+                  vertical: 5,
+                ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment:
+                      MainAxisAlignment.center,
                   children: row.map(
                     (index) {
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        padding:
+                            const EdgeInsets.symmetric(
+                          horizontal: 5,
+                        ),
                         child: _buildPlayerDice(
                           index,
                           size: diceSize,
@@ -414,31 +627,45 @@ class RollDiceScreen extends StatelessWidget {
     const horizontalPadding = 10.0;
     const safetySpace = 12.0;
 
-    final availableWidth = screenWidth - horizontalPadding - safetySpace;
-    final calculatedSize = (availableWidth / rowCount) - 34 - 10;
+    final availableWidth =
+        screenWidth -
+        horizontalPadding -
+        safetySpace;
+
+    final calculatedSize =
+        (availableWidth / rowCount) -
+        34 -
+        10;
 
     double maxSize;
 
     switch (count) {
-  case 3:
-    maxSize = 105;
-    break;
-  case 4:
-    maxSize = 100;
-    break;
-  case 5:
-    maxSize = 95;
-    break;
-  case 6:
-    maxSize = 90;
-    break;
-  case 7:
-  default:
-    maxSize = 85;
-    break;
-}
+      case 3:
+        maxSize = 105;
+        break;
 
-    return calculatedSize.clamp(55.0, maxSize);
+      case 4:
+        maxSize = 100;
+        break;
+
+      case 5:
+        maxSize = 95;
+        break;
+
+      case 6:
+        maxSize = 90;
+        break;
+
+      case 7:
+      default:
+        maxSize = 85;
+        break;
+    }
+
+    return calculatedSize.clamp(
+      55.0,
+      maxSize,
+    );
   }
 
   // ==========================================================
@@ -449,13 +676,29 @@ class RollDiceScreen extends StatelessWidget {
     int index,
     RollDiceController controller,
   ) {
-    final themes = DiceThemes.all;
+    final SettingsController settings =
+        Get.find<SettingsController>();
 
-    if (themes.isEmpty) {
-      return controller.selectedDiceTheme.value;
+    // ========================================================
+    // MULTI COLOR
+    // ========================================================
+
+    if (settings.isMultiColor) {
+      final themes = DiceThemes.all;
+
+      if (themes.isEmpty) {
+        return controller.selectedDiceTheme.value;
+      }
+
+      return themes[
+          index % themes.length];
     }
 
-    return themes[index % themes.length];
+    // ========================================================
+    // SINGLE SELECTED COLOR
+    // ========================================================
+
+    return controller.selectedDiceTheme.value;
   }
 
   // ==========================================================
@@ -469,8 +712,16 @@ class RollDiceScreen extends StatelessWidget {
   }) {
     return Obx(
       () {
-        final value = controller.diceValues[index];
-        final DiceTheme theme = _getPlayerTheme(
+        if (index >=
+            controller.diceValues.length) {
+          return const SizedBox.shrink();
+        }
+
+        final value =
+            controller.diceValues[index];
+
+        final DiceTheme theme =
+            _getPlayerTheme(
           index,
           controller,
         );
@@ -481,19 +732,24 @@ class RollDiceScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                constraints: const BoxConstraints(
+                constraints:
+                    const BoxConstraints(
                   minWidth: 78,
                   maxWidth: 100,
                 ),
-                padding: const EdgeInsets.symmetric(
+                padding:
+                    const EdgeInsets.symmetric(
                   horizontal: 9,
                   vertical: 5,
                 ),
                 decoration: BoxDecoration(
-                  color: theme.glowColor.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(20),
+                  color: theme.glowColor
+                      .withValues(alpha: 0.08),
+                  borderRadius:
+                      BorderRadius.circular(20),
                   border: Border.all(
-                    color: theme.glowColor.withValues(alpha: 0.18),
+                    color: theme.glowColor
+                        .withValues(alpha: 0.18),
                   ),
                 ),
                 child: FittedBox(
@@ -502,9 +758,11 @@ class RollDiceScreen extends StatelessWidget {
                     'PLAYER ${index + 1}',
                     maxLines: 1,
                     style: TextStyle(
-                      color: theme.glowColor,
+                      color:
+                          theme.glowColor,
                       fontSize: 8.5,
-                      fontWeight: FontWeight.w900,
+                      fontWeight:
+                          FontWeight.w900,
                       letterSpacing: 0.7,
                     ),
                   ),
@@ -514,9 +772,16 @@ class RollDiceScreen extends StatelessWidget {
               const SizedBox(height: 8),
 
               AnimatedScale(
-                duration: const Duration(milliseconds: 250),
-                scale: controller.isRolling.value ? 0.88 : 1.0,
-                curve: Curves.easeOutBack,
+                duration:
+                    const Duration(
+                  milliseconds: 250,
+                ),
+                scale:
+                    controller.isRolling.value
+                        ? 0.88
+                        : 1.0,
+                curve:
+                    Curves.easeOutBack,
                 child: _buildDiceFace(
                   value: value,
                   size: size,
@@ -542,46 +807,66 @@ class RollDiceScreen extends StatelessWidget {
     required RollDiceController controller,
   }) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
+      duration:
+          const Duration(milliseconds: 250),
       curve: Curves.easeOutBack,
       child: Transform(
         transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.0008)
+          ..setEntry(
+            3,
+            2,
+            0.0008,
+          )
           ..rotateX(
-            controller.isRolling.value ? 0.25 : 0.05,
+            controller.isRolling.value
+                ? 0.25
+                : 0.05,
           )
           ..rotateY(
-            controller.isRolling.value ? -0.30 : -0.05,
+            controller.isRolling.value
+                ? -0.30
+                : -0.05,
           )
           ..rotateZ(
-            controller.isRolling.value ? 0.10 : 0.0,
+            controller.isRolling.value
+                ? 0.10
+                : 0.0,
           ),
         alignment: Alignment.center,
         child: Container(
           width: size,
           height: size,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(size * 0.22),
+            borderRadius:
+                BorderRadius.circular(
+              size * 0.22,
+            ),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: theme.colors,
             ),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: Colors.white.withValues(
+                alpha: 0.85,
+              ),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.glowColor.withValues(alpha: 0.40),
+                color: theme.glowColor
+                    .withValues(alpha: 0.40),
                 blurRadius: 14,
                 spreadRadius: 1,
-                offset: const Offset(-2, 4),
+                offset:
+                    const Offset(-2, 4),
               ),
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.40),
+                color: Colors.black
+                    .withValues(alpha: 0.40),
                 blurRadius: 8,
-                offset: const Offset(3, 5),
+                offset:
+                    const Offset(3, 5),
               ),
             ],
           ),
@@ -593,33 +878,54 @@ class RollDiceScreen extends StatelessWidget {
                 child: Container(
                   width: size * 0.35,
                   height: size * 0.09,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.75),
-                    borderRadius: BorderRadius.circular(50),
+                  decoration:
+                      BoxDecoration(
+                    color: Colors.white
+                        .withValues(
+                      alpha: 0.75,
+                    ),
+                    borderRadius:
+                        BorderRadius.circular(
+                      50,
+                    ),
                   ),
                 ),
               ),
+
               Center(
-                child: controller.diceSides.value <= 6
-                    ? _buildDiceDots(
-                        value: value,
-                        size: size,
-                      )
-                    : Text(
-                        '$value',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: size * 0.34,
-                          fontWeight: FontWeight.w900,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withValues(alpha: 0.45),
-                              offset: const Offset(2, 2),
-                              blurRadius: 3,
+                child:
+                    controller.diceSides.value <=
+                            6
+                        ? _buildDiceDots(
+                            value: value,
+                            size: size,
+                          )
+                        : Text(
+                            '$value',
+                            style: TextStyle(
+                              color:
+                                  Colors.white,
+                              fontSize:
+                                  size * 0.34,
+                              fontWeight:
+                                  FontWeight.w900,
+                              shadows: [
+                                Shadow(
+                                  color: Colors
+                                      .black
+                                      .withValues(
+                                    alpha: 0.45,
+                                  ),
+                                  offset:
+                                      const Offset(
+                                    2,
+                                    2,
+                                  ),
+                                  blurRadius: 3,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
               ),
             ],
           ),
@@ -650,13 +956,18 @@ class RollDiceScreen extends StatelessWidget {
       width: size * 0.65,
       height: size * 0.65,
       child: GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
+        physics:
+            const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         itemCount: 9,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate:
+            const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
         ),
-        itemBuilder: (context, index) {
+        itemBuilder: (
+          context,
+          index,
+        ) {
           if (!positions.contains(index)) {
             return const SizedBox.shrink();
           }
@@ -665,16 +976,10 @@ class RollDiceScreen extends StatelessWidget {
             child: Container(
               width: size * 0.105,
               height: size * 0.105,
-              decoration: BoxDecoration(
+              decoration:
+                  const BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF22232B),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.35),
-                    blurRadius: size * 0.025,
-                    offset: const Offset(0, 1.5),
-                  ),
-                ],
+                color: Color(0xFF22232B),
               ),
             ),
           );
@@ -687,17 +992,23 @@ class RollDiceScreen extends StatelessWidget {
   // ROLL BUTTON
   // ==========================================================
 
-  Widget _buildRollButton(RollDiceController controller) {
+  Widget _buildRollButton(
+    RollDiceController controller,
+  ) {
     return Obx(
       () => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding:
+            const EdgeInsets.symmetric(
+          horizontal: 20,
+        ),
         child: SizedBox(
           width: double.infinity,
           height: 56,
           child: ElevatedButton.icon(
-            onPressed: controller.isRolling.value
-                ? null
-                : controller.rollAllDice,
+            onPressed:
+                controller.isRolling.value
+                    ? null
+                    : controller.rollAllDice,
             icon: Icon(
               controller.isRolling.value
                   ? Icons.sync_rounded
@@ -716,13 +1027,21 @@ class RollDiceScreen extends StatelessWidget {
                 letterSpacing: 0.9,
               ),
             ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.purple,
+            style:
+                ElevatedButton.styleFrom(
+              backgroundColor:
+                  AppColors.purple,
               disabledBackgroundColor:
-                  AppColors.purple.withValues(alpha: 0.45),
+                  AppColors.purple.withValues(
+                alpha: 0.45,
+              ),
               elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+              shape:
+                  RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(
+                  18,
+                ),
               ),
             ),
           ),
