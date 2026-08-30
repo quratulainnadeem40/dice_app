@@ -266,17 +266,22 @@ ever<int>(
           diceValues.length.clamp(1, 7);
 
       for (int i = 0; i < totalPlayers; i++) {
-        final String playerName =
-            i < playerNames.length
-                ? playerNames[i]
-                : 'Player ${i + 1}';
-
         final int diceNumber =
             diceValues[i];
 
-        final String sentence =
-            '$playerName rolled '
-            '${_numberToWord(diceNumber)}';
+        final String sentence;
+        if (totalPlayers == 1) {
+          sentence = _numberToWord(diceNumber);
+        } else {
+          final String playerName =
+              i < playerNames.length
+                  ? playerNames[i]
+                  : 'Player ${i + 1}';
+
+          sentence =
+              '$playerName rolled '
+              '${_numberToWord(diceNumber)}';
+        }
 
         await flutterTts.speak(
           sentence,

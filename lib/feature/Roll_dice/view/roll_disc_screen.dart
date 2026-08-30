@@ -51,11 +51,7 @@ class RollDiceScreen extends StatelessWidget {
               children: [
                 _buildTopBar(),
 
-                const SizedBox(height: 8),
-
-                _buildHeading(controller),
-
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
 
                 // ==================================================
                 // NUMBER OF PLAYERS
@@ -256,46 +252,6 @@ class RollDiceScreen extends StatelessWidget {
     );
   }
 
-  // ==========================================================
-  // HEADING
-  // ==========================================================
-
-  Widget _buildHeading(
-    RollDiceController controller,
-  ) {
-    return Obx(
-      () => Column(
-        children: [
-          Text(
-            '${controller.playerCount.value} '
-            '${controller.playerCount.value == 1 ? 'Player' : 'Players'}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 27,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -0.4,
-            ),
-          ),
-
-          const SizedBox(height: 4),
-
-          Text(
-            controller.isRolling.value
-                ? 'Rolling your dice...'
-                : 'Choose players and roll',
-            style: TextStyle(
-              color: Colors.white.withValues(
-                alpha: 0.42,
-              ),
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   // ==========================================================
   // PLAYER SELECTOR
@@ -541,60 +497,72 @@ class RollDiceScreen extends StatelessWidget {
     BuildContext context,
     RollDiceController controller,
   ) {
-    return Obx(
-      () {
-        final int count =
-            controller.playerCount.value;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Obx(
+          () {
+            final int count =
+                controller.playerCount.value;
 
-        if (count == 1) {
-          return Center(
-            child: _buildPlayerDice(
+            if (count == 1) {
+              final double maxH = (constraints.maxHeight - 48).clamp(55.0, 160.0);
+              final double maxW = (constraints.maxWidth - 40).clamp(55.0, 160.0);
+              final double size = maxH < maxW ? maxH : maxW;
+
+              return Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: _buildPlayerDice(
+                    context,
+                    0,
+                    size: size,
+                    controller: controller,
+                  ),
+                ),
+              );
+            }
+
+            if (count == 2) {
+              final double availableWidth =
+                  constraints.maxWidth - 56;
+              final double maxH = (constraints.maxHeight - 48).clamp(50.0, 120.0);
+              final double maxW = ((availableWidth - 30) / 2).clamp(50.0, 120.0);
+              final double size = maxH < maxW ? maxH : maxW;
+
+              return Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.center,
+                    children: [
+                      _buildPlayerDice(
+                        context,
+                        0,
+                        size: size,
+                        controller: controller,
+                      ),
+                      const SizedBox(width: 20),
+                      _buildPlayerDice(
+                        context,
+                        1,
+                        size: size,
+                        controller: controller,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            return _buildBalancedPlayerLayout(
+              count,
               context,
-              0,
-              size: 155,
-              controller: controller,
-            ),
-          );
-        }
-
-        if (count == 2) {
-          final double screenWidth =
-              MediaQuery.sizeOf(context).width;
-
-          final double availableWidth =
-              screenWidth - 56;
-
-          final double size =
-              ((availableWidth - 30) / 2)
-                  .clamp(85.0, 120.0);
-
-          return Center(
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.center,
-              children: [
-                _buildPlayerDice(
-                  context,
-                  0,
-                  size: size,
-                  controller: controller,
-                ),
-                const SizedBox(width: 20),
-                _buildPlayerDice(
-                  context,
-                  1,
-                  size: size,
-                  controller: controller,
-                ),
-              ],
-            ),
-          );
-        }
-
-        return _buildBalancedPlayerLayout(
-          count,
-          context,
-          controller,
+              controller,
+              availableHeight: constraints.maxHeight,
+              availableWidth: constraints.maxWidth,
+            );
+          },
         );
       },
     );
@@ -607,8 +575,10 @@ class RollDiceScreen extends StatelessWidget {
   Widget _buildBalancedPlayerLayout(
     int count,
     BuildContext context,
-    RollDiceController controller,
-  ) {
+    RollDiceController controller, {
+    double? availableHeight,
+    double? availableWidth,
+  }) {
     final List<List<int>> rows = [];
 
     if (count == 3) {
@@ -629,7 +599,7 @@ class RollDiceScreen extends StatelessWidget {
     }
 
     final double screenWidth =
-        MediaQuery.sizeOf(context).width;
+        availableWidth ?? MediaQuery.sizeOf(context).width;
 
     return Center(
       child: SingleChildScrollView(
@@ -651,12 +621,14 @@ class RollDiceScreen extends StatelessWidget {
                 count: count,
                 rowCount: row.length,
                 screenWidth: screenWidth,
+                availableHeight: availableHeight,
+                totalRows: rows.length,
               );
 
               return Padding(
                 padding:
                     const EdgeInsets.symmetric(
-                  vertical: 5,
+                  vertical: 4,
                 ),
                 child: Row(
                   mainAxisAlignment:
@@ -666,7 +638,7 @@ class RollDiceScreen extends StatelessWidget {
                       return Padding(
                         padding:
                             const EdgeInsets.symmetric(
-                          horizontal: 5,
+                          horizontal: 4,
                         ),
                         child:
                             _buildPlayerDice(
@@ -696,6 +668,8 @@ class RollDiceScreen extends StatelessWidget {
     required int count,
     required int rowCount,
     required double screenWidth,
+    double? availableHeight,
+    int totalRows = 1,
   }) {
     const double horizontalPadding = 10.0;
     const double safetySpace = 12.0;
@@ -735,10 +709,20 @@ class RollDiceScreen extends StatelessWidget {
         break;
     }
 
-    return calculatedSize.clamp(
-      55.0,
+    double size = calculatedSize.clamp(
+      45.0,
       maxSize,
     );
+
+    if (availableHeight != null && totalRows > 0) {
+      final double maxRowHeight = (availableHeight - 16) / totalRows;
+      final double heightConstrainedSize = maxRowHeight - 48;
+      if (heightConstrainedSize > 40 && heightConstrainedSize < size) {
+        size = heightConstrainedSize;
+      }
+    }
+
+    return size.clamp(45.0, maxSize);
   }
 
   // ==========================================================
@@ -792,91 +776,94 @@ class RollDiceScreen extends StatelessWidget {
           controller,
         );
 
+        final bool showName = controller.playerCount.value > 1;
+
         return SizedBox(
           width: size + 34,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // ==================================================
-              // PLAYER NAME
+              // PLAYER NAME (Only when multiple players)
               // ==================================================
 
-              GestureDetector(
-                onTap: () {
-                  controller.editPlayerName(
-                    context,
-                    index,
-                  );
-                },
-                child: Container(
-                  constraints:
-                      const BoxConstraints(
-                    minWidth: 78,
-                    maxWidth: 100,
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 5,
-                  ),
-                  decoration:
-                      BoxDecoration(
-                    color: theme.glowColor
-                        .withValues(
-                      alpha: 0.08,
+              if (showName) ...[
+                GestureDetector(
+                  onTap: () {
+                    controller.editPlayerName(
+                      context,
+                      index,
+                    );
+                  },
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(
+                      minWidth: 78,
+                      maxWidth: 100,
                     ),
-                    borderRadius:
-                        BorderRadius.circular(
-                      20,
+                    padding:
+                        const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 5,
                     ),
-                    border: Border.all(
+                    decoration:
+                        BoxDecoration(
                       color: theme.glowColor
                           .withValues(
-                        alpha: 0.18,
+                        alpha: 0.08,
                       ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize:
-                        MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          controller
-                              .getPlayerName(
-                            index,
-                          )
-                              .toUpperCase(),
-                          maxLines: 1,
-                          overflow:
-                              TextOverflow.ellipsis,
-                          textAlign:
-                              TextAlign.center,
-                          style: TextStyle(
-                            color:
-                                theme.glowColor,
-                            fontSize: 8.5,
-                            fontWeight:
-                                FontWeight.w900,
-                            letterSpacing: 0.7,
-                          ),
+                      borderRadius:
+                          BorderRadius.circular(
+                        20,
+                      ),
+                      border: Border.all(
+                        color: theme.glowColor
+                            .withValues(
+                          alpha: 0.18,
                         ),
                       ),
-                      const SizedBox(
-                        width: 3,
-                      ),
-                      Icon(
-                        Icons.edit_rounded,
-                        color:
-                            theme.glowColor,
-                        size: 9,
-                      ),
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisSize:
+                          MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            controller
+                                .getPlayerName(
+                              index,
+                            )
+                                .toUpperCase(),
+                            maxLines: 1,
+                            overflow:
+                                TextOverflow.ellipsis,
+                            textAlign:
+                                TextAlign.center,
+                            style: TextStyle(
+                              color:
+                                  theme.glowColor,
+                              fontSize: 8.5,
+                              fontWeight:
+                                  FontWeight.w900,
+                              letterSpacing: 0.7,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 3,
+                        ),
+                        Icon(
+                          Icons.edit_rounded,
+                          color:
+                              theme.glowColor,
+                          size: 9,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 8),
+                const SizedBox(height: 8),
+              ],
 
               // ==================================================
               // DICE
