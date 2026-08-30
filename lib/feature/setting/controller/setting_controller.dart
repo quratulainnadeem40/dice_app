@@ -51,7 +51,7 @@ class SettingsController extends GetxController {
   // Roll Sound
   // =========================
   final RxInt selectedRollDice = 1.obs;
-
+final RxInt settingsVersion = 0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -152,28 +152,38 @@ class SettingsController extends GetxController {
   // =========================
   // Save Settings
   // =========================
-  void saveSettings() {
-    settings.diceCount = diceCount.value;
-    settings.diceSides = diceSides.value;
-    settings.diceColor = diceColor.value;
-    settings.animationSpeed = animationSpeed.value;
+   // =========================
+  // Save Settings
+  // =========================
+  // =========================
+// Save Settings
+// =========================
+void saveSettings() {
+  settings.diceCount = diceCount.value;
+  settings.diceSides = diceSides.value;
+  settings.diceColor = diceColor.value;
+  settings.animationSpeed = animationSpeed.value;
 
-    settings.soundEnabled = soundEnabled.value;
-    settings.soundVolume = soundVolume.value;
+  settings.soundEnabled = soundEnabled.value;
+  settings.soundVolume = soundVolume.value;
 
-    settings.vibrationEnabled = vibrationEnabled.value;
-    settings.vibrationIntensity = vibrationIntensity.value;
+  settings.vibrationEnabled = vibrationEnabled.value;
+  settings.vibrationIntensity = vibrationIntensity.value;
 
-    settings.rollSoundDice = selectedRollDice.value;
+  settings.rollSoundDice = selectedRollDice.value;
 
-    Get.snackbar(
-      'Settings Saved',
-      'Your dice settings have been saved successfully.',
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-      backgroundColor: const Color(0xFF171434),
-      colorText: Colors.white,
-      duration: const Duration(seconds: 2),
-    );
-  }
+  // Tell the RollDiceController that
+  // the settings have now been officially saved.
+  settingsVersion.value++;
+
+  Get.snackbar(
+    'Settings Saved',
+    'Your dice settings have been saved successfully.',
+    snackPosition: SnackPosition.BOTTOM,
+    margin: const EdgeInsets.all(16),
+    backgroundColor: const Color(0xFF171434),
+    colorText: Colors.white,
+    duration: const Duration(seconds: 2),
+  );
+}
 }

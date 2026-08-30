@@ -95,43 +95,15 @@ class RollDiceController extends GetxController {
     applySettings();
 
     // --------------------------------------------------------
-    // LISTEN TO DICE SIDES
-    // --------------------------------------------------------
+// LISTEN ONLY TO SAVED SETTINGS
+// --------------------------------------------------------
 
-    ever<int>(
-      settingsController.diceSides,
-      (int newSides) {
-        diceSides.value = newSides;
-        updateDiceCount();
-      },
-    );
-
-    // --------------------------------------------------------
-    // LISTEN TO DICE COLOR
-    // --------------------------------------------------------
-
-    ever<Color>(
-      settingsController.diceColor,
-      (Color newColor) {
-        updateThemeFromColor(newColor);
-      },
-    );
-
-    // --------------------------------------------------------
-    // LISTEN TO DICE COUNT
-    // --------------------------------------------------------
-
-    ever<int>(
-      settingsController.diceCount,
-      (int newCount) {
-        final int count = newCount.clamp(1, 7);
-
-        playerCount.value = count;
-
-        updatePlayerNames();
-        updateDiceCount();
-      },
-    );
+ever<int>(
+  settingsController.settingsVersion,
+  (_) {
+    applySettings();
+  },
+);
 
     // --------------------------------------------------------
     // SYNC SETTINGS
@@ -178,52 +150,34 @@ class RollDiceController extends GetxController {
   // SOUND SETUP
   // ==========================================================
 
-  Future<void> _setupSound() async {
-    try {
-      await _audioPlayer.setAsset(
-        'assets/sounds/dice_sound.mp3',
-      );
+ Future<void> _setupSound() async {
+  try {
+    await _audioPlayer.setAsset(
+      'assets/sounds/dice_sound.mp3',
+    );
 
-      await _audioPlayer.setVolume(
-        settingsController.soundVolume.value,
-      );
-
-      // Listen for volume changes.
-      ever<double>(
-        settingsController.soundVolume,
-        (double volume) async {
-          try {
-            await _audioPlayer.setVolume(
-              volume.clamp(0.0, 1.0),
-            );
-          } catch (e) {
-            debugPrint(
-              'Sound volume error: $e',
-            );
-          }
-        },
-      );
-    } catch (e) {
-      debugPrint(
-        'Sound setup error: $e',
-      );
-    }
+    await _audioPlayer.setVolume(
+      settingsController.settings.soundVolume,
+    );
+  } catch (e) {
+    debugPrint(
+      'Sound setup error: $e',
+    );
   }
-
+}
   // ==========================================================
   // PLAY DICE SOUND
   // ==========================================================
 
   Future<void> _playDiceSound() async {
-    if (!settingsController.soundEnabled.value) {
+   if (!settingsController.settings.soundEnabled) {
       return;
     }
 
     try {
-      final double volume =
-          settingsController.soundVolume.value
-              .clamp(0.0, 1.0);
-
+   final double volume =
+    settingsController.settings.soundVolume
+        .clamp(0.0, 1.0);
       await _audioPlayer.setVolume(volume);
 
       await _audioPlayer.seek(
@@ -257,7 +211,7 @@ class RollDiceController extends GetxController {
   // ==========================================================
 
   Future<void> _vibrate() async {
-    if (!settingsController.vibrationEnabled.value) {
+   if (!settingsController.settings.vibrationEnabled) {
       return;
     }
 
@@ -269,9 +223,9 @@ class RollDiceController extends GetxController {
         return;
       }
 
-      final double intensity =
-          settingsController.vibrationIntensity.value
-              .clamp(0.0, 1.0);
+     final double intensity =
+    settingsController.settings.vibrationIntensity
+        .clamp(0.0, 1.0);
 
       if (intensity <= 0) {
         return;
@@ -421,21 +375,20 @@ class RollDiceController extends GetxController {
   // ==========================================================
 
   void applySettings() {
-    playerCount.value =
-        settingsController.diceCount.value
-            .clamp(1, 7);
+  playerCount.value =
+      settingsController.settings.diceCount.clamp(1, 7);
 
-    diceSides.value =
-        settingsController.diceSides.value;
+  diceSides.value =
+      settingsController.settings.diceSides;
 
-    updateThemeFromColor(
-      settingsController.diceColor.value,
-    );
+  updateThemeFromColor(
+    settingsController.settings.diceColor,
+  );
 
-    updatePlayerNames();
+  updatePlayerNames();
 
-    updateDiceCount();
-  }
+  updateDiceCount();
+}
 
   // ==========================================================
   // UPDATE PLAYER NAMES
@@ -515,158 +468,112 @@ class RollDiceController extends GetxController {
   // ==========================================================
   // EDIT PLAYER NAME
   // ==========================================================
-
-  Future<void> editPlayerName(
-    BuildContext context,
-    int index,
-  ) async {
-    if (index < 0 ||
-        index >= playerNames.length) {
-      return;
-    }
-
-    final TextEditingController
-        textController =
-        TextEditingController(
-      text: getPlayerName(index),
-    );
-
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          backgroundColor:
-              const Color(0xFF111437),
-          shape:
-              RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(18),
-          ),
-          title: const Text(
-            'Edit Player Name',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight:
-                  FontWeight.w800,
-            ),
-          ),
-          content: TextField(
-            controller:
-                textController,
-            autofocus: true,
-            maxLength: 20,
-            textCapitalization:
-                TextCapitalization.words,
-            style:
-                const TextStyle(
-              color: Colors.white,
-            ),
-            decoration:
-                InputDecoration(
-              hintText:
-                  'Enter player name',
-              hintStyle:
-                  TextStyle(
-                color: Colors.white
-                    .withValues(
-                  alpha: 0.4,
-                ),
-              ),
-              counterStyle:
-                  TextStyle(
-                color: Colors.white
-                    .withValues(
-                  alpha: 0.4,
-                ),
-              ),
-              filled: true,
-              fillColor: Colors.white
-                  .withValues(
-                alpha: 0.06,
-              ),
-              border:
-                  OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
-                ),
-                borderSide:
-                    BorderSide.none,
-              ),
-            ),
-            onSubmitted: (_) {
-              setPlayerName(
-                index,
-                textController.text,
-              );
-
-              Navigator.of(
-                dialogContext,
-              ).pop();
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(
-                  dialogContext,
-                ).pop();
-              },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                  color:
-                      Colors.white70,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setPlayerName(
-                  index,
-                  textController.text,
-                );
-
-                Navigator.of(
-                  dialogContext,
-                ).pop();
-              },
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color(
-                  0xFF8B22E9,
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
-                ),
-              ),
-              child: const Text(
-                'Save',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight:
-                      FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-
-    textController.dispose();
+Future<void> editPlayerName(
+  BuildContext context,
+  int index,
+) async {
+  if (index < 0 || index >= playerNames.length) {
+    return;
   }
 
-  // ==========================================================
-  // PLAYER COUNT
-  // ==========================================================
+  final TextEditingController textController =
+      TextEditingController(
+    text: getPlayerName(index),
+  );
 
-  void setPlayerCount(
+  final String? newName = await showDialog<String>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        backgroundColor: const Color(0xFF111437),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
+        title: const Text(
+          'Edit Player Name',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        content: TextField(
+          controller: textController,
+          autofocus: true,
+          maxLength: 20,
+          textCapitalization: TextCapitalization.words,
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Enter player name',
+            hintStyle: TextStyle(
+              color: Colors.white.withValues(
+                alpha: 0.4,
+              ),
+            ),
+            counterStyle: TextStyle(
+              color: Colors.white.withValues(
+                alpha: 0.4,
+              ),
+            ),
+            filled: true,
+            fillColor: Colors.white.withValues(
+              alpha: 0.06,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.white70,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(
+                textController.text.trim(),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8B22E9),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+
+ if (newName != null && newName.isNotEmpty) {
+  await Future<void>.delayed(Duration.zero);
+  setPlayerName(index, newName);
+}
+}
+
+// ==========================================================
+// PLAYER COUNT
+// ==========================================================
+
+void setPlayerCount(
     int count,
   ) {
     if (count < 1 ||
@@ -799,11 +706,8 @@ class RollDiceController extends GetxController {
       // ------------------------------------------------------
 
       final double speed =
-          settingsController
-              .animationSpeed
-              .value
-              .clamp(0.0, 1.0);
-
+    settingsController.settings.animationSpeed
+        .clamp(0.0, 1.0);
       final int stepDelay =
           ((250 -
                   (speed * 180)))

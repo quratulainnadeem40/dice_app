@@ -97,23 +97,9 @@ class HomePage extends StatelessWidget {
           ],
         ),
 
-        const Spacer(),
+      
 
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.06),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.10),
-            ),
-          ),
-          child: const Icon(
-            Icons.person_outline_rounded,
-            color: AppColors.lightText,
-          ),
-        ),
+        
       ],
     );
   }
