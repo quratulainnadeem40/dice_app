@@ -815,6 +815,7 @@ class RollDiceScreen extends StatelessWidget {
               // ==================================================
 
               _buildDiceFace(
+                index: index,
                 value: value,
                 size: size,
                 theme: theme,
@@ -832,18 +833,25 @@ class RollDiceScreen extends StatelessWidget {
   // ==========================================================
 
   Widget _buildDiceFace({
+    required int index,
     required int value,
     required double size,
     required DiceTheme theme,
     required RollDiceController controller,
   }) {
-    return AnimatedScale(
-      duration: const Duration(milliseconds: 180),
-      scale: controller.isRolling.value ? 0.93 : 1.0,
-      curve: Curves.easeInOut,
-      child: Container(
-        width: size,
-        height: size,
+    final bool isDiceRolling = controller.isDiceRolling(index);
+
+    return GestureDetector(
+      onTap: () => controller.rollSingleDice(index),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 180),
+          scale: isDiceRolling ? 0.92 : 1.0,
+          curve: Curves.easeInOut,
+          child: Container(
+            width: size,
+            height: size,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(
             size * 0.22,
@@ -934,7 +942,9 @@ class RollDiceScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   // ==========================================================

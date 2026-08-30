@@ -748,6 +748,111 @@ void setPlayerCount(
   }
 
   // ==========================================================
+  // SINGLE DICE ROLLING STATE & METHODS
+  // ==========================================================
+
+  final RxSet<int> rollingDiceIndices = <int>{}.obs;
+
+  bool isDiceRolling(int index) =>
+      isRolling.value || rollingDiceIndices.contains(index);
+
+  Future<void> rollSingleDice(int index) async {
+    if (isRolling.value || rollingDiceIndices.contains(index)) {
+      return;
+    }
+    if (index < 0 || index >= diceValues.length) {
+      return;
+    }
+
+    await stopVoice();
+
+    rollingDiceIndices.add(index);
+
+    try {
+      final double speed =
+          settingsController.settings.animationSpeed.clamp(0.0, 1.0);
+      final int stepDelay = (65 - (speed * 30)).round().clamp(30, 70);
+      final int totalDurationMs =
+          (750 - (speed * 350)).round().clamp(400, 800);
+      final int totalSteps = (totalDurationMs / stepDelay).round();
+
+      // Trigger roll sound and matched haptic vibration
+      _playDiceSound();
+      _triggerRollVibration(
+        totalDurationMs: totalDurationMs,
+        stepDelay: stepDelay,
+      );
+
+      for (int i = 0; i < totalSteps; i++) {
+        await Future.delayed(
+          Duration(milliseconds: stepDelay),
+        );
+
+        if (!rollingDiceIndices.contains(index)) break;
+
+        diceValues[index] = _random.nextInt(diceSides.value) + 1;
+        diceValues.refresh();
+      }
+
+      final int finalVal = _random.nextInt(diceSides.value) + 1;
+      diceValues[index] = finalVal;
+      diceValues.refresh();
+
+      _saveToHistory(List<int>.from(diceValues));
+
+      rollingDiceIndices.remove(index);
+
+      if (rollingDiceIndices.isEmpty && !isRolling.value) {
+        await _stopDiceSound();
+      }
+
+      await Future.delayed(
+        const Duration(
+          milliseconds: 140,
+        ),
+      );
+
+      await speakSingleDiceResult(index);
+    } catch (e) {
+      debugPrint('Single roll error: $e');
+      rollingDiceIndices.remove(index);
+      if (rollingDiceIndices.isEmpty && !isRolling.value) {
+        await _stopDiceSound();
+      }
+    }
+  }
+
+  Future<void> speakSingleDiceResult(int index) async {
+    if (!settingsController.settings.soundEnabled) {
+      return;
+    }
+    if (index < 0 || index >= diceValues.length) return;
+
+    final int currentSession = ++_speechSessionId;
+    final int diceNumber = diceValues[index];
+    final String pName = getPlayerName(index);
+
+    try {
+      final double volume =
+          settingsController.settings.soundVolume.clamp(0.0, 1.0);
+      await flutterTts.stop();
+      await flutterTts.setVolume(volume);
+      await flutterTts.setSpeechRate(0.58);
+      await flutterTts.setPitch(1.0);
+
+      if (_speechSessionId != currentSession) return;
+
+      final String speech = (playerCount.value == 1)
+          ? _numberToWord(diceNumber)
+          : '$pName rolled ${_numberToWord(diceNumber)}';
+
+      await flutterTts.speak(speech);
+    } catch (e) {
+      debugPrint('Single TTS error: $e');
+    }
+  }
+
+  // ==========================================================
   // ROLL ALL DICE
   // ==========================================================
 
