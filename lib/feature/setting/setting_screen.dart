@@ -1,4 +1,5 @@
 
+import 'package:dice_app/feature/home/widget/bottom_nav.dart';
 import 'package:dice_app/feature/setting/controller/setting_controller.dart';
 import 'package:dice_app/feature/setting/widgets/animation_speed_slider.dart';
 import 'package:dice_app/feature/setting/widgets/dice_color_selector.dart';
@@ -72,6 +73,7 @@ class SettingsScreen extends GetView<SettingsController> {
           },
         ),
       ),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 2),
     );
   }
 
@@ -216,7 +218,7 @@ class SettingsScreen extends GetView<SettingsController> {
 
   Widget _buildPreview() {
     return SettingsSection(
-      title: '4. PREVIEW',
+      title: '3. PREVIEW',
       child: Obx(
         () {
           final isMultiColor = controller.diceColor.value == Colors.transparent;
@@ -232,34 +234,39 @@ class SettingsScreen extends GetView<SettingsController> {
               children: [
                 SizedBox(
                   height: 150,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _previewDice(
-                        isMultiColor
-                            ? const Color(0xFF8B2CFF)
-                            : controller.diceColor.value,
-                        5,
-                        -0.12,
+                  child: Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          _previewDice(
+                            isMultiColor
+                                ? const Color(0xFF8B2CFF)
+                                : controller.diceColor.value,
+                            5,
+                            -0.12,
+                          ),
+                          const SizedBox(width: 12),
+                          _previewDice(
+                            isMultiColor
+                                ? const Color(0xFFFF3D4F)
+                                : controller.diceColor.value,
+                            6,
+                            0.08,
+                          ),
+                          const SizedBox(width: 12),
+                          _previewDice(
+                            isMultiColor
+                                ? const Color(0xFF087FF5)
+                                : controller.diceColor.value,
+                            4,
+                            -0.08,
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      _previewDice(
-                        isMultiColor
-                            ? const Color(0xFFFF3D4F)
-                            : controller.diceColor.value,
-                        6,
-                        0.08,
-                      ),
-                      const SizedBox(width: 12),
-                      _previewDice(
-                        isMultiColor
-                            ? const Color(0xFF087FF5)
-                            : controller.diceColor.value,
-                        4,
-                        -0.08,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),

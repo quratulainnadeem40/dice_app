@@ -1,5 +1,6 @@
 import 'package:dice_app/core/theme/custom_color.dart';
 import 'package:dice_app/feature/history/model/history_model.dart';
+import 'package:dice_app/feature/home/widget/bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -146,6 +147,7 @@ class HistoryScreen extends GetView<HistoryController> {
           }),
         ),
       ),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 1),
     );
   }
 
