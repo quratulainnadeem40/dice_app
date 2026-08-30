@@ -105,6 +105,16 @@ ever<int>(
   },
 );
 
+ever<bool>(
+  settingsController.soundEnabled,
+  (enabled) {
+    if (!enabled) {
+      stopVoice();
+      _stopDiceSound();
+    }
+  },
+);
+
     // --------------------------------------------------------
     // SYNC SETTINGS
     // --------------------------------------------------------
@@ -188,14 +198,14 @@ ever<int>(
   // ==========================================================
 
   Future<void> _playDiceSound() async {
-   if (!settingsController.settings.soundEnabled) {
+    if (!settingsController.soundEnabled.value) {
       return;
     }
 
     try {
-   final double volume =
-    settingsController.settings.soundVolume
-        .clamp(0.0, 1.0);
+      final double volume =
+          settingsController.soundVolume.value.clamp(0.0, 1.0);
+      if (volume <= 0.0) return;
       await _audioPlayer.setVolume(volume);
 
       await _audioPlayer.seek(
@@ -244,12 +254,12 @@ ever<int>(
     required int totalDurationMs,
     required int stepDelay,
   }) {
-    if (!settingsController.settings.vibrationEnabled) {
+    if (!settingsController.vibrationEnabled.value) {
       return;
     }
 
     final double intensity =
-        settingsController.settings.vibrationIntensity.clamp(0.0, 1.0);
+        settingsController.vibrationIntensity.value.clamp(0.0, 1.0);
     if (intensity <= 0) {
       return;
     }
@@ -292,12 +302,12 @@ ever<int>(
   // ==========================================================
 
   Future<void> speakDiceResults() async {
-    if (!settingsController.settings.soundEnabled) {
+    if (!settingsController.soundEnabled.value) {
       return;
     }
 
     final double volume =
-        settingsController.settings.soundVolume.clamp(0.0, 1.0);
+        settingsController.soundVolume.value.clamp(0.0, 1.0);
     if (volume <= 0.0) {
       return;
     }
@@ -752,7 +762,7 @@ Future<void> editPlayerName(
 
     try {
       final double speed =
-          settingsController.settings.animationSpeed.clamp(0.0, 1.0);
+          settingsController.animationSpeed.value.clamp(0.0, 1.0);
       final int stepDelay = (65 - (speed * 30)).round().clamp(30, 70);
       final int totalDurationMs =
           (750 - (speed * 350)).round().clamp(400, 800);
@@ -805,7 +815,7 @@ Future<void> editPlayerName(
   }
 
   Future<void> speakSingleDiceResult(int index) async {
-    if (!settingsController.settings.soundEnabled) {
+    if (!settingsController.soundEnabled.value) {
       return;
     }
     if (index < 0 || index >= diceValues.length) return;
@@ -816,7 +826,8 @@ Future<void> editPlayerName(
 
     try {
       final double volume =
-          settingsController.settings.soundVolume.clamp(0.0, 1.0);
+          settingsController.soundVolume.value.clamp(0.0, 1.0);
+      if (volume <= 0.0) return;
       await flutterTts.stop();
       await flutterTts.setVolume(volume);
       await flutterTts.setSpeechRate(0.58);
@@ -850,7 +861,7 @@ Future<void> editPlayerName(
 
     try {
       final double speed =
-          settingsController.settings.animationSpeed.clamp(0.0, 1.0);
+          settingsController.animationSpeed.value.clamp(0.0, 1.0);
       final int stepDelay = (65 - (speed * 30)).round().clamp(30, 70);
       final int totalDurationMs =
           (850 - (speed * 400)).round().clamp(450, 900);
