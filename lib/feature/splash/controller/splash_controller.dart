@@ -1,85 +1,69 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../core/routes/app_routes.dart';
+import 'package:flutter/material.dart';
+import 'package:dice_app/core/routes/app_routes.dart';
 
 class SplashController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  late AnimationController animationController;
-
-  late Animation<double> scaleAnimation;
-  late Animation<double> fadeAnimation;
+  late AnimationController loadingController;
+  late Animation<double> loadingAnimation;
 
   final RxInt activeDot = 0.obs;
-
-  Timer? _timer;
-  Timer? _dotsTimer;
+  bool _navigated = false;
 
   @override
   void onInit() {
     super.onInit();
 
-    animationController = AnimationController(
+    // 3 Second Animation setup (0.0 to 1.0)
+    loadingController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat(reverse: true);
-
-    scaleAnimation = Tween<double>(
-      begin: 0.85,
-      end: 1.15,
-    ).animate(
-      CurvedAnimation(
-        parent: animationController,
-        curve: Curves.easeInOut,
-      ),
+      duration: const Duration(seconds: 3),
     );
 
-    fadeAnimation = Tween<double>(
-      begin: 0.35,
+    loadingAnimation = Tween<double>(
+      begin: 0.0,
       end: 1.0,
     ).animate(
       CurvedAnimation(
-        parent: animationController,
-        curve: Curves.easeInOut,
+        parent: loadingController,
+        curve: Curves.linear,
       ),
     );
 
-    _startLoadingDots();
-    _startSplashTimer();
+    // Dynamic dot switching based on progress values
+    loadingAnimation.addListener(() {
+      final progress = loadingAnimation.value;
+      if (progress < 0.25) {
+        activeDot.value = 0;
+      } else if (progress < 0.50) {
+        activeDot.value = 1;
+      } else if (progress < 0.75) {
+        activeDot.value = 2;
+      } else {
+        activeDot.value = 3;
+      }
+    });
+
+    // Start 3-second progress
+    loadingController.forward();
+
+    // Auto navigate after completion
+    loadingController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _navigateToHome();
+      }
+    });
   }
 
-  void _startLoadingDots() {
-    _dotsTimer = Timer.periodic(
-      const Duration(milliseconds: 350),
-      (timer) {
-        if (isClosed) {
-          timer.cancel();
-          return;
-        }
-
-        activeDot.value = (activeDot.value + 1) % 4;
-      },
-    );
-  }
-
-  void _startSplashTimer() {
-    _timer = Timer(
-      const Duration(seconds: 3),
-      () {
-        if (!isClosed) {
-          Get.offNamed(AppRoutes.home);
-        }
-      },
-    );
+  void _navigateToHome() {
+    if (isClosed || _navigated) return;
+    _navigated = true;
+    Get.offAllNamed(AppRoutes.home);
   }
 
   @override
   void onClose() {
-    _timer?.cancel();
-    _dotsTimer?.cancel();
-    animationController.dispose();
+    loadingController.dispose();
     super.onClose();
   }
 }
